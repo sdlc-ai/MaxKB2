@@ -1,7 +1,7 @@
 FROM python:3.11-slim-trixie AS python-stage
 RUN python3 -m venv /opt/py3
 
-FROM ghcr.io/1panel-dev/maxkb-vector-model:v2.0.3 AS vector-model
+FROM sdlc-vector-model:v1.0.1 AS vector-model
 
 FROM postgres:17.6-trixie
 COPY --from=python-stage /usr/local /usr/local
