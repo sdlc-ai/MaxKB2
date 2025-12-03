@@ -77,7 +77,7 @@ explicit = true
 
 [[tool.uv.index]]
 name = "tsinghua"
-url = "https://mirrors.aliyun.com/pypi/simple/"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 explicit = true
 
 [[tool.uv.index]]
