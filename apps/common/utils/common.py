@@ -242,21 +242,7 @@ def query_params_to_single_dict(query_params: Dict):
 
 def valid_license(model=None, count=None, message=None):
     def inner(func):
-        def run(*args, **kwargs):
-            is_license_valid = DatabaseModelManage.get_model('license_is_valid')
-            is_license_valid = is_license_valid() if is_license_valid() is not None else False
-            record_count = QuerySet(model).count()
-
-            if not is_license_valid and record_count >= count:
-                error_message = message or _(
-                    'Limit {count} exceeded, please contact us (https://fit2cloud.com/).').format(
-                    count=count)
-                raise AppApiException(400, error_message)
-
-            return func(*args, **kwargs)
-
-        return run
-
+        return func
     return inner
 
 
