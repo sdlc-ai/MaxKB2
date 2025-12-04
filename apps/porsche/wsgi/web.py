@@ -1,11 +1,4 @@
 # coding=utf-8
-"""
-    @project: porsche
-    @Author： 
-    @file： web.py
-    @date：2025/11/5 15:14
-    @desc:
-"""
 import builtins
 import os
 import sys

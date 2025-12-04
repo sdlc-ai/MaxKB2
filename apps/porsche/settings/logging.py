@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 import os
 
 from ..const import PROJECT_DIR, CONFIG, LOG_DIR

@@ -1,11 +1,4 @@
 # coding=utf-8
-"""
-    @project: porsche
-    @Author：
-    @file： web.py
-    @date：2025/11/5 14:53
-    @desc:
-"""
 from pathlib import Path
 from ...const import CONFIG, PROJECT_DIR
 import os

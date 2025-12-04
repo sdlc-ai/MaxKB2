@@ -1,11 +1,4 @@
 # coding=utf-8
-"""
-    @project: porsche
-    @Author： 
-    @file： conf.py
-    @date：2025/4/11 16:58
-    @desc:
-"""
 import errno
 import logging
 import os

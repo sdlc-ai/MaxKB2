@@ -1,11 +1,4 @@
 # coding=utf-8
-"""
-    @project: porsche
-    @Author： 
-    @file： lib.py
-    @date：2024/8/16 17:12
-    @desc:
-"""
 import os
 
 from redis.sentinel import Sentinel
