@@ -15,7 +15,7 @@ const langModuleMap = new Map<string, object>()
 
 export const langCode: Array<string> = []
 
-export const localeConfigKey = 'MaxKB-locale'
+export const localeConfigKey = 'Porsche-locale'
 
 // 获取浏览器默认语言环境
 const languages = usePreferredLanguages()

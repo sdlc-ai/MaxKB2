@@ -14,7 +14,7 @@
         v-if="!user.isEnterprise()"
         link
         type="primary"
-        @click="toUrl('https://maxkb.cn/pricing.html')"
+        @click="toUrl('https://porsche.cn/pricing.html')"
         class="mr-8"
       >
         <AppIcon iconName="app-pricing" class="mr-8" style="font-size: 20px"></AppIcon>

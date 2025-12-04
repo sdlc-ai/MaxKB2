@@ -45,7 +45,7 @@ export default {
     modeName: {
       label: 'Model Name',
       placeholder: 'Set a name for the base model',
-      tooltip: 'Custom model name in MaxKB',
+      tooltip: 'Custom model name in Porsche',
       requiredMessage: 'Model name cannot be empty',
     },
     permissionType: {

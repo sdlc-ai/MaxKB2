@@ -36,7 +36,7 @@ const init = async () => {
     corpId: props.config.corp_id,
     agentId: props.config.agent_id
   }
-  const lang = localStorage.getItem('MaxKB-locale') || getBrowserLang() || 'en-US'
+  const lang = localStorage.getItem('Porsche-locale') || getBrowserLang() || 'en-US'
   const redirectUri = window.location.origin
   try {
     wwLogin.value = ww.createWWLoginPanel({

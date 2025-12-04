@@ -40,7 +40,7 @@ const open: (loading?: Ref<boolean>) => Promise<Result<string>> = (loading) => {
  * data
  */
 const chat: (chat_id: string, data: any) => Promise<any> = (chat_id, data) => {
-  const prefix = (window.MaxKB?.prefix ? window.MaxKB?.prefix : '/chat') + '/api'
+  const prefix = (window.Porsche?.prefix ? window.Porsche?.prefix : '/chat') + '/api'
   return postStream(`${prefix}/chat_message/${chat_id}`, data)
 }
 

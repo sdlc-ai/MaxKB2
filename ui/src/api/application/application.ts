@@ -239,7 +239,7 @@ const generate_prompt: (workspace_id:string ,model_id:string, application_id:str
   application_id,
   data
 ) => {
-  const prefix = (window.MaxKB?.prefix ? window.MaxKB?.prefix : '/admin') + '/api'
+  const prefix = (window.Porsche?.prefix ? window.Porsche?.prefix : '/admin') + '/api'
   return postStream(`${prefix}/workspace/${workspace_id}/application/${application_id}/model/${model_id}/prompt_generate`, data)
 }
 
@@ -252,7 +252,7 @@ const generate_prompt: (workspace_id:string ,model_id:string, application_id:str
  * @param data
  */
 const chat: (chat_id: string, data: any) => Promise<any> = (chat_id, data) => {
-  const prefix = (window.MaxKB?.prefix ? window.MaxKB?.prefix : '/admin') + '/api'
+  const prefix = (window.Porsche?.prefix ? window.Porsche?.prefix : '/admin') + '/api'
   return postStream(`${prefix}/chat_message/${chat_id}`, data)
 }
 /**

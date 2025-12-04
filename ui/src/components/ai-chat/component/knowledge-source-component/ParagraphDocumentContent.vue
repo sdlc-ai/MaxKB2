@@ -13,6 +13,6 @@ const is_pdf = computed(() => {
   return props.detail?.meta?.source_file_id
 })
 const pdfSrc = computed(() => {
-  return `${window.MaxKB.prefix}/oss/file/${props.detail?.meta?.source_file_id}`
+  return `${window.Porsche.prefix}/oss/file/${props.detail?.meta?.source_file_id}`
 })
 </script>
