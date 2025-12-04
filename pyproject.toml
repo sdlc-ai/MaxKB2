@@ -75,11 +75,21 @@ name = "macpytorch"
 url = "https://download.pytorch.org/whl"
 explicit = true
 
+[[tool.uv.index]]
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+explicit = true
+
+[[tool.uv.index]]
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+explicit = true
+
 [tool.uv.sources]
 torch = [
-    { index = "pytorch", marker = "sys_platform == 'linux'" },
-    { index = "pytorch", marker = "sys_platform == 'win'" },
-    { index = "macpytorch", marker = "sys_platform == 'darwin'" },
+    { index = "tsinghua", marker = "sys_platform == 'linux'" },
+    { index = "tsinghua", marker = "sys_platform == 'win'" },
+    { index = "aliyun", marker = "sys_platform == 'darwin'" },
 ]
 
 [build-system]
