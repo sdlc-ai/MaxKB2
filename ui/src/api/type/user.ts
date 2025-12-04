@@ -7,7 +7,6 @@ interface User {
    * 用户名
    */
   username: string
-  nick_name: string
   /**
    * 邮箱
    */
@@ -15,7 +14,7 @@ interface User {
   /**
    * 用户角色
    */
-  role: Array<string>
+  role: string
   /**
    * 用户权限
    */
@@ -26,10 +25,7 @@ interface User {
   is_edit_password?: boolean
   IS_XPACK?: boolean
   XPACK_LICENSE_IS_VALID?: boolean
-  language?: string
-  workspace_list?: Array<any>
-  role_name?: Array<any>
-  source?: string
+  language: string
 }
 
 interface LoginRequest {
@@ -41,6 +37,10 @@ interface LoginRequest {
    * 密码
    */
   password: string
+  /**
+   * 验证码
+   */
+  captcha: string
 }
 
 interface RegisterRequest {
@@ -85,7 +85,7 @@ interface ResetCurrentUserPasswordRequest {
   /**
    * 验证码
    */
-  code?: string
+  code: string
   /**
    *密码
    */
@@ -121,5 +121,5 @@ export type {
   CheckCodeRequest,
   ResetPasswordRequest,
   User,
-  ResetCurrentUserPasswordRequest,
+  ResetCurrentUserPasswordRequest
 }

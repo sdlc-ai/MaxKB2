@@ -1,6 +1,10 @@
 <template>
   <el-dialog
-    :title="isEdit ? $t('common.param.editParam') : $t('common.param.addParam')"
+    :title="
+      isEdit
+        ? $t('views.template.templateForm.title.editParam')
+        : $t('views.template.templateForm.title.addParam')
+    "
     v-model="dialogVisible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -24,15 +28,7 @@
           @blur="form.variable = form.variable.trim()"
         />
       </el-form-item>
-      <el-form-item :label="$t('common.desc')">
-        <el-input
-          v-model="form.desc"
-          :placeholder="$t('common.descPlaceholder')"
-          @blur="form.name = form.name.trim()"
-          maxlength="64"
-          show-word-limit
-        />
-      </el-form-item>
+
       <el-form-item :label="$t('dynamicsForm.paramForm.required.label')" @click.prevent>
         <el-switch size="small" v-model="form.is_required"></el-switch>
       </el-form-item>
@@ -42,7 +38,7 @@
         :rules="{
           required: form.is_required,
           message: $t('dynamicsForm.default.placeholder'),
-          trigger: 'blur',
+          trigger: 'blur'
         }"
       >
         <el-input
@@ -55,7 +51,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click.prevent="dialogVisible = false"> {{ $t('common.cancel') }} </el-button>
-        <el-button type="primary" @click="submit(fieldFormRef)" :loading="loading">
+        <el-button type="primary" class="custom-btn" @click="submit(fieldFormRef)" :loading="loading">
           {{ isEdit ? $t('common.save') : $t('common.add') }}
         </el-button>
       </span>
@@ -80,22 +76,15 @@ const form = ref<any>({
   is_required: true,
   assignment_method: 'api_input',
   optionList: [''],
-  default_value: '',
-  desc: '',
+  default_value: ''
 })
 
 const rules = reactive({
-  name: [
-    { required: true, message: t('dynamicsForm.paramForm.name.requiredMessage'), trigger: 'blur' },
-  ],
+  name: [{ required: true, message: t('dynamicsForm.paramForm.name.requiredMessage'), trigger: 'blur' }],
   variable: [
-    { required: true, message: t('dynamicsForm.paramForm.field.requiredMessage'), trigger: 'blur' },
-    {
-      pattern: /^[a-zA-Z0-9_]+$/,
-      message: t('dynamicsForm.paramForm.field.requiredMessage2'),
-      trigger: 'blur',
-    },
-  ],
+    { required: true, message:  t('dynamicsForm.paramForm.field.requiredMessage'), trigger: 'blur' },
+    { pattern: /^[a-zA-Z0-9_]+$/, message: t('dynamicsForm.paramForm.field.requiredMessage2'), trigger: 'blur' }
+  ]
 })
 
 const dialogVisible = ref<boolean>(false)
@@ -109,8 +98,7 @@ watch(dialogVisible, (bool) => {
       is_required: true,
       assignment_method: 'api_input',
       optionList: [''],
-      default_value: '',
-      desc: '',
+      default_value: ''
     }
     isEdit.value = false
   }

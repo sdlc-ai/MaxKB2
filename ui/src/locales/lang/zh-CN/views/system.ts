@@ -1,5 +1,3 @@
-import role from './role'
-
 export default {
   title: '系统管理',
   subTitle: '系统设置',
@@ -21,7 +19,7 @@ export default {
       ldap_filterPlaceholder: '请输入用户过滤器',
       ldap_mapping: 'LDAP 属性映射',
       ldap_mappingPlaceholder: '请输入 LDAP 属性映射',
-      enableAuthentication: '启用 LDAP 认证',
+      enableAuthentication: '启用 LDAP 认证'
     },
     cas: {
       title: 'CAS',
@@ -31,7 +29,7 @@ export default {
       validateUrlPlaceholder: '请输入验证地址',
       redirectUrl: '回调地址',
       redirectUrlPlaceholder: '请输入回调地址',
-      enableAuthentication: '启用 CAS 认证',
+      enableAuthentication: '启用 CAS 认证'
     },
     oidc: {
       title: 'OIDC',
@@ -50,7 +48,7 @@ export default {
       logoutEndpointPlaceholder: '请输入注销端地址',
       redirectUrl: '回调地址',
       redirectUrlPlaceholder: '请输入回调地址',
-      enableAuthentication: '启用 OIDC 认证',
+      enableAuthentication: '启用 OIDC 认证'
     },
 
     oauth2: {
@@ -71,25 +69,7 @@ export default {
       redirectUrlPlaceholder: '请输入回调地址',
       filedMapping: '字段映射',
       filedMappingPlaceholder: '请输入字段映射',
-      enableAuthentication: '启用 OAuth2 认证',
-    },
-    saml2: {
-      title: 'SAML2',
-      ldp: 'Idp MetaData Url',
-      ldpPlaceholder: '请输入 Idp MetaData Url',
-      enableAuthnRequests: '开启请求签名',
-      enableAssertions: '开启断言签名',
-      privateKey: 'SP Private Key',
-      privateKeyPlaceholder: '请输入 SP Private Key',
-      certificate: 'SP Certificate',
-      certificatePlaceholder: '请输入 SP Certificate',
-      filedMapping: '字段映射',
-      spEntityId: 'SP Entity Id',
-      spEntityIdPlaceholder: '请输入 SP Entity Id',
-      spAcs: 'SP Ace',
-      spAcsPlaceholder: '请输入 SP Ace',
-      filedMappingPlaceholder: '请输入字段映射',
-      enableAuthentication: '启用 SAML2 认证',
+      enableAuthentication: '启用 OAuth2 认证'
     },
     scanTheQRCode: {
       title: '扫码登录',
@@ -111,8 +91,48 @@ export default {
       larkQrCode: '飞书扫码登录',
       dingtalkQrCode: '钉钉扫码登录',
       setting: '设置',
-      access: '接入',
-    },
+      access: '接入'
+    }
+  },
+  theme: {
+    title: '外观设置',
+    platformDisplayTheme: '平台显示主题',
+    customTheme: '自定义主题',
+    platformLoginSettings: '平台登录设置',
+    custom: '自定义',
+    pagePreview: '页面预览',
+    default: '默认',
+    restoreDefaults: '恢复默认',
+    orange: '活力橙',
+    green: '松石绿',
+    purple: '神秘紫',
+    red: '胭脂红',
+    loginBackground: '登录背景图',
+    loginLogo: '登录 Logo',
+    websiteLogo: '网站 Logo',
+    replacePicture: '替换图片',
+    websiteLogoTip: '顶部网站显示的 Logo，建议尺寸 48*48，支持 JPG、PNG、GIF，大小不超过 10MB',
+    loginLogoTip: '登录页面右侧 Logo，建议尺寸 204*52，支持 JPG、PNG、GIF，大小不超过 10 MB',
+    loginBackgroundTip:
+      '左侧背景图，矢量图建议尺寸 576*900，位图建议尺寸 1152*1800；支持 JPG、PNG、GIF，大小不超过 10 MB',
+    websiteName: '网站名称',
+    websiteNamePlaceholder: '请输入网站名称',
+    websiteNameTip: '显示在网页 Tab 的平台名称',
+    websiteSlogan: '欢迎语',
+    websiteSloganPlaceholder: '请输入欢迎语',
+    websiteSloganTip: '产品 Logo 下的欢迎语',
+    defaultSlogan: '欢迎使用智擎企业级智能平台系统',
+    logoDefaultTip: '默认为 智擎企业级智能平台 登录界面，支持自定义设置',
+    defaultTip: '默认为 智擎企业级智能平台 平台界面，支持自定义设置',
+    platformSetting: '平台设置',
+    showUserManual: '显示用户手册',
+    showForum: '显示论坛求助',
+    showProject: '显示项目地址',
+    urlPlaceholder: '请输入 URL 地址',
+    abandonUpdate: '放弃更新',
+    saveAndApply: '保存并应用',
+    fileMessageError: '文件大小超过 10M',
+    saveSuccess: '外观设置成功'
   },
   email: {
     title: '邮箱设置',
@@ -127,36 +147,6 @@ export default {
     smtpPassword: '发件人密码',
     smtpPasswordPlaceholder: '请输入发件人密码',
     enableSSL: '启用 SSL（如果 SMTP 端口是 465，通常需要启用 SSL）',
-    enableTLS: '启用 TLS（如果 SMTP 端口是 587，通常需要启用 TLS）',
-  },
-  resourceAuthorization: {
-    title: '资源授权',
-    member: '成员',
-    permissionSetting: '资源权限配置',
-    setting: {
-      management: '管理',
-      managementDesc: '可对该资源进行删改操作',
-      check: '查看',
-      checkDesc: '仅能查看使用该资源',
-      role: '按用户角色',
-      roleDesc: '根据用户角色中的权限授权用户对该资源的操作权限',
-      notAuthorized: '不授权',
-      configure: '配置权限',
-      currentOnly: '仅当前资源',
-      includeAll: '包含所有子资源',
-      effectiveResource: '生效资源',
-    },
-  },
-  resource_management: {
-    label: '资源管理',
-    type: '类型',
-    management: '管理',
-  },
-  default_login: '默认登录方式',
-  display_code: '账号登录验证码设置',
-  loginFailed: '登录失败',
-  loginFailedMessage: '次显示验证码',
-  display_codeTip: '值为-1时，不显示验证码',
-  time: '次',
-  setting: '登录设置',
+    enableTLS: '启用 TLS（如果 SMTP 端口是 587，通常需要启用 TLS）'
+  }
 }

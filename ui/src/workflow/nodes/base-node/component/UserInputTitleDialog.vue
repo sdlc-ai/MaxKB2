@@ -14,7 +14,6 @@
       :rules="rules"
       :model="form"
       require-asterisk-position="right"
-      @submit.prevent
     >
       <el-form-item :label="$t('common.title')" prop="title">
         <el-input
@@ -28,7 +27,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click.prevent="dialogVisible = false"> {{ $t('common.cancel') }} </el-button>
-        <el-button type="primary" @click="submit(fieldFormRef)" :loading="loading">
+        <el-button type="primary" class="custom-btn" @click="submit(fieldFormRef)" :loading="loading">
           {{ $t('common.save') }}
         </el-button>
       </span>
@@ -46,13 +45,13 @@ const fieldFormRef = ref()
 const loading = ref<boolean>(false)
 
 const form = ref<any>({
-  title: t('chat.userInput'),
+  title: t('chat.userInput')
 })
 
 const rules = reactive({
   title: [
-    { required: true, message: t('dynamicsForm.paramForm.name.requiredMessage'), trigger: 'blur' },
-  ],
+    { required: true, message: t('dynamicsForm.paramForm.name.requiredMessage'), trigger: 'blur' }
+  ]
 })
 
 const dialogVisible = ref<boolean>(false)

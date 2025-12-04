@@ -27,7 +27,7 @@
         />
       </el-form-item>
       <el-form-item
-        v-else-if="!isImport && documentType === 1"
+        v-else-if="!isImport && documentType === '1'"
         :label="$t('views.document.form.source_url.label')"
         prop="source_url"
       >
@@ -36,7 +36,7 @@
           :placeholder="$t('views.document.form.source_url.requiredMessage')"
         />
       </el-form-item>
-      <el-form-item :label="$t('views.document.form.selector.label')" v-if="documentType === 1">
+      <el-form-item :label="$t('views.document.form.selector.label')" v-if="documentType === '1'">
         <el-input
           v-model="form.selector"
           :placeholder="$t('views.document.form.selector.placeholder')"
@@ -80,16 +80,11 @@
           /><span>{{ $t('views.document.form.similarity.placeholder') }}</span>
         </div>
       </el-form-item>
-      <el-form-item prop="allow_download">
-        <el-checkbox v-model="form.allow_download">
-          {{ $t('views.document.form.allow_download.label') }}
-        </el-checkbox>
-      </el-form-item>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click.prevent="dialogVisible = false"> {{ $t('common.cancel') }} </el-button>
-        <el-button type="primary" @click="submit(webFormRef)" :loading="loading">
+        <el-button type="primary" class="custom-btn" @click="submit(webFormRef)" :loading="loading">
           {{ $t('common.confirm') }}
         </el-button>
       </span>
@@ -97,30 +92,20 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import { ref, reactive, watch, computed } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import type { FormInstance } from 'element-plus'
+import documentApi from '@/api/document'
 import { MsgSuccess } from '@/utils/message'
 import { hitHandlingMethod } from '@/enums/document'
-import { loadSharedApi } from '@/utils/dynamics-api/shared-api'
 import { t } from '@/locales'
 const route = useRoute()
 const {
-  params: { id },
+  params: { id }
 } = route as any
 
 const props = defineProps({
-  title: String,
-})
-
-const apiType = computed(() => {
-  if (route.path.includes('shared')) {
-    return 'systemShare'
-  } else if (route.path.includes('resource-management')) {
-    return 'systemManage'
-  } else {
-    return 'workspace'
-  }
+  title: String
 })
 
 const emit = defineEmits(['refresh'])
@@ -131,8 +116,7 @@ const form = ref<any>({
   source_url: '',
   selector: '',
   hit_handling_method: 'optimization',
-  directly_return_similarity: 0.9,
-  allow_download: true,
+  directly_return_similarity: 0.9
 })
 
 // 文档设置
@@ -147,16 +131,16 @@ const rules = reactive({
     {
       required: true,
       message: t('views.document.form.source_url.requiredMessage'),
-      trigger: 'blur',
-    },
+      trigger: 'blur'
+    }
   ],
   directly_return_similarity: [
     {
       required: true,
       message: t('views.document.form.similarity.requiredMessage'),
-      trigger: 'blur',
-    },
-  ],
+      trigger: 'blur'
+    }
+  ]
 })
 
 const dialogVisible = ref<boolean>(false)
@@ -167,8 +151,7 @@ watch(dialogVisible, (bool) => {
       source_url: '',
       selector: '',
       hit_handling_method: 'optimization',
-      directly_return_similarity: 0.9,
-      allow_download: true,
+      directly_return_similarity: 0.9
     }
     isImport.value = false
     documentType.value = ''
@@ -184,8 +167,7 @@ const open = (row: any, list: Array<string>) => {
     form.value = {
       hit_handling_method: row.hit_handling_method,
       directly_return_similarity: row.directly_return_similarity,
-      ...row.meta,
-      meta: row.meta,
+      ...row.meta
     }
     isImport.value = false
   } else if (list) {
@@ -193,7 +175,7 @@ const open = (row: any, list: Array<string>) => {
     documentList.value = list
   } else {
     // 导入 只有web文档类型
-    documentType.value = 1
+    documentType.value = '1'
     isImport.value = true
   }
   dialogVisible.value = true
@@ -206,53 +188,40 @@ const submit = async (formEl: FormInstance | undefined) => {
       if (isImport.value) {
         const obj = {
           source_url_list: form.value.source_url.split('\n'),
-          selector: form.value.selector,
-          allow_download: form.value.allow_download,
+          selector: form.value.selector
         }
-        loadSharedApi({ type: 'document', systemType: apiType.value })
-          .postWebDocument(id, obj, loading)
-          .then(() => {
-            MsgSuccess(t('views.document.tip.importMessage'))
-            emit('refresh')
-            dialogVisible.value = false
-          })
+        documentApi.postWebDocument(id, obj, loading).then(() => {
+          MsgSuccess(t('views.document.tip.importMessage'))
+          emit('refresh')
+          dialogVisible.value = false
+        })
       } else {
         if (documentId.value) {
           const obj = {
             hit_handling_method: form.value.hit_handling_method,
             directly_return_similarity: form.value.directly_return_similarity,
-            // 飞书文档需要传递meta信息，不能被页面上的form覆盖
             meta: {
-              ...form.value.meta,
-              ...{
-                source_url: form.value.source_url,
-                selector: form.value.selector,
-                allow_download: form.value.allow_download,
-              },
-            },
+              source_url: form.value.source_url,
+              selector: form.value.selector
+            }
           }
-          loadSharedApi({ type: 'document', systemType: apiType.value })
-            .putDocument(id, documentId.value, obj, loading)
-            .then(() => {
-              MsgSuccess(t('common.settingSuccess'))
-              emit('refresh')
-              dialogVisible.value = false
-            })
+          documentApi.putDocument(id, documentId.value, obj, loading).then(() => {
+            MsgSuccess(t('common.settingSuccess'))
+            emit('refresh')
+            dialogVisible.value = false
+          })
         } else if (documentList.value.length > 0) {
           // 批量设置
           const obj = {
             hit_handling_method: form.value.hit_handling_method,
             directly_return_similarity: form.value.directly_return_similarity,
-            id_list: documentList.value,
-            allow_download: form.value.allow_download,
+            id_list: documentList.value
           }
-          loadSharedApi({ type: 'document', systemType: apiType.value })
-            .putBatchEditHitHandling(id, obj, loading)
-            .then(() => {
-              MsgSuccess(t('common.settingSuccess'))
-              emit('refresh')
-              dialogVisible.value = false
-            })
+          documentApi.batchEditHitHandling(id, obj, loading).then(() => {
+            MsgSuccess(t('common.settingSuccess'))
+            emit('refresh')
+            dialogVisible.value = false
+          })
         }
       }
     }

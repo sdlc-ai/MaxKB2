@@ -1,239 +1,231 @@
 <template>
-  <div class="p-16-24">
-    <h2 class="mb-16">{{ $t('views.applicationOverview.title') }}</h2>
+  <LayoutContainer :header="$t('views.applicationOverview.title')">
     <el-scrollbar>
-      <div class="main-calc-height">
-        <el-card style="--el-card-padding: 24px">
-          <h4 class="title-decoration-1 mb-16">
-            {{ $t('views.applicationOverview.appInfo.header') }}
-          </h4>
-          <el-card shadow="never" class="overview-card" v-loading="loading">
-            <div class="title flex align-center">
-              <div class="edit-avatar mr-12">
-                <el-avatar shape="square" :size="32" style="background: none">
-                  <img :src="resetUrl(detail?.icon, resetUrl('./favicon.ico'))" alt=""/>
-                </el-avatar>
-              </div>
-
-              <h4>{{ detail?.name || '-' }}</h4>
+      <div class="main-calc-height p-24">
+        <h4 class="title-decoration-1 mb-16">
+          {{ $t('views.applicationOverview.appInfo.header') }}
+        </h4>
+        <el-card shadow="never" class="overview-card" v-loading="loading">
+          <div class="title flex align-center">
+            <div
+              class="edit-avatar mr-12"
+              @mouseenter="showEditIcon = true"
+              @mouseleave="showEditIcon = false"
+            >
+              <AppAvatar
+                v-if="isAppIcon(detail?.icon)"
+                shape="square"
+                :size="32"
+                style="background: none"
+              >
+                <img :src="detail?.icon" alt="" />
+              </AppAvatar>
+              <AppAvatar
+                v-else-if="detail?.name"
+                shape="square"
+                :size="32"
+              >
+              <img src="@/assets/icon/application.png" alt="" />
+            </AppAvatar>
+              <AppAvatar
+                v-if="showEditIcon"
+                shape="square"
+                class="edit-mask"
+                :size="32"
+                @click="openEditAvatar"
+              >
+                <el-icon><EditPen /></el-icon>
+              </AppAvatar>
             </div>
 
-            <el-row :gutter="12">
-              <el-col :span="12" class="mt-16">
-                <div class="flex">
-                  <el-text type="info"
-                  >{{ $t('views.applicationOverview.appInfo.publicAccessLink') }}
-                  </el-text>
-                  <el-switch
-                    v-model="accessToken.is_active"
-                    class="ml-8"
-                    size="small"
-                    inline-prompt
-                    :active-text="$t('views.applicationOverview.appInfo.openText')"
-                    :inactive-text="$t('views.applicationOverview.appInfo.closeText')"
-                    :before-change="() => changeState(accessToken.is_active)"
-                  />
-                </div>
+            <h4>{{ detail?.name }}</h4>
+          </div>
 
-                <div class="mt-4 mb-16 url-height flex align-center" style="margin-bottom: 37px">
-                  <span class="vertical-middle lighter break-all ellipsis-1">
-                    {{ shareUrl }}
+          <el-row :gutter="12">
+            <el-col :span="12" class="mt-16">
+              <div class="flex">
+                <el-text type="info">{{
+                  $t('views.applicationOverview.appInfo.publicAccessLink')
+                }}</el-text>
+                <el-switch
+                  v-model="accessToken.is_active"
+                  class="ml-8"
+                  size="small"
+                  inline-prompt
+                  :active-text="$t('views.applicationOverview.appInfo.openText')"
+                  :inactive-text="$t('views.applicationOverview.appInfo.closeText')"
+                  :before-change="() => changeState(accessToken.is_active)"
+                />
+              </div>
+
+              <div class="mt-4 mb-16 url-height flex align-center" style="margin-bottom: 37px">
+                <span class="vertical-middle lighter break-all ellipsis-1">
+                  {{ shareUrl }}
+                </span>
+                <el-tooltip effect="dark" :content="$t('common.copy')" placement="top">
+                  <el-button type="primary" text @click="copyClick(shareUrl)">
+                    <AppIcon iconName="app-copy"></AppIcon>
+                  </el-button>
+                </el-tooltip>
+                <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                  <el-button
+                    @click="refreshAccessToken"
+                    type="primary"
+                    text
+                    style="margin-left: 1px"
+                  >
+                    <el-icon><RefreshRight /></el-icon>
+                  </el-button>
+                </el-tooltip>
+              </div>
+              <div>
+                <el-button
+                  v-if="accessToken?.is_active"
+                  :disabled="!accessToken?.is_active"
+                  type="primary"
+                  tag="a"
+                  :href="shareUrl"
+                  target="_blank"
+                  class="custom-btn"
+                >
+                  {{ $t('views.applicationOverview.appInfo.demo') }}
+                </el-button>
+                <el-button v-else :disabled="!accessToken?.is_active" type="primary">
+                  {{ $t('views.applicationOverview.appInfo.demo') }}
+                </el-button>
+                <el-button :disabled="!accessToken?.is_active" @click="openDialog">
+                  {{ $t('views.applicationOverview.appInfo.embedInWebsite') }}
+                </el-button>
+                <el-button @click="openLimitDialog">
+                  {{ $t('views.applicationOverview.appInfo.accessControl') }}
+                </el-button>
+                <el-button @click="openDisplaySettingDialog">
+                  {{ $t('views.applicationOverview.appInfo.displaySetting') }}
+                </el-button>
+              </div>
+            </el-col>
+            <el-col :span="12" class="mt-16">
+              <div class="flex">
+                <el-text type="info"
+                  >{{ $t('views.applicationOverview.appInfo.apiAccessCredentials') }}
+                </el-text>
+              </div>
+              <div class="mt-4 mb-16 url-height">
+                <div>
+                  <el-text>API {{ $t('common.fileUpload.document') }}：</el-text
+                  ><el-button
+                    type="primary"
+                    link
+                    @click="toUrl(apiUrl)"
+                    class="vertical-middle lighter break-all"
+                  >
+                    {{ apiUrl }}
+                  </el-button>
+                </div>
+                <div class="flex align-center">
+                  <span class="flex">
+                    <el-text style="width: 80px">Base URL：</el-text>
                   </span>
+
+                  <span class="vertical-middle lighter break-all ellipsis-1">{{
+                    baseUrl + id
+                  }}</span>
                   <el-tooltip effect="dark" :content="$t('common.copy')" placement="top">
-                    <el-button type="primary" text @click="copyClick(shareUrl)">
+                    <el-button type="primary" text @click="copyClick(baseUrl + id)">
                       <AppIcon iconName="app-copy"></AppIcon>
                     </el-button>
                   </el-tooltip>
-                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                    <el-button
-                      @click="refreshAccessToken"
-                      type="primary"
-                      text
-                      style="margin-left: 1px"
-                    >
-                      <el-icon>
-                        <RefreshRight/>
-                      </el-icon>
-                    </el-button>
-                  </el-tooltip>
                 </div>
-                <div>
-                  <el-button
-                    v-if="accessToken?.is_active"
-                    :disabled="!accessToken?.is_active"
-                    tag="a"
-                    :href="shareUrl"
-                    target="_blank"
-                  >
-                    <AppIcon iconName="app-create-chat" class="mr-4"></AppIcon>
-                    {{ $t('views.application.operation.toChat') }}
-                  </el-button>
-                  <el-button v-else :disabled="!accessToken?.is_active">
-                    <AppIcon iconName="app-create-chat" class="mr-4"></AppIcon>
-                    {{ $t('views.application.operation.toChat') }}
-                  </el-button>
-                  <el-button
-                    :disabled="!accessToken?.is_active"
-                    @click="openDialog"
-                    v-if="permissionPrecise.overview_embed(id)"
-                  >
-                    <AppIcon iconName="app-export" class="mr-4"></AppIcon>
-                    {{ $t('views.applicationOverview.appInfo.embedInWebsite') }}
-                  </el-button>
-                  <!-- 访问限制 -->
-                  <el-button @click="openLimitDialog" v-if="permissionPrecise.overview_access(id)">
-                    <AppIcon iconName="app-lock" class="mr-4"></AppIcon>
-                    {{ $t('views.applicationOverview.appInfo.accessControl') }}
-                  </el-button>
-                  <!-- 显示设置 -->
-                  <el-button
-                    @click="openDisplaySettingDialog"
-                    v-if="permissionPrecise.overview_display(id)"
-                  >
-                    <AppIcon iconName="app-setting" class="mr-4"></AppIcon>
-                    {{ $t('views.applicationOverview.appInfo.displaySetting') }}
-                  </el-button>
-                </div>
-              </el-col>
-              <el-col :span="12" class="mt-16">
-                <div class="flex">
-                  <el-text type="info"
-                  >{{ $t('views.applicationOverview.appInfo.apiAccessCredentials') }}
-                  </el-text>
-                </div>
-                <div class="mt-4 mb-16 url-height">
-                  <div>
-                    <el-text>API {{ $t('common.fileUpload.document') }}：</el-text>
-                    <el-button
-                      type="primary"
-                      link
-                      @click="toUrl(apiUrl)"
-                      class="vertical-middle lighter break-all"
-                    >
-                      {{ apiUrl }}
-                    </el-button>
-                  </div>
-                  <div class="flex align-center">
-                    <span class="flex">
-                      <el-text style="width: 80px">Base URL：</el-text>
-                    </span>
-
-                    <span class="vertical-middle lighter break-all ellipsis-1">{{
-                        baseUrl + id
-                      }}</span>
-                    <el-tooltip effect="dark" :content="$t('common.copy')" placement="top">
-                      <el-button type="primary" text @click="copyClick(baseUrl + id)">
-                        <AppIcon iconName="app-copy"></AppIcon>
-                      </el-button>
-                    </el-tooltip>
-                  </div>
-                </div>
-                <div>
-                  <el-button
-                    @click="openAPIKeyDialog"
-                    v-if="permissionPrecise.overview_api_key(id)"
-                  >
-                    <el-icon class="mr-4">
-                      <Key/>
-                    </el-icon>
-                    {{ $t('views.applicationOverview.appInfo.apiKey') }}
-                  </el-button>
-                </div>
-              </el-col>
-            </el-row>
-          </el-card>
+              </div>
+              <div>
+                <el-button @click="openAPIKeyDialog">{{
+                  $t('views.applicationOverview.appInfo.apiKey')
+                }}</el-button>
+              </div>
+            </el-col>
+          </el-row>
         </el-card>
-        <el-card style="--el-card-padding: 24px" class="mt-16">
-          <h4 class="title-decoration-1 mb-16">
-            {{ $t('views.applicationOverview.monitor.monitoringStatistics') }}
-          </h4>
-          <div class="mb-16">
-            <el-select
-              v-model="history_day"
-              class="mr-12"
-              @change="changeDayHandle"
-              style="width: 180px"
-            >
-              <el-option
-                v-for="item in dayOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-            <el-date-picker
-              v-if="history_day === 'other'"
-              v-model="daterangeValue"
-              type="daterange"
-              :start-placeholder="$t('views.applicationOverview.monitor.startDatePlaceholder')"
-              :end-placeholder="$t('views.applicationOverview.monitor.endDatePlaceholder')"
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
-              @change="changeDayRangeHandle"
+        <h4 class="title-decoration-1 mt-16 mb-16">
+          {{ $t('views.applicationOverview.monitor.monitoringStatistics') }}
+        </h4>
+        <div class="mb-16">
+          <el-select
+            v-model="history_day"
+            class="mr-12"
+            @change="changeDayHandle"
+            style="width: 180px"
+          >
+            <el-option
+              v-for="item in dayOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             />
-          </div>
-          <div v-loading="statisticsLoading">
-            <StatisticsCharts :data="statisticsData" :token-usage="tokenUsage"
-                              :top-questions="topQuestions"/>
-          </div>
-        </el-card>
+          </el-select>
+          <el-date-picker
+            v-if="history_day === 'other'"
+            v-model="daterangeValue"
+            type="daterange"
+            :start-placeholder="$t('views.applicationOverview.monitor.startDatePlaceholder')"
+            :end-placeholder="$t('views.applicationOverview.monitor.endDatePlaceholder')"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
+            @change="changeDayRangeHandle"
+          />
+        </div>
+        <div v-loading="statisticsLoading">
+          <StatisticsCharts :data="statisticsData" />
+        </div>
       </div>
     </el-scrollbar>
-
     <EmbedDialog
       ref="EmbedDialogRef"
       :data="detail"
       :api-input-params="mapToUrlParams(apiInputParams)"
     />
-    <APIKeyDialog ref="APIKeyDialogRef"/>
-
-    <!-- 社区版访问限制 -->
-    <component :is="currentLimitDialog" ref="LimitDialogRef" @refresh="refresh"/>
-    <!-- 显示设置 -->
-    <component :is="currentDisplaySettingDialog" ref="DisplaySettingDialogRef" @refresh="refresh"/>
-  </div>
+    <APIKeyDialog ref="APIKeyDialogRef" />
+    <LimitDialog ref="LimitDialogRef" @refresh="refresh" />
+    <EditAvatarDialog ref="EditAvatarDialogRef" @refresh="refreshIcon" />
+    <XPackDisplaySettingDialog
+     v-if="user.isEnterprise()"
+      ref="XPackDisplaySettingDialogRef"
+      @refresh="refresh"
+    />
+    <DisplaySettingDialog ref="DisplaySettingDialogRef" @refresh="refresh" v-else />
+  </LayoutContainer>
 </template>
 <script setup lang="ts">
-import {ref, computed, onMounted, shallowRef, nextTick} from 'vue'
-import {useRoute} from 'vue-router'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import EmbedDialog from './component/EmbedDialog.vue'
 import APIKeyDialog from './component/APIKeyDialog.vue'
 import LimitDialog from './component/LimitDialog.vue'
-import XPackLimitDrawer from './xpack-component/XPackLimitDrawer.vue'
 import DisplaySettingDialog from './component/DisplaySettingDialog.vue'
-import XPackDisplaySettingDialog from './xpack-component/XPackDisplaySettingDialog.vue'
+import XPackDisplaySettingDialog from './component/XPackDisplaySettingDialog.vue'
+import EditAvatarDialog from './component/EditAvatarDialog.vue'
 import StatisticsCharts from './component/StatisticsCharts.vue'
-import {nowDate, beforeDay} from '@/utils/time'
-import {MsgSuccess, MsgConfirm} from '@/utils/message'
-import {copyClick} from '@/utils/clipboard'
-import {resetUrl} from '@/utils/common'
-import {mapToUrlParams} from '@/utils/application'
-import {t} from '@/locales'
-import {EditionConst} from '@/utils/permission/data'
-import {hasPermission} from '@/utils/permission/index'
-import permissionMap from '@/permission'
-import {loadSharedApi} from '@/utils/dynamics-api/shared-api'
-
+import applicationApi from '@/api/application'
+import overviewApi from '@/api/application-overview'
+import { nowDate, beforeDay } from '@/utils/time'
+import { MsgSuccess, MsgConfirm } from '@/utils/message'
+import { copyClick } from '@/utils/clipboard'
+import { isAppIcon } from '@/utils/application'
+import useStore from '@/stores'
+import { t } from '@/locales'
+const { user, application } = useStore()
 const route = useRoute()
 const {
-  params: {id},
+  params: { id }
 } = route as any
 
-const apiType = computed(() => {
-  if (route.path.includes('resource-management')) {
-    return 'systemManage'
-  } else {
-    return 'workspace'
-  }
-})
-const permissionPrecise = computed(() => {
-  return permissionMap['application'][apiType.value]
-})
+const apiUrl = window.location.origin + '/doc/chat/'
 
-const apiUrl = window.location.origin + `${window.MaxKB.chatPrefix}/api-doc/`
+const baseUrl = window.location.origin + '/api/application/'
 
-const baseUrl = window.location.origin + `${window.MaxKB.chatPrefix}/api/`
-
+const DisplaySettingDialogRef = ref()
+const XPackDisplaySettingDialogRef = ref()
+const EditAvatarDialogRef = ref()
+const LimitDialogRef = ref()
 const APIKeyDialogRef = ref()
 const EmbedDialogRef = ref()
 
@@ -243,36 +235,34 @@ const detail = ref<any>(null)
 const loading = ref(false)
 
 const urlParams = computed(() =>
-  mapToUrlParams(apiInputParams.value) ? '?' + mapToUrlParams(apiInputParams.value) : '',
+  mapToUrlParams(apiInputParams.value) ? '?' + mapToUrlParams(apiInputParams.value) : ''
 )
 const shareUrl = computed(
-  () =>
-    `${window.location.origin}${window.MaxKB.chatPrefix}/` +
-    accessToken.value?.access_token +
-    urlParams.value,
+  () => application.location + accessToken.value.access_token + urlParams.value
 )
 
 const dayOptions = [
   {
     value: 7,
-    label: t('views.applicationOverview.monitor.pastDayOptions.past7Days'),
+    // @ts-ignore
+    label: t('views.applicationOverview.monitor.pastDayOptions.past7Days')
   },
   {
     value: 30,
-    label: t('views.applicationOverview.monitor.pastDayOptions.past30Days'),
+    label: t('views.applicationOverview.monitor.pastDayOptions.past30Days')
   },
   {
     value: 90,
-    label: t('views.applicationOverview.monitor.pastDayOptions.past90Days'),
+    label: t('views.applicationOverview.monitor.pastDayOptions.past90Days')
   },
   {
     value: 183,
-    label: t('views.applicationOverview.monitor.pastDayOptions.past183Days'),
+    label: t('views.applicationOverview.monitor.pastDayOptions.past183Days')
   },
   {
     value: 'other',
-    label: t('common.custom'),
-  },
+    label: t('views.applicationOverview.monitor.pastDayOptions.other')
+  }
 ]
 
 const history_day = ref<number | string>(7)
@@ -283,60 +273,29 @@ const daterangeValue = ref('')
 // 提交日期时间
 const daterange = ref({
   start_time: '',
-  end_time: '',
+  end_time: ''
 })
 
 const statisticsLoading = ref(false)
 const statisticsData = ref([])
-const tokenUsage = ref([])
-const topQuestions = ref([])
 
+const showEditIcon = ref(false)
 const apiInputParams = ref([])
 
 function toUrl(url: string) {
   window.open(url, '_blank')
 }
-
-// 显示设置
-const DisplaySettingDialogRef = ref()
-const currentDisplaySettingDialog = shallowRef<any>(null)
-
 function openDisplaySettingDialog() {
-  // 企业版和专业版
-  if (hasPermission([EditionConst.IS_EE, EditionConst.IS_PE], 'OR')) {
-    currentDisplaySettingDialog.value = XPackDisplaySettingDialog
-  } else {
-    // 社区版
-    currentDisplaySettingDialog.value = DisplaySettingDialog
-  }
-  nextTick(() => {
-    if (currentDisplaySettingDialog.value == XPackDisplaySettingDialog) {
-      loadSharedApi({type: 'application', systemType: apiType.value})
-        .getApplicationSetting(id)
-        .then((ok: any) => {
-          DisplaySettingDialogRef.value?.open(ok.data, detail.value)
-        })
-    } else {
-      DisplaySettingDialogRef.value?.open(accessToken.value, detail.value)
-    }
-  })
+   DisplaySettingDialogRef.value?.open(accessToken.value, detail.value)
+  // XPackDisplaySettingDialogRef.value?.open(accessToken.value, detail.value)
+  // if (user.isEnterprise()) {
+  //   XPackDisplaySettingDialogRef.value?.open(accessToken.value, detail.value)
+  // } else {
+  //   XPackDisplaySettingDialogRef.value?.open(accessToken.value, detail.value)
+  // }
 }
-
-// 访问限制
-const LimitDialogRef = ref()
-const currentLimitDialog = shallowRef<any>(null)
-
-function openLimitDialog() {
-  // 企业版和专业版
-  if (hasPermission([EditionConst.IS_EE, EditionConst.IS_PE], 'OR')) {
-    currentLimitDialog.value = XPackLimitDrawer
-  } else {
-    // 社区版
-    currentLimitDialog.value = LimitDialog
-  }
-  nextTick(() => {
-    LimitDialogRef.value.open(accessToken.value)
-  })
+function openEditAvatar() {
+  EditAvatarDialogRef.value.open(detail.value)
 }
 
 function changeDayHandle(val: number | string) {
@@ -354,23 +313,9 @@ function changeDayRangeHandle(val: string) {
 }
 
 function getAppStatistics() {
-  loadSharedApi({type: 'application', systemType: apiType.value})
-    .getStatistics(id, daterange.value, statisticsLoading)
-    .then((res: any) => {
-      statisticsData.value = res.data
-    })
-  loadSharedApi({type: 'application', systemType: apiType.value})
-    .getTokenUsage(id, daterange.value, statisticsLoading)
-    .then((res: any) => {
-      // [{'token_usage': 200, 'username': '张三'}, ...]
-      tokenUsage.value = res.data
-    })
-  loadSharedApi({type: 'application', systemType: apiType.value})
-    .topQuestions(id, daterange.value, statisticsLoading)
-    .then((res: any) => {
-      // [{'chat_record_count': 200, 'username': '张三'}, ...]
-      topQuestions.value = res.data
-    })
+  overviewApi.getStatistics(id, daterange.value, statisticsLoading).then((res: any) => {
+    statisticsData.value = res.data
+  })
 }
 
 function refreshAccessToken() {
@@ -379,26 +324,25 @@ function refreshAccessToken() {
     t('views.applicationOverview.appInfo.refreshToken.msgConfirm2'),
     {
       confirmButtonText: t('common.confirm'),
-      cancelButtonText: t('common.cancel'),
-    },
+      cancelButtonText: t('common.cancel')
+    }
   )
     .then(() => {
       const obj = {
-        access_token_reset: true,
+        access_token_reset: true
       }
+      // @ts-ignore
       const str = t('views.applicationOverview.appInfo.refreshToken.refreshSuccess')
       updateAccessToken(obj, str)
     })
-    .catch(() => {
-    })
+    .catch(() => {})
 }
-
-async function changeState(bool: boolean) {
+function changeState(bool: Boolean) {
   const obj = {
-    is_active: !bool,
+    is_active: !bool
   }
   const str = obj.is_active ? t('common.status.enableSuccess') : t('common.status.disableSuccess')
-  await updateAccessToken(obj, str)
+  updateAccessToken(obj, str)
     .then(() => {
       return true
     })
@@ -408,61 +352,71 @@ async function changeState(bool: boolean) {
 }
 
 async function updateAccessToken(obj: any, str: string) {
-  loadSharedApi({type: 'application', systemType: apiType.value})
-    .putAccessToken(id as string, obj, loading)
-    .then((res: any) => {
-      accessToken.value = res?.data
-      MsgSuccess(str)
-    })
+  applicationApi.putAccessToken(id as string, obj, loading).then((res) => {
+    accessToken.value = res?.data
+    MsgSuccess(str)
+  })
+}
+
+function openLimitDialog() {
+  LimitDialogRef.value.open(accessToken.value)
 }
 
 function openAPIKeyDialog() {
   APIKeyDialogRef.value.open()
 }
-
 function openDialog() {
   EmbedDialogRef.value.open(accessToken.value?.access_token)
 }
-
 function getAccessToken() {
-  loadSharedApi({type: 'application', systemType: apiType.value})
-    .getAccessToken(id, loading)
-    .then((res: any) => {
-      accessToken.value = res?.data
-    })
+  application.asyncGetAccessToken(id, loading).then((res: any) => {
+    accessToken.value = res?.data
+  })
 }
 
 function getDetail() {
-  loadSharedApi({type: 'application', systemType: apiType.value})
-    .getApplicationDetail(id, loading)
-    .then((res: any) => {
-      detail.value = res.data
-      detail.value.work_flow?.nodes
-        ?.filter((v: any) => v.id === 'base-node')
-        .map((v: any) => {
-          apiInputParams.value = v.properties.api_input_field_list
-            ? v.properties.api_input_field_list.map((v: any) => {
+  application.asyncGetApplicationDetail(id, loading).then((res: any) => {
+    detail.value = res.data
+    detail.value.work_flow?.nodes
+      ?.filter((v: any) => v.id === 'base-node')
+      .map((v: any) => {
+        apiInputParams.value = v.properties.api_input_field_list
+          ? v.properties.api_input_field_list.map((v: any) => {
               return {
                 name: v.variable,
-                value: v.default_value,
+                value: v.default_value
               }
             })
-            : v.properties.input_field_list
-              ? v.properties.input_field_list
+          : v.properties.input_field_list
+            ? v.properties.input_field_list
                 .filter((v: any) => v.assignment_method === 'api_input')
                 .map((v: any) => {
                   return {
                     name: v.variable,
-                    value: v.default_value,
+                    value: v.default_value
                   }
                 })
-              : []
-        })
-    })
+            : []
+      })
+  })
 }
 
 function refresh() {
   getAccessToken()
+}
+
+function refreshIcon() {
+  getDetail()
+}
+
+function mapToUrlParams(map: any[]) {
+  const params = new URLSearchParams()
+
+  map.forEach((item: any) => {
+    params.append(encodeURIComponent(item.name), encodeURIComponent(item.value))
+  })
+
+  return params.toString() // 返回 URL 查询字符串
 }
 
 onMounted(() => {
@@ -474,7 +428,6 @@ onMounted(() => {
 <style lang="scss" scoped>
 .overview-card {
   position: relative;
-
   .active-button {
     position: absolute;
     right: 16px;

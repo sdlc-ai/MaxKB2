@@ -103,32 +103,25 @@
     <template #footer v-if="isMul">
       <div class="dialog-footer">
         <el-button @click="dialogVisible = false"> {{ $t('common.cancel') }}</el-button>
-        <el-button type="primary" @click="mulAssociation"> {{ $t('common.confirm') }} </el-button>
+        <el-button type="primary" class="custom-btn" @click="mulAssociation"> {{ $t('common.confirm') }} </el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 <script setup lang="ts">
-import { ref, watch, reactive, computed } from 'vue'
+import { ref, watch, reactive } from 'vue'
 import { useRoute } from 'vue-router'
-import { loadSharedApi } from '@/utils/dynamics-api/shared-api'
+import problemApi from '@/api/problem'
+import paragraphApi from '@/api/paragraph'
+import useStore from '@/stores'
 import { MsgSuccess } from '@/utils/message'
 import { t } from '@/locales'
+const { problem, document } = useStore()
 
 const route = useRoute()
 const {
-  params: { id }, // knowledgeId
+  params: { id } // datasetId
 } = route as any
-
-const apiType = computed(() => {
-  if (route.path.includes('shared')) {
-    return 'systemShare'
-  } else if (route.path.includes('resource-management')) {
-    return 'systemManage'
-  } else {
-    return 'workspace'
-  }
-})
 
 const emit = defineEmits(['refresh'])
 
@@ -138,13 +131,13 @@ const loading = ref(false)
 const documentList = ref<any[]>([])
 const cloneDocumentList = ref<any[]>([])
 const paragraphList = ref<any[]>([])
-const currentProblemId = ref<string>('')
+const currentProblemId = ref<String>('')
 const currentMulProblemId = ref<string[]>([])
 
 // 回显
 const associationParagraph = ref<any[]>([])
 
-const currentDocument = ref<string>('')
+const currentDocument = ref<String>('')
 const search = ref('')
 const searchType = ref('title')
 const filterDoc = ref('')
@@ -154,7 +147,7 @@ const isMul = ref(false)
 const paginationConfig = reactive({
   current_page: 1,
   page_size: 50,
-  total: 0,
+  total: 0
 })
 
 function mulAssociation() {
@@ -162,15 +155,13 @@ function mulAssociation() {
     problem_id_list: currentMulProblemId.value,
     paragraph_list: associationParagraph.value.map((item) => ({
       paragraph_id: item.id,
-      document_id: item.document_id,
-    })),
+      document_id: item.document_id
+    }))
   }
-  loadSharedApi({ type: 'problem', systemType: apiType.value })
-    .putMulAssociationProblem(id, data, loading)
-    .then(() => {
-      MsgSuccess(t('views.problem.tip.relatedSuccess'))
-      dialogVisible.value = false
-    })
+  problemApi.postMulAssociationProblem(id, data, loading).then(() => {
+    MsgSuccess(t('views.problem.tip.relatedSuccess'))
+    dialogVisible.value = false
+  })
 }
 
 function associationClick(item: any) {
@@ -181,19 +172,27 @@ function associationClick(item: any) {
       associationParagraph.value.push(item)
     }
   } else {
-    const obj = {
-      paragraph_id: item.id,
-      problem_id: currentProblemId.value as string,
-    }
     if (isAssociation(item.id)) {
-      loadSharedApi({ type: 'paragraph', systemType: apiType.value })
-        .putDisassociationProblem(id, item.document_id, obj, loading)
+      problem
+        .asyncDisassociationProblem(
+          id,
+          item.document_id,
+          item.id,
+          currentProblemId.value as string,
+          loading
+        )
         .then(() => {
           getRecord(currentProblemId.value)
         })
     } else {
-      loadSharedApi({ type: 'paragraph', systemType: apiType.value })
-        .putAssociationProblem(id, item.document_id, obj, loading)
+      problem
+        .asyncAssociationProblem(
+          id,
+          item.document_id,
+          item.id,
+          currentProblemId.value as string,
+          loading
+        )
         .then(() => {
           getRecord(currentProblemId.value)
         })
@@ -204,9 +203,7 @@ function associationClick(item: any) {
 function searchHandle() {
   paginationConfig.current_page = 1
   paragraphList.value = []
-  if (currentDocument.value) {
-    getParagraphList(currentDocument.value)
-  }
+  currentDocument.value && getParagraphList(currentDocument.value)
 }
 
 function clickDocumentHandle(item: any) {
@@ -217,48 +214,40 @@ function clickDocumentHandle(item: any) {
 }
 
 function getDocument() {
-  loadSharedApi({ type: 'document', systemType: apiType.value })
-    .getDocumentList(id, loading)
-    .then((res: any) => {
-      cloneDocumentList.value = res.data
-      documentList.value = res.data
-      currentDocument.value =
-        cloneDocumentList.value?.length > 0 ? cloneDocumentList.value[0].id : ''
-
-      if (currentDocument.value) {
-        getParagraphList(currentDocument.value)
-      }
-    })
+  document.asyncGetAllDocument(id, loading).then((res: any) => {
+    cloneDocumentList.value = res.data
+    documentList.value = res.data
+    currentDocument.value = cloneDocumentList.value?.length > 0 ? cloneDocumentList.value[0].id : ''
+    currentDocument.value && getParagraphList(currentDocument.value)
+  })
 }
 
-function getParagraphList(documentId: string) {
-  loadSharedApi({ type: 'paragraph', systemType: apiType.value })
-    .getParagraphPage(
+function getParagraphList(documentId: String) {
+  paragraphApi
+    .getParagraph(
       id,
       (documentId || currentDocument.value) as string,
       paginationConfig,
       search.value && { [searchType.value]: search.value },
-      loading,
+      loading
     )
-    .then((res: any) => {
+    .then((res) => {
       paragraphList.value = [...paragraphList.value, ...res.data.records]
       paginationConfig.total = res.data.total
     })
 }
 
 // 已关联分段
-function getRecord(problemId: string) {
-  loadSharedApi({ type: 'problem', systemType: apiType.value })
-    .getDetailProblems(id as string, problemId as string, loading)
-    .then((res: any) => {
-      associationParagraph.value = res.data
-    })
+function getRecord(problemId: String) {
+  problemApi.getDetailProblems(id as string, problemId as string, loading).then((res) => {
+    associationParagraph.value = res.data
+  })
 }
 
-function associationCount(documentId: string) {
+function associationCount(documentId: String) {
   return associationParagraph.value.filter((item) => item.document_id === documentId).length
 }
-function isAssociation(paragraphId: string) {
+function isAssociation(paragraphId: String) {
   return associationParagraph.value.some((option) => option.id === paragraphId)
 }
 
@@ -302,35 +291,6 @@ defineExpose({ open })
 <style lang="scss" scoped>
 .paragraph-card {
   position: relative;
-  // card 选中样式
-  &.selected {
-    border: 1px solid var(--el-color-primary) !important;
-    &:before {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: 0;
-      border: 14px solid var(--el-color-primary);
-      border-bottom-color: transparent;
-      border-left-color: transparent;
-    }
-
-    &:after {
-      content: '';
-      width: 3px;
-      height: 6px;
-      position: absolute;
-      right: 5px;
-      top: 2px;
-      border: 2px solid #fff;
-      border-top-color: transparent;
-      border-left-color: transparent;
-      transform: rotate(35deg);
-    }
-    &:hover {
-      border: 1px solid var(--el-color-primary);
-    }
-  }
 }
 .paragraph-badge {
   .el-badge__content {

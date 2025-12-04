@@ -11,3 +11,10 @@ export function mapToUrlParams(map: any[]) {
 
   return params.toString() // 返回 URL 查询字符串
 }
+
+export const defaultIcon = '/ui/favicon.ico'
+
+// 是否显示字母 / icon
+export function isAppIcon(url: String | undefined) {
+  return url === defaultIcon ? '' : url
+}
