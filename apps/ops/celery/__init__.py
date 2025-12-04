@@ -5,13 +5,13 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 from kombu import Exchange, Queue
-from maxkb import settings
+from porsche import settings
 from .heartbeat import *
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'maxkb.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'porsche.settings')
 
-app = Celery('MaxKB')
+app = Celery('PorscheAi')
 
 configs = {k: v for k, v in settings.__dict__.items() if k.startswith('CELERY')}
 configs['worker_concurrency'] = 5

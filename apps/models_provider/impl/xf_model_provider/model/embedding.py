@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎
     @file： embedding.py
     @date：2024/10/17 15:29
@@ -15,10 +15,10 @@ import numpy as np
 from langchain_community.embeddings import SparkLLMTextEmbeddings
 from numpy import ndarray
 
-from models_provider.base_model_provider import MaxKBBaseModel
+from models_provider.base_model_provider import PorscheAIBaseModel
 
 
-class XFEmbedding(MaxKBBaseModel, SparkLLMTextEmbeddings):
+class XFEmbedding(PorscheAIBaseModel, SparkLLMTextEmbeddings):
     @staticmethod
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
         return XFEmbedding(

@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎
     @file： reranker.py
     @date：2024/9/10 9:45
@@ -12,10 +12,10 @@ from langchain_core.callbacks import Callbacks
 from langchain_core.documents import BaseDocumentCompressor, Document
 from xinference_client.client.restful.restful_client import RESTfulRerankModelHandle
 
-from models_provider.base_model_provider import MaxKBBaseModel
+from models_provider.base_model_provider import PorscheAIBaseModel
 
 
-class XInferenceReranker(MaxKBBaseModel, BaseDocumentCompressor):
+class XInferenceReranker(PorscheAIBaseModel, BaseDocumentCompressor):
     server_url: Optional[str]
     """URL of the xinference server"""
     model_uid: Optional[str]

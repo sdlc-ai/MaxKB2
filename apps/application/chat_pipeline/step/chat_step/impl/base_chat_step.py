@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： base_chat_step.py
     @date：2024/1/9 18:25
@@ -27,10 +27,10 @@ from application.chat_pipeline.pipeline_manage import PipelineManage
 from application.chat_pipeline.step.chat_step.i_chat_step import IChatStep, PostResponseHandler
 from application.flow.tools import Reasoning, mcp_response_generator
 from application.models import ApplicationChatUserStats, ChatUserType
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 from common.utils.rsa_util import rsa_long_decrypt
 from common.utils.tool_code import ToolExecutor
-from maxkb.const import CONFIG
+from porsche.const import CONFIG
 from models_provider.tools import get_model_instance_by_model_workspace_id
 from tools.models import Tool
 
@@ -144,7 +144,7 @@ def event_content(response,
         if not manage.debug:
             add_access_num(chat_user_id, chat_user_type, manage.context.get('application_id'))
     except Exception as e:
-        maxkb_logger.error(f'{str(e)}:{traceback.format_exc()}')
+        porsche_logger.error(f'{str(e)}:{traceback.format_exc()}')
         all_text = 'Exception:' + str(e)
         write_context(step, manage, 0, 0, all_text)
         post_response_handler.handler(chat_id, chat_record_id, paragraph_list, problem_text,

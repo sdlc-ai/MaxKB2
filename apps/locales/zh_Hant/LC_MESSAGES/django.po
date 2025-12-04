@@ -3217,7 +3217,7 @@ msgstr "修改問題"
 msgid "Get the list of questions by page"
 msgstr "分頁獲取問題列表"
 
-#: apps/maxkb/settings/base.py:101
+#: apps/porsche/settings/base.py:101
 msgid "Intelligent customer service platform"
 msgstr "强大易用的企業級智慧體平臺"
 
@@ -6606,8 +6606,8 @@ msgstr "獲取郵箱設置"
 
 #: apps/system_manage/views/system_profile.py:22
 #: apps/system_manage/views/system_profile.py:23
-msgid "Get MaxKB related information"
-msgstr "獲取 MaxKB 相關信息"
+msgid "Get PorscheAi related information"
+msgstr "獲取 PorscheAi 相關信息"
 
 #: apps/system_manage/views/system_profile.py:25
 msgid "System parameters"

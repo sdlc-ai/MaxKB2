@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： system_setting.py
     @date：2024/3/19 16:29
@@ -15,7 +15,7 @@ from rest_framework import serializers
 from common.exception.app_exception import AppApiException
 from django.utils.translation import gettext_lazy as _
 
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 from system_manage.models import SystemSetting, SettingType
 
 
@@ -48,7 +48,7 @@ class EmailSettingSerializer(serializers.Serializer):
                              self.data.get("email_use_ssl")
                              ).open()
             except Exception as e:
-                maxkb_logger.error(f'Exception: {e}')
+                porsche_logger.error(f'Exception: {e}')
                 raise AppApiException(1004, _('Email verification failed'))
 
         def update_or_save(self):

@@ -13,8 +13,8 @@
                 "stepName": "Base",
                 "node_data": {
                     "desc": "",
-                    "name": "maxkbapplication",
-                    "prologue": "Hello, I am the MaxKB assistant. You can ask me about MaxKB usage issues.\n-What are the main functions of MaxKB?\n-What major language models does MaxKB support?\n-What document types does MaxKB support?"
+                    "name": "Porsche-Ai  pplication",
+                    "prologue": "Hello, I am the Porsche-Ai  assistant. You can ask me about Porsche-Ai  usage issues.\n-What are the main functions of Porsche-Ai ?\n-What major language models does Porsche-Ai  support?\n-What document types does Porsche-Ai  support?"
                 },
                 "input_field_list": [
 

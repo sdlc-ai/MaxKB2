@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： base_search_dataset_step.py
     @date：2024/1/10 10:33
@@ -22,7 +22,7 @@ from common.db.search import native_search
 from common.utils.common import get_file_content
 from knowledge.models import Paragraph, Knowledge
 from knowledge.models import SearchMode
-from maxkb.conf import PROJECT_DIR
+from porsche.conf import PROJECT_DIR
 from models_provider.models import Model
 from models_provider.tools import get_model, get_model_by_id, get_model_default_params
 

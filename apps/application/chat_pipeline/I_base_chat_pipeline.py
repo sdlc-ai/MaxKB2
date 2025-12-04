@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： I_base_chat_pipeline.py
     @date：2024/1/9 17:25

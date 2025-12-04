@@ -1,6 +1,6 @@
  <map version="1.0.1">
 <!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
-<node CREATED="1683912345" ID="ID_1" MODIFIED="1683912345" TEXT="MaxKB 项目结构">
+<node CREATED="1683912345" ID="ID_1" MODIFIED="1683912345" TEXT="PorscheAi 项目结构">
 <node CREATED="1683912346" ID="ID_2" MODIFIED="1683912346" POSITION="right" TEXT="项目根目录">
 <node CREATED="1683912347" ID="ID_3" MODIFIED="1683912347" TEXT="main.py (主程序入口)"/>
 <node CREATED="1683912348" ID="ID_4" MODIFIED="1683912348" TEXT="pyproject.toml (项目依赖配置)"/>

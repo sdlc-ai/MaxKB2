@@ -7,6 +7,6 @@ scheduler.add_jobstore(DjangoJobStore(), "default")
 try:
     scheduler.start()
 except Exception as e:
-    from common.utils.logger import maxkb_logger
+    from common.utils.logger import porsche_logger
 
-    maxkb_logger.error(f"Failed to start scheduler: {e}")
+    porsche_logger.error(f"Failed to start scheduler: {e}")

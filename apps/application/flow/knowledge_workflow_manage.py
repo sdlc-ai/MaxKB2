@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎虎
     @file： Knowledge_workflow_manage.py
     @date：2025/11/13 19:02

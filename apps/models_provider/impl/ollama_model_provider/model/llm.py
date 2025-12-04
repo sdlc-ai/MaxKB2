@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： llm.py
     @date：2024/3/6 11:48
@@ -14,7 +14,7 @@ from langchain_ollama.chat_models import ChatOllama
 
 
 from common.config.tokenizer_manage_config import TokenizerManage
-from models_provider.base_model_provider import MaxKBBaseModel
+from models_provider.base_model_provider import PorscheAIBaseModel
 
 
 def get_base_url(url: str):
@@ -25,7 +25,7 @@ def get_base_url(url: str):
     return result_url[:-1] if result_url.endswith("/") else result_url
 
 
-class OllamaChatModel(MaxKBBaseModel, ChatOllama):
+class OllamaChatModel(PorscheAIBaseModel, ChatOllama):
     @staticmethod
     def is_cache_model():
         return False
@@ -34,7 +34,7 @@ class OllamaChatModel(MaxKBBaseModel, ChatOllama):
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
         api_base = model_credential.get('api_base', '')
         base_url = get_base_url(api_base)
-        optional_params = MaxKBBaseModel.filter_optional_params(model_kwargs)
+        optional_params = PorscheAIBaseModel.filter_optional_params(model_kwargs)
 
         return OllamaChatModel(model=model_name, base_url=base_url,
                                stream=True, **optional_params)

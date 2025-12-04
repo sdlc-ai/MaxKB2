@@ -5,12 +5,12 @@ from typing import Dict
 
 import dashscope
 
-from common.utils.logger import maxkb_logger
-from models_provider.base_model_provider import MaxKBBaseModel
+from common.utils.logger import porsche_logger
+from models_provider.base_model_provider import PorscheAIBaseModel
 from models_provider.impl.base_stt import BaseSpeechToText
 
 
-class AliyunBaiLianAsrSpeechToText(MaxKBBaseModel, BaseSpeechToText):
+class AliyunBaiLianAsrSpeechToText(PorscheAIBaseModel, BaseSpeechToText):
     api_key: str
     api_url: str
     model: str
@@ -69,4 +69,4 @@ class AliyunBaiLianAsrSpeechToText(MaxKBBaseModel, BaseSpeechToText):
                 raise Exception('Error: ', response.message)
 
         except Exception as err:
-            maxkb_logger.error(f":Error: {str(err)}: {traceback.format_exc()}")
+            porsche_logger.error(f":Error: {str(err)}: {traceback.format_exc()}")

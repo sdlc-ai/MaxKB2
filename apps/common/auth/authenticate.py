@@ -17,7 +17,7 @@ from rest_framework.authentication import TokenAuthentication
 
 from common.exception.app_exception import AppAuthenticationFailed, AppEmbedIdentityFailed, AppChatNumOutOfBoundsFailed, \
     AppApiException
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 
 token_cache = cache.caches['default']
 
@@ -88,7 +88,7 @@ class TokenAuth(TokenAuthentication):
                     return handle.handle(request, token, token_details.get_token_details)
             raise AppAuthenticationFailed(1002, _('Authentication information is incorrect! illegal user'))
         except Exception as e:
-            maxkb_logger.error(f'Exception: {e}', exc_info=True)
+            porsche_logger.error(f'Exception: {e}', exc_info=True)
             if isinstance(e, AppEmbedIdentityFailed) or isinstance(e, AppChatNumOutOfBoundsFailed) or isinstance(e,
                                                                                                                  AppApiException):
                 raise e

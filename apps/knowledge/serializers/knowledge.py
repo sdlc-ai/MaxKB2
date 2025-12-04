@@ -28,7 +28,7 @@ from common.event.listener_manage import ListenerManagement
 from common.exception.app_exception import AppApiException
 from common.utils.common import post, get_file_content, parse_image
 from common.utils.fork import Fork, ChildLink
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 from common.utils.split_model import get_split_model
 from knowledge.models import Knowledge, KnowledgeScope, KnowledgeType, Document, Paragraph, Problem, \
     ProblemParagraphMapping, TaskType, State, SearchMode, KnowledgeFolder, File, Tag, KnowledgeWorkflow
@@ -39,7 +39,7 @@ from knowledge.serializers.document import DocumentSerializers
 from knowledge.task.embedding import embedding_by_knowledge, delete_embedding_by_knowledge
 from knowledge.task.generate import generate_related_by_knowledge_id
 from knowledge.task.sync import sync_web_knowledge, sync_replace_web_knowledge
-from maxkb.conf import PROJECT_DIR
+from porsche.conf import PROJECT_DIR
 from models_provider.models import Model
 from system_manage.models import WorkspaceUserResourcePermission, AuthTargetType
 from system_manage.serializers.user_resource_permission import UserResourcePermissionSerializer
@@ -681,7 +681,7 @@ class KnowledgeSerializer(serializers.Serializer):
                         document_name = child_link.tag.text if child_link.tag is not None and len(
                             child_link.tag.text.strip()) > 0 else child_link.url
                         paragraphs = get_split_model('web.md').parse(response.content)
-                        maxkb_logger.info(child_link.url.strip())
+                        porsche_logger.info(child_link.url.strip())
                         first = QuerySet(Document).filter(
                             meta__source_url=child_link.url.strip(),
                             knowledge=knowledge
@@ -697,7 +697,7 @@ class KnowledgeSerializer(serializers.Serializer):
                                           'selector': knowledge.meta.get('selector')},
                                  'type': KnowledgeType.WEB}, with_valid=True)
                     except Exception as e:
-                        maxkb_logger.error(f'{str(e)}:{traceback.format_exc()}')
+                        porsche_logger.error(f'{str(e)}:{traceback.format_exc()}')
 
             return handler
 

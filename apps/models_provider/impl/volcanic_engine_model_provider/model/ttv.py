@@ -1,13 +1,13 @@
 import base64
 import time
 from typing import Dict, Optional
-from models_provider.base_model_provider import MaxKBBaseModel
+from models_provider.base_model_provider import PorscheAIBaseModel
 from models_provider.base_ttv import BaseGenerationVideo
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 from volcenginesdkarkruntime import Ark
 
 
-class GenerationVideoModel(MaxKBBaseModel, BaseGenerationVideo):
+class GenerationVideoModel(PorscheAIBaseModel, BaseGenerationVideo):
     api_key: str
     model_name: str
     params: dict
@@ -61,14 +61,14 @@ class GenerationVideoModel(MaxKBBaseModel, BaseGenerationVideo):
         while elapsed < max_wait:
             result = client.content_generation.tasks.get(task_id=task_id)
             status = getattr(result, "status", None)
-            maxkb_logger.info(f"[ArkVideo] Task {task_id} status={status}")
+            porsche_logger.info(f"[ArkVideo] Task {task_id} status={status}")
 
             if status in ("succeeded", "failed", "cancelled"):
                 return result
 
             time.sleep(interval)
             elapsed += interval
-        maxkb_logger.warning(f"[ArkVideo] Task {task_id} wait timeout")
+        porsche_logger.warning(f"[ArkVideo] Task {task_id} wait timeout")
         return None
 
     # --- 通用异步生成函数 ---
@@ -102,7 +102,7 @@ class GenerationVideoModel(MaxKBBaseModel, BaseGenerationVideo):
 
         task = client.content_generation.tasks.create(model=self.model_name, content=content)
         task_id = task.id
-        maxkb_logger.info(f"[ArkVideo] Created task {task_id}")
+        porsche_logger.info(f"[ArkVideo] Created task {task_id}")
 
         # 轮询获取结果
         result = self._poll_task(client, task_id)
@@ -112,8 +112,8 @@ class GenerationVideoModel(MaxKBBaseModel, BaseGenerationVideo):
         try:
             if getattr(result, "status", None) in ("succeeded", "failed", "cancelled"):
                 client.content_generation.tasks.delete(task_id=task_id)
-                maxkb_logger.info(f"[ArkVideo] Deleted task {task_id}")
+                porsche_logger.info(f"[ArkVideo] Deleted task {task_id}")
         except Exception as e:
-            maxkb_logger.error(f"[ArkVideo] Failed to delete task {task_id}: {e}")
-        maxkb_logger.info("视频地址", result.content.video_url)
+            porsche_logger.error(f"[ArkVideo] Failed to delete task {task_id}: {e}")
+        porsche_logger.info("视频地址", result.content.video_url)
         return result.content.video_url

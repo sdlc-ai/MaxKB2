@@ -3,7 +3,7 @@ from logging.handlers import TimedRotatingFileHandler
 import os
 import logging
 
-maxkb_logger = logging.getLogger('max_kb')
+porsche_logger = logging.getLogger('max_kb')
 
 
 class DailyTimedRotatingFileHandler(TimedRotatingFileHandler):

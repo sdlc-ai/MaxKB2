@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎
     @file： base_function_lib_node.py
     @date：2024/8/8 17:49
@@ -19,7 +19,7 @@ from common.database_model_manage.database_model_manage import DatabaseModelMana
 from common.exception.app_exception import AppApiException
 from common.utils.rsa_util import rsa_long_decrypt
 from common.utils.tool_code import ToolExecutor
-from maxkb.const import CONFIG
+from porsche.const import CONFIG
 from tools.models import Tool
 
 function_executor = ToolExecutor(CONFIG.get('SANDBOX'))

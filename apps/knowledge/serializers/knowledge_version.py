@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎虎
     @file： KnowledgeVersionSerializer.py
     @date：2025/11/28 18:00

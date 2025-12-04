@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎
     @file： embedding.py
     @date：2024/7/12 17:44
@@ -10,10 +10,10 @@ from typing import Dict
 
 from langchain_openai import AzureOpenAIEmbeddings
 
-from models_provider.base_model_provider import MaxKBBaseModel
+from models_provider.base_model_provider import PorscheAIBaseModel
 
 
-class AzureOpenAIEmbeddingModel(MaxKBBaseModel, AzureOpenAIEmbeddings):
+class AzureOpenAIEmbeddingModel(PorscheAIBaseModel, AzureOpenAIEmbeddings):
     @staticmethod
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
         return AzureOpenAIEmbeddingModel(

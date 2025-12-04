@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎
     @file： reranker.py
     @date：2024/9/9 17:51
@@ -16,7 +16,7 @@ from common.exception.app_exception import AppApiException
 from common.forms import BaseForm
 from models_provider.base_model_provider import BaseModelCredential, ValidCode
 from models_provider.impl.docker_ai_model_provider.model.reranker import DockerAIReranker
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 
 class DockerAIRerankerCredential(BaseForm, BaseModelCredential):
 
@@ -35,7 +35,7 @@ class DockerAIRerankerCredential(BaseForm, BaseModelCredential):
             model: DockerAIReranker = provider.get_model(model_type, model_name, model_credential)
             model.compress_documents([Document(page_content=_('Hello'))], _('Hello'))
         except Exception as e:
-            maxkb_logger.error(f'Exception: {e}', exc_info=True)
+            porsche_logger.error(f'Exception: {e}', exc_info=True)
             if isinstance(e, AppApiException):
                 raise e
             if raise_exception:

@@ -49,7 +49,7 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          DOCKER_IMAGE=${{ secrets.FIT2CLOUD_REGISTRY_HOST }}/maxkb/maxkb
+          DOCKER_IMAGE=${{ secrets.FIT2CLOUD_REGISTRY_HOST }}/porsche/porsche
           DOCKER_PLATFORMS=${{ github.event.inputs.architecture }}
           TAG_NAME=${{ github.event.inputs.dockerImageTag }}
           TAG_NAME_WITH_LATEST=${{ github.event.inputs.dockerImageTagWithLatest }}
@@ -105,7 +105,7 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          DOCKER_IMAGE=1panel/maxkb
+          DOCKER_IMAGE=1panel/porsche
           DOCKER_PLATFORMS=${{ github.event.inputs.architecture }}
           TAG_NAME=${{ github.event.inputs.dockerImageTag }}          
           TAG_NAME_WITH_LATEST=${{ github.event.inputs.dockerImageTagWithLatest }}

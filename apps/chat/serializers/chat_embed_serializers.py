@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎虎
     @file： chat_embed_serializers.py
     @date：2025/5/30 14:34
@@ -17,8 +17,8 @@ from rest_framework import serializers
 
 from application.models import ApplicationAccessToken
 from common.database_model_manage.database_model_manage import DatabaseModelManage
-from maxkb.conf import PROJECT_DIR
-from maxkb.const import CONFIG
+from porsche.conf import PROJECT_DIR
+from porsche.const import CONFIG
 
 
 class ChatEmbedSerializer(serializers.Serializer):
@@ -39,7 +39,7 @@ class ChatEmbedSerializer(serializers.Serializer):
             access_token=self.data.get('token')).first()
         is_draggable = 'false'
         show_guide = 'true'
-        float_icon = f"{self.data.get('protocol')}://{self.data.get('host')}{CONFIG.get_chat_path()}/MaxKB.gif"
+        float_icon = f"{self.data.get('protocol')}://{self.data.get('host')}{CONFIG.get_chat_path()}/PorscheAi.gif"
         is_license_valid = DatabaseModelManage.get_model('license_is_valid')
         X_PACK_LICENSE_IS_VALID = is_license_valid() if is_license_valid is not None else False
         # 获取接入的query参数

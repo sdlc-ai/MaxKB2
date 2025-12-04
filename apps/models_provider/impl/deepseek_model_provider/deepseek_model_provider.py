@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@Project ：MaxKB 
+@Project ：PorscheAi 
 @File    ：deepseek_model_provider.py
 @Author  ：Brian Yang
 @Date    ：5/12/24 7:40 AM 
@@ -13,7 +13,7 @@ from models_provider.base_model_provider import IModelProvider, ModelProvideInfo
     ModelInfoManage
 from models_provider.impl.deepseek_model_provider.credential.llm import DeepSeekLLMModelCredential
 from models_provider.impl.deepseek_model_provider.model.llm import DeepSeekChatModel
-from maxkb.conf import PROJECT_DIR
+from porsche.conf import PROJECT_DIR
 from django.utils.translation import gettext as _
 
 deepseek_llm_model_credential = DeepSeekLLMModelCredential()

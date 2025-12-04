@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： wenxin_model_provider.py
     @date：2023/10/31 16:19
@@ -15,7 +15,7 @@ from models_provider.impl.wenxin_model_provider.credential.embedding import Qian
 from models_provider.impl.wenxin_model_provider.credential.llm import WenxinLLMModelCredential
 from models_provider.impl.wenxin_model_provider.model.embedding import QianfanEmbeddings
 from models_provider.impl.wenxin_model_provider.model.llm import QianfanChatModel
-from maxkb.conf import PROJECT_DIR
+from porsche.conf import PROJECT_DIR
 from django.utils.translation import gettext as _
 
 win_xin_llm_model_credential = WenxinLLMModelCredential()

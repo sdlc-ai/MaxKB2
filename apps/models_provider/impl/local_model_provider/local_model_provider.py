@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： zhipu_model_provider.py
     @date：2024/04/19 13:5
@@ -11,7 +11,7 @@ import os
 from django.utils.translation import gettext as _
 
 from common.utils.common import get_file_content
-from maxkb.conf import PROJECT_DIR
+from porsche.conf import PROJECT_DIR
 from models_provider.base_model_provider import ModelProvideInfo, ModelTypeConst, ModelInfo, IModelProvider, \
     ModelInfoManage
 from models_provider.impl.local_model_provider.credential.embedding import LocalEmbeddingCredential
