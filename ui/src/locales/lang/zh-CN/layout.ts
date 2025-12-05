@@ -35,6 +35,6 @@ export default {
     expiringSoon: '即将到期'
   },
   copyright: '版权所有 © 2014-2025 SDLC',
-  userManualUrl: 'https://maxkb.cn/docs/v2/',
+  userManualUrl: 'https://porsche.cn/docs/v2/',
   forumUrl: 'https://bbs.fit2cloud.com/c/mk/11'
 }

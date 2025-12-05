@@ -441,7 +441,7 @@ const open = async (id: string, type: PlatformType) => {
   } finally {
     loading.value = false
     form[configType.value].callback_url =
-      `${window.location.origin}${window.MaxKB.prefix}/api/chat/${type}/${id}`
+      `${window.location.origin}${window.Porsche.prefix}/api/chat/${type}/${id}`
   }
 }
 

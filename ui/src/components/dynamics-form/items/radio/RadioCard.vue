@@ -51,11 +51,11 @@ const width = ref<number>()
 const radioContentStyle = computed(() => {
   if (width.value) {
     if (width.value < 350) {
-      return { '--maxkb-radio-card-width': '316px' }
+      return { '--porsche-radio-card-width': '316px' }
     } else if (width.value > 770) {
-      return { '--maxkb-radio-card-width': '378px' }
+      return { '--porsche-radio-card-width': '378px' }
     } else {
-      return { '--maxkb-radio-card-width': '100%' }
+      return { '--porsche-radio-card-width': '100%' }
     }
   }
   return {}
@@ -99,7 +99,7 @@ const option_list = computed(() => {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: var(--maxkb-radio-card-width, 100%);
+    width: var(--porsche-radio-card-width, 100%);
     margin: 4px;
   }
 }

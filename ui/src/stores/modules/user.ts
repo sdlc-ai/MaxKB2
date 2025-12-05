@@ -32,7 +32,7 @@ const useUserStore = defineStore('user', {
   }),
   actions: {
     getLanguage() {
-      return localStorage.getItem('MaxKB-locale') || getBrowserLang()
+      return localStorage.getItem('Porsche-locale') || getBrowserLang()
     },
     setWorkspaceId(workspace_id: string) {
       this.workspace_id = workspace_id
