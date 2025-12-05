@@ -24,7 +24,7 @@
         <el-button @click.prevent="dialogVisible = false">
           {{ $t('common.cancel') }}
         </el-button>
-        <el-button type="primary" class="custom-btn" @click="submit" :loading="loading">
+        <el-button type="primary" @click="submit" :loading="loading">
           {{ $t('common.confirm') }}
         </el-button>
       </span>
@@ -33,11 +33,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { FormField } from '@/components/dynamics-form/type'
-import modelAPi from '@/api/model'
-import applicationApi from '@/api/application'
+import { useRoute } from 'vue-router'
 import DynamicsForm from '@/components/dynamics-form/index.vue'
+import permissionMap from '@/permission'
+import { loadSharedApi } from '@/utils/dynamics-api/shared-api'
+
+const route = useRoute()
+const apiType = computed(() => {
+  if (route.path.includes('resource-management')) {
+    return 'systemManage'
+  } else {
+    return 'workspace'
+  }
+})
 const model_form_field = ref<Array<FormField>>([])
 const emit = defineEmits(['refresh'])
 const dynamicsFormRef = ref<InstanceType<typeof DynamicsForm>>()
@@ -45,14 +55,23 @@ const form_data = ref<any>({})
 const dialogVisible = ref(false)
 const loading = ref(false)
 const getApi = (model_id: string, application_id?: string) => {
-  return application_id
-    ? applicationApi.getModelParamsForm(application_id, model_id, loading)
-    : modelAPi.getModelParamsForm(model_id, loading)
+  return loadSharedApi({ type: 'model', systemType: apiType.value }).getModelParamsForm(
+    model_id,
+    loading,
+  )
 }
+
+const modelID = ref('')
+
+const permissionPrecise = computed(() => {
+  return permissionMap['model'][apiType.value]
+})
+
 const open = (model_id: string, application_id?: string, model_setting_data?: any) => {
+  modelID.value = model_id
   form_data.value = {}
   const api = getApi(model_id, application_id)
-  api.then((ok) => {
+  api.then((ok: any) => {
     model_form_field.value = ok.data
     // 渲染动态表单
     dynamicsFormRef.value?.render(model_form_field.value, model_setting_data)
@@ -62,17 +81,17 @@ const open = (model_id: string, application_id?: string, model_setting_data?: an
 
 const reset_default = (model_id: string, application_id?: string) => {
   const api = getApi(model_id, application_id)
-  api.then((ok) => {
+  api.then((ok: any) => {
     model_form_field.value = ok.data
     const model_setting_data = ok.data
-      .map((item) => {
+      .map((item: any) => {
         if (item.show_default_value === false) {
           return { [item.field]: undefined }
         } else {
           return { [item.field]: item.default_value }
         }
       })
-      .reduce((x, y) => ({ ...x, ...y }), {})
+      .reduce((x: any, y: any) => ({ ...x, ...y }), {})
 
     emit('refresh', model_setting_data)
   })

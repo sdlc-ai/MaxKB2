@@ -99,10 +99,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { nextTick, onMounted, ref, onBeforeUnmount } from 'vue'
+import { nextTick, onMounted, ref, onBeforeUnmount, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { copyClick } from '@/utils/clipboard'
-import applicationApi from '@/api/application'
+import applicationApi from '@/api/application/application'
+import chatAPI from '@/api/chat/chat'
 import { datetimeFormat } from '@/utils/time'
 import { MsgError } from '@/utils/message'
 import bus from '@/bus'
@@ -118,7 +119,7 @@ const copy = (data: any) => {
 }
 const route = useRoute()
 const {
-  params: { id }
+  params: { id },
 } = route as any
 
 const props = withDefaults(
@@ -134,8 +135,8 @@ const props = withDefaults(
   }>(),
   {
     data: () => ({}),
-    type: 'ai-chat'
-  }
+    type: 'ai-chat',
+  },
 )
 
 const emit = defineEmits(['update:data', 'regeneration'])
@@ -152,12 +153,10 @@ function regeneration() {
 }
 
 function voteHandle(val: string) {
-  applicationApi
-    .putChatVote(props.applicationId, props.chatId, props.data.record_id, val, loading)
-    .then(() => {
-      buttonData.value['vote_status'] = val
-      emit('update:data', buttonData.value)
-    })
+  chatAPI.vote(props.chatId, props.data.record_id, val, loading).then(() => {
+    buttonData.value['vote_status'] = val
+    emit('update:data', buttonData.value)
+  })
 }
 
 function markdownToPlainText(md: string) {
@@ -203,9 +202,9 @@ function smartSplit(
     0: 10,
     1: 25,
     3: 50,
-    5: 100
+    5: 100,
   },
-  is_end = false
+  is_end = false,
 ) {
   // 匹配中文逗号/句号，且后面至少还有20个字符（含任何字符，包括换行）
   const regex = /([。？\n])|(<audio[^>]*><\/audio>)/g
@@ -261,8 +260,18 @@ enum AudioStatus {
   /**
    * 错误
    */
-  ERROR = 'ERROR'
+  ERROR = 'ERROR',
 }
+const getTextToSpeechAPI = () => {
+  if (props.type === 'ai-chat') {
+    return (application_id?: string, data?: any, loading?: Ref<boolean>) => {
+      return chatAPI.textToSpeech(data, loading)
+    }
+  } else {
+    return applicationApi.postTextToSpeech
+  }
+}
+const textToSpeechAPI = getTextToSpeechAPI()
 class AudioManage {
   textList: Array<string>
   statusList: Array<AudioStatus>
@@ -284,7 +293,7 @@ class AudioManage {
     const newTextList = textList.slice(this.textList.length)
     // 没有新增段落
     if (newTextList.length <= 0) {
-      return
+      return 0
     }
     newTextList.forEach((text, index) => {
       this.textList.push(text)
@@ -314,12 +323,11 @@ class AudioManage {
           audioElement.src = text.match(/src="([^"]*)"/)?.[1] || ''
           this.statusList[index] = AudioStatus.READY
         } else {
-          applicationApi
-            .postTextToSpeech(
-              (props.applicationId as string) || (id as string),
-              { text: text },
-              loading
-            )
+          textToSpeechAPI(
+            (props.applicationId as string) || (id as string),
+            { text: text },
+            loading,
+          )
             .then(async (res: any) => {
               if (res.type === 'application/json') {
                 const text = await res.text()
@@ -347,7 +355,7 @@ class AudioManage {
         this.audioList.push(audioElement)
       } else {
         const speechSynthesisUtterance: SpeechSynthesisUtterance = new SpeechSynthesisUtterance(
-          text
+          text,
         )
         speechSynthesisUtterance.onend = () => {
           this.statusList[index] = AudioStatus.END
@@ -377,12 +385,11 @@ class AudioManage {
         if (audioElement instanceof HTMLAudioElement) {
           const text = this.textList[index]
           this.statusList[index] = AudioStatus.MOUNTED
-          applicationApi
-            .postTextToSpeech(
-              (props.applicationId as string) || (id as string),
-              { text: text },
-              loading
-            )
+          textToSpeechAPI(
+            (props.applicationId as string) || (id as string),
+            { text: text },
+            loading,
+          )
             .then(async (res: any) => {
               if (res.type === 'application/json') {
                 const text = await res.text()
@@ -422,7 +429,10 @@ class AudioManage {
     }
     if (text) {
       const textList = this.getTextList(text, is_end ? true : false)
-      this.appendTextList(textList)
+      if (this.appendTextList(textList) !== 0) {
+        // 没有新增段落
+        return
+      }
     }
     // 如果存在在阅读的元素则直接返回
     if (this.statusList.some((item) => [AudioStatus.PLAY_INT].includes(item))) {
@@ -432,7 +442,7 @@ class AudioManage {
 
     // 需要播放的内容
     const index = this.statusList.findIndex((status) =>
-      [AudioStatus.MOUNTED, AudioStatus.READY].includes(status)
+      [AudioStatus.MOUNTED, AudioStatus.READY].includes(status),
     )
     if (index < 0 || this.statusList[index] === AudioStatus.MOUNTED) {
       return
@@ -454,14 +464,22 @@ class AudioManage {
         this.statusList[index] = AudioStatus.ERROR
       }
     } else {
-      if (window.speechSynthesis.paused) {
+      if (window.speechSynthesis.paused && self) {
         window.speechSynthesis.resume()
+        this.statusList[index] = AudioStatus.PLAY_INT
       } else {
-        if (window.speechSynthesis.pending) {
+        // 如果不是暂停状态，取消当前播放并重新开始
+        if (window.speechSynthesis.speaking) {
           window.speechSynthesis.cancel()
         }
-        speechSynthesis.speak(audioElement)
-        this.statusList[index] = AudioStatus.PLAY_INT
+        // 等待取消完成后重新播放
+        setTimeout(() => {
+          if (speechSynthesis.speaking) {
+            return
+          }
+          speechSynthesis.speak(audioElement)
+          this.statusList[index] = AudioStatus.PLAY_INT
+        }, 500)
       }
     }
   }
@@ -482,11 +500,6 @@ class AudioManage {
       this.statusList[index] = AudioStatus.READY
       if (self) {
         window.speechSynthesis.pause()
-        nextTick(() => {
-          if (!window.speechSynthesis.paused) {
-            window.speechSynthesis.cancel()
-          }
-        })
       } else {
         window.speechSynthesis.cancel()
       }
@@ -502,9 +515,9 @@ class AudioManage {
       {
         0: 20,
         1: 50,
-        5: 100
+        5: 100,
       },
-      is_end
+      is_end,
     )
 
     return split

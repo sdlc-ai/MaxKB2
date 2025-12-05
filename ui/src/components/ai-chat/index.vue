@@ -5,7 +5,6 @@
     :class="type"
     :style="{
       height: firsUserInput ? '100%' : undefined,
-      paddingBottom: applicationDetails.disclaimer ? '20px' : 0
     }"
   >
     <div
@@ -21,11 +20,12 @@
         @confirm="UserFormConfirm"
         @cancel="UserFormCancel"
         ref="userFormRef"
-      ></UserForm>
+      >
+      </UserForm>
     </div>
     <template v-if="!(isUserInput || isAPIInput) || !firsUserInput || type === 'log'">
       <el-scrollbar ref="scrollDiv" @scroll="handleScrollTop">
-        <div ref="dialogScrollbar" class="ai-chat__content p-16">
+        <div ref="dialogScrollbar" class="ai-chat__content p-16" id="chatListId">
           <PrologueContent
             :type="type"
             :application="applicationDetails"
@@ -48,63 +48,82 @@
               :type="type"
               :send-message="sendMessage"
               :chat-management="ChatManagement"
+              :executionIsRightPanel="props.executionIsRightPanel"
+              @open-execution-detail="emit('openExecutionDetail', chatList[index])"
+              @openParagraph="emit('openParagraph', chatList[index])"
+              @openParagraphDocument="
+                (val: any) => emit('openParagraphDocument', chatList[index], val)
+              "
             ></AnswerContent>
           </template>
           <TransitionContent
             v-if="transcribing"
-            :text="t('chat.transcribing')"
+            :text="t('chat.inputPlaceholder.recorderLoading')"
             :type="type"
             :application="applicationDetails"
-          ></TransitionContent>
+          >
+          </TransitionContent>
         </div>
       </el-scrollbar>
-
-      <ChatInputOperate
-        :app-id="appId"
-        :application-details="applicationDetails"
-        :is-mobile="isMobile"
-        :type="type"
-        :send-message="sendMessage"
-        :open-chat-id="openChatId"
-        :validate="validate"
-        :chat-management="ChatManagement"
-        v-model:chat-id="chartOpenId"
-        v-model:loading="loading"
-        v-model:show-user-input="showUserInput"
-        v-if="type !== 'log'"
-      >
-        <template #operateBefore>
-          <div class="flex-between">
-            <slot name="operateBefore">
-              <span></span>
-            </slot>
-
+      <div style="position: relative">
+        <!-- 置底按钮 -->
+        <el-button v-if="isBottom" circle class="back-bottom-button" @click="setScrollBottom">
+          <el-icon><ArrowDownBold /></el-icon>
+        </el-button>
+        <ChatInputOperate
+          :app-id="appId"
+          :application-details="applicationDetails"
+          :is-mobile="isMobile"
+          :type="type"
+          :send-message="sendMessage"
+          :open-chat-id="openChatId"
+          :validate="validate"
+          :chat-management="ChatManagement"
+          v-model:chat-id="chartOpenId"
+          v-model:loading="loading"
+          v-model:show-user-input="showUserInput"
+          v-if="type !== 'log'"
+        >
+          <template #userInput>
             <el-button
               v-if="isUserInput || isAPIInput"
               class="user-input-button mb-8"
-              type="primary"
-              text
               @click="toggleUserInput"
             >
-              <AppIcon iconName="app-user-input"></AppIcon>
+              <AppIcon iconName="app-edit" :size="16" class="mr-4"></AppIcon>
+              <span class="ellipsis">
+                {{ userInputTitle || $t('chat.userInput') }}
+              </span>
             </el-button>
-          </div>
-        </template>
-      </ChatInputOperate>
-
+          </template>
+        </ChatInputOperate>
+      </div>
       <Control></Control>
     </template>
   </div>
 </template>
 <script setup lang="ts">
-import { ref, nextTick, computed, watch, reactive, onMounted, onBeforeUnmount } from 'vue'
+import {
+  type Ref,
+  ref,
+  nextTick,
+  computed,
+  watch,
+  reactive,
+  onMounted,
+  onBeforeUnmount,
+  provide,
+  onBeforeMount,
+} from 'vue'
 import { useRoute } from 'vue-router'
-import applicationApi from '@/api/application'
-import logApi from '@/api/log'
+import applicationApi from '@/api/application/application'
+import chatAPI from '@/api/chat/chat'
+import SystemResourceManagementApplicationAPI from '@/api/system-resource-management/application.ts'
+import syetrmResourceManagementChatLogApi from '@/api/system-resource-management/chat-log'
+import chatLogApi from '@/api/application/chat-log'
 import { ChatManagement, type chatType } from '@/api/type/application'
-import { randomId } from '@/utils/utils'
+import { randomId } from '@/utils/common'
 import useStore from '@/stores'
-import { isWorkFlow } from '@/utils/application'
 import { debounce } from 'lodash'
 import AnswerContent from '@/components/ai-chat/component/answer-content/index.vue'
 import QuestionContent from '@/components/ai-chat/component/question-content/index.vue'
@@ -115,12 +134,17 @@ import UserForm from '@/components/ai-chat/component/user-form/index.vue'
 import Control from '@/components/ai-chat/component/control/index.vue'
 import { t } from '@/locales'
 import bus from '@/bus'
+provide('upload', (file: any, loading?: Ref<boolean>) => {
+  return props.type === 'debug-ai-chat'
+    ? applicationApi.postUploadFile(file, 'TEMPORARY_120_MINUTE', 'TEMPORARY_120_MINUTE', loading)
+    : chatAPI.postUploadFile(file, chartOpenId.value, 'CHAT', loading)
+})
 const transcribing = ref<boolean>(false)
 defineOptions({ name: 'AiChat' })
 const route = useRoute()
 const {
   params: { accessToken, id },
-  query: { mode }
+  query: { mode },
 } = route as any
 const props = withDefaults(
   defineProps<{
@@ -130,16 +154,22 @@ const props = withDefaults(
     record?: Array<chatType>
     available?: boolean
     chatId?: string
-    isCustom?: boolean
+    executionIsRightPanel?: boolean
   }>(),
   {
     applicationDetails: () => ({}),
     available: true,
-    type: 'ai-chat'
-  }
+    type: 'ai-chat',
+  },
 )
-const emit = defineEmits(['refresh', 'scroll'])
-const { application, common } = useStore()
+const emit = defineEmits([
+  'refresh',
+  'scroll',
+  'openExecutionDetail',
+  'openParagraph',
+  'openParagraphDocument',
+])
+const { application, common, chatUser } = useStore()
 const isMobile = computed(() => {
   return common.isMobile() || mode === 'embed' || mode === 'mobile'
 })
@@ -164,13 +194,19 @@ const initialApiFormData = ref({})
 const isUserInput = computed(
   () =>
     props.applicationDetails.work_flow?.nodes?.filter((v: any) => v.id === 'base-node')[0]
-      .properties.user_input_field_list.length > 0
+      ?.properties.user_input_field_list.length > 0,
+)
+
+const userInputTitle = computed(
+  () =>
+    props.applicationDetails.work_flow?.nodes?.filter((v: any) => v.id === 'base-node')[0]
+      ?.properties?.user_input_config?.title,
 )
 const isAPIInput = computed(
   () =>
     props.type === 'debug-ai-chat' &&
     props.applicationDetails.work_flow?.nodes?.filter((v: any) => v.id === 'base-node')[0]
-      .properties.api_input_field_list.length > 0
+      .properties.api_input_field_list.length > 0,
 )
 const showUserInputContent = computed(() => {
   return (
@@ -193,7 +229,7 @@ watch(
       }
     }
   },
-  { deep: true, immediate: true }
+  { deep: true, immediate: true },
 )
 
 watch(
@@ -201,7 +237,7 @@ watch(
   () => {
     chartOpenId.value = ''
   },
-  { deep: true }
+  { deep: true },
 )
 
 watch(
@@ -210,8 +246,8 @@ watch(
     chatList.value = value ? value : []
   },
   {
-    immediate: true
-  }
+    immediate: true,
+  },
 )
 
 const toggleUserInput = () => {
@@ -245,14 +281,18 @@ function sendMessage(val: string, other_params_data?: any, chat?: chatType): Pro
       return userFormRef.value
         ?.validate()
         .then((ok) => {
-          let userFormData = JSON.parse(localStorage.getItem(`${accessToken}userForm`) || '{}')
+          const userFormData = accessToken
+            ? JSON.parse(localStorage.getItem(`${accessToken}userForm`) || '{}')
+            : {}
           const newData = Object.keys(form_data.value).reduce((result: any, key: string) => {
             result[key] = Object.prototype.hasOwnProperty.call(userFormData, key)
               ? userFormData[key]
               : form_data.value[key]
             return result
           }, {})
-          localStorage.setItem(`${accessToken}userForm`, JSON.stringify(newData))
+          if (accessToken) {
+            localStorage.setItem(`${accessToken}userForm`, JSON.stringify(newData))
+          }
 
           showUserInput.value = false
 
@@ -293,38 +333,74 @@ const handleDebounceClick = debounce((val, other_params_data?: any, chat?: chatT
  */
 const openChatId: () => Promise<string> = () => {
   const obj = props.applicationDetails
-  if (props.appId) {
-    return applicationApi
-      .getChatOpen(props.appId)
-      .then((res) => {
-        chartOpenId.value = res.data
-        return res.data
-      })
-      .catch((res) => {
-        if (res.response.status === 403) {
-          return application.asyncAppAuthentication(accessToken).then(() => {
-            return openChatId()
-          })
-        }
-        return Promise.reject(res)
-      })
+  return getOpenChatAPI()(obj.id)
+    .then((res) => {
+      chartOpenId.value = res.data
+      return res.data
+    })
+    .catch((res) => {
+      return Promise.reject(res)
+    })
+}
+
+const getChatMessageAPI = () => {
+  if (props.type === 'debug-ai-chat') {
+    return applicationApi.chat
   } else {
-    if (isWorkFlow(obj.type)) {
-      const submitObj = {
-        work_flow: obj.work_flow,
-        user_id: obj.user
-      }
-      return applicationApi.postWorkflowChatOpen(submitObj).then((res) => {
-        chartOpenId.value = res.data
-        return res.data
-      })
+    return chatAPI.chat
+  }
+}
+const getOpenChatAPI = () => {
+  if (props.type === 'debug-ai-chat') {
+    if (route.path.includes('resource-management')) {
+      return SystemResourceManagementApplicationAPI.open
     } else {
-      return applicationApi.postChatOpen(obj).then((res) => {
-        chartOpenId.value = res.data
-        return res.data
-      })
+      return applicationApi.open
+    }
+  } else {
+    return (a?: string, loading?: Ref<boolean>) => {
+      return chatAPI.open(loading)
     }
   }
+}
+
+const getChatRecordDetailsAPI = (row: any) => {
+  if (row.record_id) {
+    if (props.type === 'debug-ai-chat') {
+      if (route.path.includes('resource-management')) {
+        return syetrmResourceManagementChatLogApi.getChatRecordDetails(
+          id || props.appId,
+          row.chat_id,
+          row.record_id,
+          loading,
+        )
+      } else {
+        return chatLogApi.getChatRecordDetails(
+          id || props.appId,
+          row.chat_id,
+          row.record_id,
+          loading,
+        )
+      }
+    } else {
+      return chatAPI.getChatRecord(row.chat_id, row.record_id, loading)
+    }
+  }
+  return Promise.reject('404')
+}
+/**
+ * 获取对话详情
+ * @param row
+ */
+function getSourceDetail(row: any) {
+  return getChatRecordDetailsAPI(row).then((res) => {
+    const exclude_keys = ['answer_text', 'id', 'answer_text_list']
+    Object.keys(res.data).forEach((key) => {
+      if (!exclude_keys.includes(key)) {
+        row[key] = res.data[key]
+      }
+    })
+  })
 }
 /**
  * 对话
@@ -447,9 +523,11 @@ function chatMessage(chat?: any, problem?: string, re_chat?: boolean, other_para
             : [],
         audio_list:
           other_params_data && other_params_data.audio_list ? other_params_data.audio_list : [],
+        video_list:
+          other_params_data && other_params_data.video_list ? other_params_data.video_list : [],
         other_list:
-          other_params_data && other_params_data.other_list ? other_params_data.other_list : []
-      }
+          other_params_data && other_params_data.other_list ? other_params_data.other_list : [],
+      },
     })
     chatList.value.push(chat)
     ChatManagement.addChatRecord(chat, 50, loading)
@@ -471,27 +549,18 @@ function chatMessage(chat?: any, problem?: string, re_chat?: boolean, other_para
   } else {
     const obj = {
       message: chat.problem_text,
+      stream: true,
       re_chat: re_chat || false,
       ...other_params_data,
       form_data: {
         ...form_data.value,
-        ...api_form_data.value
-      }
+        ...api_form_data.value,
+      },
     }
     // 对话
-    applicationApi
-      .postChatMessage(chartOpenId.value, obj)
+    getChatMessageAPI()(chartOpenId.value, obj)
       .then((response) => {
-        if (response.status === 401) {
-          application
-            .asyncAppAuthentication(accessToken)
-            .then(() => {
-              chatMessage(chat, problem)
-            })
-            .catch(() => {
-              errorWrite(chat)
-            })
-        } else if (response.status === 460) {
+        if (response.status === 460) {
           return Promise.reject(t('chat.tip.errorIdentifyMessage'))
         } else if (response.status === 461) {
           return Promise.reject(t('chat.tip.errorLimitMessage'))
@@ -505,7 +574,7 @@ function chatMessage(chat?: any, problem?: string, re_chat?: boolean, other_para
           const write = getWrite(
             chat,
             reader,
-            response.headers.get('Content-Type') !== 'application/json'
+            response.headers.get('Content-Type') !== 'application/json',
           )
           return reader.read().then(write)
         }
@@ -514,7 +583,17 @@ function chatMessage(chat?: any, problem?: string, re_chat?: boolean, other_para
         if (props.chatId === 'new') {
           emit('refresh', chartOpenId.value)
         }
-        return (id || props.applicationDetails?.show_source) && getSourceDetail(chat)
+        getSourceDetail(chat)
+        // if (props.type === 'debug-ai-chat') {
+        //   getSourceDetail(chat)
+        // } else {
+        //   if (
+        //     props.applicationDetails &&
+        //     (props.applicationDetails.show_exec || props.applicationDetails.show_source)
+        //   ) {
+        //     getSourceDetail(chat)
+        //   }
+        // }
       })
       .finally(() => {
         ChatManagement.close(chat.id)
@@ -526,33 +605,17 @@ function chatMessage(chat?: any, problem?: string, re_chat?: boolean, other_para
 }
 
 /**
- * 获取对话详情
- * @param row
- */
-function getSourceDetail(row: any) {
-  if (row.record_id) {
-    logApi.getRecordDetail(id || props.appId, row.chat_id, row.record_id, loading).then((res) => {
-      const exclude_keys = ['answer_text', 'id', 'answer_text_list']
-      Object.keys(res.data).forEach((key) => {
-        if (!exclude_keys.includes(key)) {
-          row[key] = res.data[key]
-        }
-      })
-    })
-  }
-  return true
-}
-
-/**
  * 滚动条距离最上面的高度
  */
 const scrollTop = ref(0)
 
 const scorll = ref(true)
+const isBottom = ref(false)
 
 const getMaxHeight = () => {
   return dialogScrollbar.value!.scrollHeight
 }
+
 /**
  * 滚动滚动条到最上面
  * @param $event
@@ -567,6 +630,8 @@ const handleScrollTop = ($event: any) => {
   } else {
     scorll.value = false
   }
+  isBottom.value =
+    scrollTop.value + scrollDiv.value.wrapRef.offsetHeight < dialogScrollbar.value!.scrollHeight
   emit('scroll', { ...$event, dialogScrollbar: dialogScrollbar.value, scrollDiv: scrollDiv.value })
 }
 /**
@@ -583,10 +648,19 @@ const handleScroll = () => {
     }
   }
 }
-
+onBeforeMount(() => {
+  window.chatUserProfile = () => {
+    if (props.type === 'ai-chat') {
+      if (chatUser.chat_profile?.authentication_type === 'login') {
+        return chatUser.getChatUserProfile()
+      }
+    }
+    return Promise.resolve(null)
+  }
+})
 onMounted(() => {
   if (isUserInput.value && localStorage.getItem(`${accessToken}userForm`)) {
-    let userFormData = JSON.parse(localStorage.getItem(`${accessToken}userForm`) || '{}')
+    const userFormData = JSON.parse(localStorage.getItem(`${accessToken}userForm`) || '{}')
     form_data.value = userFormData
   }
   if (window.speechSynthesis) {
@@ -606,6 +680,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   window.sendMessage = null
+  window.chatUserProfile = null
 })
 
 function setScrollBottom() {
@@ -618,37 +693,50 @@ watch(
   () => {
     handleScroll()
   },
-  { deep: true, immediate: true }
+  { deep: true, immediate: true },
 )
 
 defineExpose({
-  setScrollBottom
+  setScrollBottom,
 })
 </script>
 <style lang="scss">
-@import './index.scss';
+@use './index.scss';
+
 .firstUserInput {
   height: 100%;
   display: flex;
   justify-content: center;
   overflow: auto;
+
   .user-form-container {
     max-width: 70%;
   }
 }
+
 .debug-ai-chat {
   .user-form-container {
     max-width: 100%;
   }
 }
+
 .popperUserInput {
   position: absolute;
   z-index: 999;
-  right: 50px;
-  bottom: 0;
+  left: 0;
+  bottom: 50px;
   width: calc(100% - 50px);
   max-width: 400px;
 }
+
+.video-stop-button {
+  box-shadow: 0px 6px 24px 0px rgba(31, 35, 41, 0.08);
+
+  &:hover {
+    background: #ffffff;
+  }
+}
+
 @media only screen and (max-width: 768px) {
   .firstUserInput {
     .user-form-container {

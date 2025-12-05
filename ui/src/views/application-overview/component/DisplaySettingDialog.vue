@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="$t('views.applicationOverview.appInfo.SettingDisplayDialog.dialogTitle')"
+    :title="$t('views.applicationOverview.appInfo.displaySetting')"
     v-model="dialogVisible"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -9,7 +9,7 @@
     <el-form label-position="top" ref="displayFormRef" :model="form">
       <el-form-item>
         <span>{{
-          $t('views.applicationOverview.appInfo.SettingDisplayDialog.languageLabel')
+          $t('layout.language')
         }}</span>
         <el-select v-model="form.language" clearable>
           <el-option
@@ -21,13 +21,16 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-space direction="vertical" alignment="start">
+        <el-space direction="vertical" alignment="start" :size="2">
           <el-checkbox
             v-model="form.show_source"
+            :label="$t('views.applicationOverview.SettingDisplayDialog.showSourceLabel')"
+          />
+
+          <el-checkbox
+            v-model="form.show_exec"
             :label="
-              isWorkFlow(detail.type)
-                ? $t('views.applicationOverview.appInfo.SettingDisplayDialog.showExecutionDetail')
-                : $t('views.applicationOverview.appInfo.SettingDisplayDialog.showSourceLabel')
+              $t('views.applicationOverview.SettingDisplayDialog.showExecutionDetail')
             "
           />
         </el-space>
@@ -36,7 +39,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click.prevent="dialogVisible = false">{{ $t('common.cancel') }} </el-button>
-        <el-button type="primary" class="custom-btn" @click="submit(displayFormRef)" :loading="loading">
+        <el-button type="primary" @click="submit(displayFormRef)" :loading="loading">
           {{ $t('common.save') }}
         </el-button>
       </span>
@@ -44,24 +47,31 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import type { FormInstance, FormRules, UploadFiles } from 'element-plus'
-import applicationApi from '@/api/application'
-import { isWorkFlow } from '@/utils/application'
+import type { FormInstance } from 'element-plus'
 import { MsgSuccess, MsgError } from '@/utils/message'
-import { getBrowserLang, langList, t } from '@/locales'
+import { langList, t } from '@/locales'
+import { loadSharedApi } from '@/utils/dynamics-api/shared-api'
+
 const route = useRoute()
 const {
-  params: { id }
+  params: { id },
 } = route
-
+const apiType = computed(() => {
+  if (route.path.includes('resource-management')) {
+    return 'systemManage'
+  } else {
+    return 'workspace'
+  }
+})
 const emit = defineEmits(['refresh'])
 
 const displayFormRef = ref()
 const form = ref<any>({
   show_source: false,
-  language: ''
+  show_exec: false,
+  language: '',
 })
 
 const detail = ref<any>(null)
@@ -73,13 +83,15 @@ watch(dialogVisible, (bool) => {
   if (!bool) {
     form.value = {
       show_source: false,
-      language: ''
+      show_exec: false,
+      language: '',
     }
   }
 })
 const open = (data: any, content: any) => {
   detail.value = content
   form.value.show_source = data.show_source
+  form.value.show_exec = data.show_exec
   form.value.language = data.language
   dialogVisible.value = true
 }
@@ -88,12 +100,14 @@ const submit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      applicationApi.putAccessToken(id as string, form.value, loading).then((res) => {
-        emit('refresh')
-        // @ts-ignore
-        MsgSuccess(t('common.settingSuccess'))
-        dialogVisible.value = false
-      })
+      loadSharedApi({ type: 'application', systemType: apiType.value })
+        .putAccessToken(id as string, form.value, loading)
+        .then(() => {
+          emit('refresh')
+
+          MsgSuccess(t('common.settingSuccess'))
+          dialogVisible.value = false
+        })
     }
   })
 }

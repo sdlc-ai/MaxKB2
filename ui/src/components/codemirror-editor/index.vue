@@ -31,7 +31,7 @@
       />
       <template #footer>
         <div class="dialog-footer mt-24">
-          <el-button type="primary" class="custom-btn" @click="submitDialog"> {{ $t('common.confirm') }}</el-button>
+          <el-button type="primary" @click="submitDialog"> {{ $t('common.confirm') }}</el-button>
         </div>
       </template>
     </el-dialog>
@@ -40,26 +40,41 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { Codemirror } from 'vue-codemirror'
 import { python } from '@codemirror/lang-python'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { linter, type Diagnostic } from '@codemirror/lint'
-import FunctionApi from '@/api/function-lib'
+import { loadSharedApi } from '@/utils/dynamics-api/shared-api'
+import debounce from 'lodash/debounce'
 
 defineOptions({ name: 'CodemirrorEditor' })
 
 const props = defineProps<{
-  title: String
+  title: string
   modelValue: any
 }>()
 const emit = defineEmits(['update:modelValue', 'submitDialog'])
+
+const route = useRoute()
+
+const apiType = computed(() => {
+  if (route.path.includes('shared')) {
+    return 'systemShare'
+  } else if (route.path.includes('resource-management')) {
+    return 'systemManage'
+  } else {
+    return 'workspace'
+  }
+})
+
 const data = computed({
   set: (value) => {
     emit('update:modelValue', value)
   },
   get: () => {
     return props.modelValue
-  }
+  },
 })
 
 function getRangeFromLineAndColumn(state: any, line: number, column: number, end_column?: number) {
@@ -68,35 +83,52 @@ function getRangeFromLineAndColumn(state: any, line: number, column: number, end
   const to_end_column = l.from + end_column
   return {
     form: form > l.to ? l.to : form,
-    to: end_column && to_end_column < l.to ? to_end_column : l.to
+    to: end_column && to_end_column < l.to ? to_end_column : l.to,
   }
 }
 
+const asyncLint = debounce(async (doc: string) => {
+  const res = await loadSharedApi({ type: 'tool', systemType: apiType.value }).postPylint(doc)
+  return res.data
+}, 500)
+
 const regexpLinter = linter(async (view) => {
-  let diagnostics: Diagnostic[] = []
-  await FunctionApi.pylint(view.state.doc.toString()).then((ok) => {
-    ok.data.forEach((element: any) => {
+  const diagnostics: Diagnostic[] = []
+  const lintResults = await asyncLint(view.state.doc.toString())
+  if (!lintResults || lintResults.length === 0) {
+    return diagnostics
+  }
+  // 限制诊断数量，避免过多诊断信息
+  const maxDiagnostics = 50
+  const limitedResults = lintResults.slice(0, maxDiagnostics)
+
+  limitedResults.forEach((element: any) => {
+    try {
       const range = getRangeFromLineAndColumn(
         view.state,
         element.line,
         element.column,
-        element.endColumn
+        element.endColumn,
       )
-
-      diagnostics.push({
-        from: range.form,
-        to: range.to,
-        severity: element.type,
-        message: element.message
-      })
-    })
+      // 验证范围有效性
+      if (range.form >= 0 && range.to >= range.form) {
+        diagnostics.push({
+          from: range.form,
+          to: range.to,
+          severity: element.type === 'error' ? 'error' : 'warning',
+          message: element.message,
+        })
+      }
+    } catch (error) {
+      // console.error('Error processing lint result:', error)
+    }
   })
   return diagnostics
 })
 const extensions = [python(), regexpLinter, oneDark]
 const codemirrorStyle = {
   height: '210px!important',
-  width: '100%'
+  width: '100%',
 }
 const cmRef = ref<InstanceType<typeof Codemirror>>()
 // 弹出框相关代码
@@ -124,6 +156,7 @@ function submitDialog() {
 <style lang="scss" scoped>
 .codemirror-editor {
   position: relative;
+
   &__footer {
     position: absolute;
     bottom: 10px;

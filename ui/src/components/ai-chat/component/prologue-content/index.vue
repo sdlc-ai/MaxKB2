@@ -2,15 +2,14 @@
   <!-- 开场白组件 -->
   <div class="item-content mb-16">
     <div class="avatar mr-8" v-if="prologue && showAvatar">
-      <img v-if="isCustom" src="@/assets/logo/temp_logo.png" height="28px" width="28px" alt="">
-      <img v-else-if="application.avatar" :src="application.avatar" height="28px" width="28px" />
+      <img v-if="application.avatar" :src="application.avatar" height="28px" width="28px" />
       <LogoIcon v-else height="28px" width="28px" />
     </div>
     <div
       class="content"
       v-if="prologue"
       :style="{
-        'padding-right': showUserAvatar ? 'var(--padding-left)' : '0'
+        'padding-right': showUserAvatar ? 'var(--padding-left)' : '0',
       }"
     >
       <el-card shadow="always" class="border-r-8" style="--el-card-padding: 10px 16px 12px">
@@ -18,6 +17,7 @@
           :source="prologue"
           :send-message="sendMessage"
           reasoning_content=""
+          :type="type"
         ></MdRenderer>
       </el-card>
     </div>
@@ -34,16 +34,13 @@ const props = defineProps<{
   available: boolean
   type: 'log' | 'ai-chat' | 'debug-ai-chat'
   sendMessage: (question: string, other_params_data?: any, chat?: chatType) => void
-  isCustom?: boolean
 }>()
 
-const { user } = useStore()
-
 const showAvatar = computed(() => {
-  return user.isEnterprise() ? props.application.show_avatar : true
+  return props.application.show_avatar == undefined ? true : props.application.show_avatar
 })
 const showUserAvatar = computed(() => {
-  return user.isEnterprise() ? props.application.show_user_avatar : true
+  return props.application.show_user_avatar == undefined ? true : props.application.show_user_avatar
 })
 
 const toQuickQuestion = (match: string, offset: number, input: string) => {
@@ -56,7 +53,7 @@ const prologue = computed(() => {
       /<html_rander>[\d\D]*?<\/html_rander>/g,
       /<echarts_rander>[\d\D]*?<\/echarts_rander>/g,
       /<quick_question>[\d\D]*?<\/quick_question>/g,
-      /<form_rander>[\d\D]*?<\/form_rander>/g
+      /<form_rander>[\d\D]*?<\/form_rander>/g,
     ]
     let _temp = temp
     for (const index in tag_list) {

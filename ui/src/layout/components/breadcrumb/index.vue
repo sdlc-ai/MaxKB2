@@ -1,253 +1,143 @@
 <template>
-  <div class="breadcrumb ml-4 mt-4 mb-12 flex">
-    <back-button :to="activeMenu" class="mt-4"></back-button>
-    <el-dropdown
-      placement="bottom"
-      trigger="click"
-      @command="changeMenu"
-      class="w-full"
-      style="display: block"
-    >
-      <div class="breadcrumb-hover flex-between cursor">
-        <div class="flex align-center">
-          <AppAvatar
-            v-if="isApplication && isAppIcon(current?.icon)"
-            shape="square"
-            :size="24"
-            style="background: none"
-            class="mr-8"
-          >
-            <img :src="current?.icon" alt="" />
-          </AppAvatar>
-          <img v-else-if="isApplication" style="margin-right: 5px;width: 26px;height: 26px;" src="@/assets/icon/application.png" alt="">
-          <!-- <AppAvatar
-            v-else-if="isApplication"
-            :name="current?.name"
-            pinyinColor
-            shape="square"
-            class="mr-8"
-            :size="24"
-          /> -->
+  <div class="breadcrumb ml-4 mt-4 mb-12 flex align-center">
+    <back-button  @click="toBack"></back-button>
+    <div class="flex align-center">
+      <el-avatar
+        v-if="isApplication"
+        shape="square"
+        :size="24"
+        style="background: none"
+        class="mr-8"
+      >
+        <img :src="resetUrl(current?.icon, resetUrl('./favicon.ico'))" alt="" />
+      </el-avatar>
+      <!-- <LogoIcon
+        v-else-if="isApplication"
+        height="28px"
+        style="width: 28px; height: 28px; display: block"
+        class="mr-8"
+      /> -->
+      <KnowledgeIcon v-else-if="isKnowledge" :type="current?.type" class="mr-8" />
 
-          <AppAvatar
-            v-else-if="isDataset && current?.type === '1'"
-            class="mr-8 avatar-purple"
-            shape="square"
-            :size="24"
-          >
-            <img src="@/assets/icon_web.svg" style="width: 58%" alt="" />
-          </AppAvatar>
-          <AppAvatar
-            v-else-if="isDataset && current?.type === '2'"
-            class="mr-8 avatar-purple"
-            shape="square"
-            :size="24"
-            style="background: none"
-          >
-            <img src="@/assets/logo_lark.svg" style="width: 100%" alt="" />
-          </AppAvatar>
-          <!-- <AppAvatar v-else class="mr-8 avatar-blue" shape="square" :size="24">
-          </AppAvatar> -->
-            <!-- <img src="@/assets/icon_document.svg" style="width: 58%" alt="" /> -->
-          <img v-else  style="margin-right: 5px;width: 26px;height: 26px;" src="@/assets/icon/dataset.png" alt="">
-
-          <div class="ellipsis" :title="current?.name">{{ current?.name }}</div>
-        </div>
-
-        <el-button text>
-          <el-icon><CaretBottom /></el-icon>
-        </el-button>
-      </div>
-      <template #dropdown>
-        <el-scrollbar>
-          <div style="max-height: 400px">
-            <el-dropdown-menu>
-              <template v-for="(item, index) in list" :key="index">
-                <div :class="item.id === id ? 'dropdown-active' : ''">
-                  <el-dropdown-item :command="item.id">
-                    <div class="flex align-center">
-                      <AppAvatar
-                        v-if="isApplication && isAppIcon(item?.icon)"
-                        shape="square"
-                        :size="24"
-                        style="background: none"
-                        class="mr-8"
-                      >
-                        <img :src="item?.icon" alt="" />
-                      </AppAvatar>
-
-                      <!-- <AppAvatar
-                        v-else-if="isApplication"
-                        :name="item.name"
-                        pinyinColor
-                        class="mr-12"
-                        shape="square"
-                        :size="24"
-                      /> -->
-                      <img v-else-if="isApplication" style="margin-right: 5px;width: 26px;height: 26px;" src="@/assets/icon/application.png" alt="">
-                      <AppAvatar
-                        v-else-if="isDataset && item.type === '1'"
-                        class="mr-12 avatar-purple"
-                        shape="square"
-                        :size="24"
-                      >
-                        <img src="@/assets/icon_web.svg" style="width: 58%" alt="" />
-                      </AppAvatar>
-                      <AppAvatar
-                        v-else-if="isDataset && item.type === '2'"
-                        class="mr-8 avatar-purple"
-                        shape="square"
-                        :size="24"
-                        style="background: none"
-                      >
-                        <img src="@/assets/logo_lark.svg" style="width: 100%" alt="" />
-                      </AppAvatar>
-                      <AppAvatar v-else class="mr-12 avatar-blue" shape="square" :size="24">
-                        <!-- <img src="@/assets/icon_document.svg" style="width: 58%" alt="" /> -->
-                        <img style="margin-right: 5px;width: 26px;height: 26px;" src="@/assets/icon/dataset.png" alt="">
-                      </AppAvatar>
-                      <span class="ellipsis" :title="item?.name"> {{ item?.name }}</span>
-                    </div>
-                  </el-dropdown-item>
-                </div>
-              </template>
-            </el-dropdown-menu>
-          </div>
-        </el-scrollbar>
-        <div class="breadcrumb__footer border-t" style="padding: 8px 11px; min-width: 200px">
-          <template v-if="isApplication">
-            <div class="w-full text-left cursor" @click="openCreateDialog">
-              <el-button link>
-                <el-icon class="mr-4"><Plus /></el-icon>
-                {{ $t('views.application.createApplication') }}
-              </el-button>
-            </div>
-          </template>
-          <template v-else-if="isDataset">
-            <div class="w-full text-left cursor" @click="openCreateDialog">
-              <el-button link>
-                <el-icon class="mr-4"><Plus /></el-icon> {{ $t('views.dataset.createDataset') }}
-              </el-button>
-            </div>
-          </template>
-        </div>
-      </template>
-    </el-dropdown>
+      <div class="ellipsis" :title="current?.name">{{ current?.name }}</div>
+    </div>
   </div>
-  <CreateApplicationDialog ref="CreateApplicationDialogRef" @refresh="refresh" />
-  <CreateDatasetDialog ref="CreateDatasetDialogRef" @refresh="refresh" />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { onBeforeRouteLeave, useRouter, useRoute } from 'vue-router'
-import CreateApplicationDialog from '@/views/application/component/CreateApplicationDialog.vue'
-import CreateDatasetDialog from '@/views/dataset/component/CreateDatasetDialog.vue'
-import { isAppIcon, isWorkFlow } from '@/utils/application'
+import { resetUrl } from '@/utils/common'
+import { loadSharedApi } from '@/utils/dynamics-api/shared-api'
 import useStore from '@/stores'
-const { common, dataset, application } = useStore()
+import permissionMap from '@/permission'
+const { common, folder,user } = useStore()
 const route = useRoute()
 const router = useRouter()
+
 const {
   meta: { activeMenu },
-  params: { id }
+  params: { id, folderId },
+  query: { isShared },
 } = route as any
+
+const apiType = computed(() => {
+  if (route.path.includes('shared')) {
+    return 'systemShare'
+  } else if (route.path.includes('resource-management')) {
+    return 'systemManage'
+  } else {
+    return 'workspace'
+  }
+})
+
+const folderType = computed(() => {
+  if (route.path.includes('application')) {
+    return 'application'
+  }
+  if (route.path.includes('knowledge')) {
+    return 'knowledge'
+  }
+  else {return 'application'}
+})
+
+const permissionPrecise = computed(() => {
+  return permissionMap[folderType.value!]['workspace']
+})
+
+const shareDisabled = computed(() => {
+  return folderId === 'share' || isShared === 'true'
+})
 
 onBeforeRouteLeave((to, from) => {
   common.saveBreadcrumb(null)
 })
 
-const CreateDatasetDialogRef = ref()
-const CreateApplicationDialogRef = ref()
-const list = ref<any[]>([])
 const loading = ref(false)
 
-const breadcrumbData = computed(() => common.breadcrumb)
-
-const current = computed(() => {
-  return list.value?.filter((v) => v.id === id)?.[0]
-})
+const current = ref<any>(null)
 
 const isApplication = computed(() => {
   return activeMenu.includes('application')
 })
-const isDataset = computed(() => {
-  return activeMenu.includes('dataset')
+const isKnowledge = computed(() => {
+  return activeMenu.includes('knowledge')
 })
 
-function openCreateDialog() {
-  if (isDataset.value) {
-    CreateDatasetDialogRef.value.open()
-  } else if (isApplication.value) {
-    CreateApplicationDialogRef.value.open()
-  }
-}
-
-function changeMenu(id: string) {
-  const lastMatched = route.matched[route.matched.length - 1]
-  if (lastMatched) {
-    if (isDataset.value) {
-      router.push({ name: lastMatched.name, params: { id: id } })
-    } else if (isApplication.value) {
-      const type = list.value?.filter((v) => v.id === id)?.[0]?.type
-      if (
-        isWorkFlow(type) &&
-        (lastMatched.name === 'AppSetting' || lastMatched.name === 'AppHitTest')
-      ) {
-        router.push({ path: `/application/${id}/${type}/overview` })
-      } else {
-        router.push({
-          name: lastMatched.name,
-          params: { id: id, type: type }
-        })
-      }
-    }
-  }
-}
-
-function getDataset() {
-  loading.value = true
-  dataset
-    .asyncGetAllDataset()
-    .then((res: any) => {
-      list.value = res.data
-      common.saveBreadcrumb(list.value)
-      loading.value = false
-    })
-    .catch(() => {
-      loading.value = false
-    })
-}
-function getApplication() {
-  loading.value = true
-  application
-    .asyncGetAllApplication()
-    .then((res: any) => {
-      list.value = res.data
-      common.saveBreadcrumb(list.value)
-      loading.value = false
-    })
-    .catch(() => {
-      loading.value = false
-    })
-}
-function refresh() {
-  common.saveBreadcrumb(null)
-  if (isDataset.value) {
-    getDataset()
-  } else if (isApplication.value) {
-    getApplication()
-  }
-}
-onMounted(() => {
-  if (!breadcrumbData.value) {
-    if (isDataset.value) {
-      getDataset()
-    } else if (isApplication.value) {
-      getApplication()
-    }
+const toBackPath = computed(() => {
+  if (route.path.includes('shared')) {
+    return '/system/shared' + activeMenu
+  } else if (route.path.includes('resource-management')) {
+    return '/system/resource-management' + activeMenu
   } else {
-    list.value = breadcrumbData.value
+    return activeMenu
+  }
+})
+
+function getKnowledgeDetail() {
+  loading.value = true
+  loadSharedApi({ type: 'knowledge', isShared: shareDisabled.value, systemType: apiType.value })
+    .getKnowledgeDetail(id)
+    .then((res: any) => {
+      current.value = res.data
+      loading.value = false
+    })
+    .catch(() => {
+      loading.value = false
+    })
+}
+
+function getApplicationDetail() {
+  loading.value = true
+  loadSharedApi({ type: 'application', systemType: apiType.value })
+    .getApplicationDetail(id)
+    .then((res: any) => {
+      current.value = res.data
+      loading.value = false
+    })
+    .catch(() => {
+      loading.value = false
+    })
+}
+
+function toBack() {
+  if (isKnowledge.value) {
+    folder.setCurrentFolder({
+      id: permissionPrecise.value.folderRead(folderId)? folderId : user.getWorkspaceId(),
+    })
+  } else if (isApplication.value) {
+    folder.setCurrentFolder({
+      id: permissionPrecise.value.folderRead(current.value.folder)? current.value.folder : user.getWorkspaceId(),
+    })
+  }
+  router.push({ path: toBackPath.value })
+}
+
+onMounted(() => {
+  if (isKnowledge.value) {
+    getKnowledgeDetail()
+  } else if (isApplication.value) {
+    getApplicationDetail()
   }
 })
 </script>

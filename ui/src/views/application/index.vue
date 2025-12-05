@@ -1,300 +1,571 @@
 <template>
-  <div class="application-list-container p-24" style="padding-top: 16px">
-    <div class="flex-between mb-16">
-      <h4>{{ $t('views.application.title') }}</h4>
-      <div class="flex-between">
-        <el-select
-          v-model="selectUserId"
-          class="mr-12"
-          @change="searchHandle"
-          style="max-width: 240px; width: 150px"
-        >
-          <el-option
-            v-for="item in userOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-        <el-input
-          v-model="searchValue"
-          @change="searchHandle"
-          :placeholder="$t('views.application.searchBar.placeholder')"
-          prefix-icon="Search"
-          class="w-240"
-          style="min-width: 240px"
-          clearable
-        />
-        <el-button style="padding: 0 20px;margin-left: 5px;" type="primary" class="custom-btn">
-          <el-icon style="margin-right: 5px;"><Search /></el-icon>
-          {{ $t('views.application.searchBar.search') }}
-        </el-button>
-      </div>
-    </div>
-    <div v-loading.fullscreen.lock="paginationConfig.current_page === 1 && loading">
-      <InfiniteScroll
-        :size="applicationList.length"
-        :total="paginationConfig.total"
-        :page_size="paginationConfig.page_size"
-        v-model:current_page="paginationConfig.current_page"
-        @load="getList"
-        :loading="loading"
-      >
-        <el-row :gutter="15">
-          <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="6" class="mb-16">
-            <el-card shadow="hover" class="application-card-add" style="--el-card-padding: 8px">
-              <div class="card-add-button flex align-center cursor p-8" @click="openCreateDialog">
-                <AppIcon iconName="app-add-application" class="mr-8"></AppIcon>
-                {{ $t('views.application.createApplication') }}
-              </div>
-              <el-divider style="margin: 8px 0" />
-              <el-upload
-                ref="elUploadRef"
-                :file-list="[]"
-                action="#"
-                multiple
-                :auto-upload="false"
-                :show-file-list="false"
-                :limit="1"
-                :on-change="(file: any, fileList: any) => importApplication(file)"
-                class="card-add-button"
-              >
-                <div class="flex align-center cursor p-8">
-                  <AppIcon iconName="app-import" class="mr-8"></AppIcon>
-                  {{ $t('views.application.importApplication') }}
-                </div>
-              </el-upload>
-            </el-card>
-          </el-col>
-          <el-col
-            :xs="24"
-            :sm="12"
-            :md="8"
-            :lg="6"
-            :xl="6"
-            v-for="(item, index) in applicationList"
-            :key="index"
-            class="mb-16"
-          >
-            <CardBox
-              :title="item.name"
-              :description="item.desc"
-              class="application-card cursor"
-              @click="router.push({ path: `/application/${item.id}/${item.type}/overview` })"
+  <LayoutContainer showCollapse resizable class="application-manage">
+    <template #left>
+      <h4 class="p-12-16 pb-0 mt-12">{{ $t('views.application.title') }}</h4>
+
+      <folder-tree
+        :source="SourceTypeEnum.APPLICATION"
+        :data="folderList"
+        :currentNodeKey="folder.currentFolder?.id"
+        @handleNodeClick="folderClickHandle"
+        @refreshTree="refreshFolder"
+        :draggable="true"
+      />
+    </template>
+    <ContentContainer>
+      <template #header>
+        <FolderBreadcrumb :folderList="folderList" @click="folderClickHandle" />
+      </template>
+      <template #search>
+        <div class="flex">
+          <div class="flex-between complex-search">
+            <el-select
+              class="complex-search__left"
+              v-model="search_type"
+              style="width: 120px"
+              @change="search_type_change"
             >
-              <template #icon>
-                <AppAvatar
-                  v-if="isAppIcon(item?.icon)"
-                  shape="square"
-                  :size="32"
-                  style="background: none"
-                  class="mr-8"
-                >
-                  <img :src="item?.icon" alt="" />
-                </AppAvatar>
-                <AppAvatar
-                  v-else-if="item?.name"
-                  shape="square"
-                  :size="32"
-                  class="mr-8"
-                >
-                <img src="@/assets/icon/application.png" alt="">
-              </AppAvatar>
-              </template>
-              <template #subTitle>
-                <el-text class="color-secondary" size="small">
-                  <auto-tooltip :content="item.username">
-                    {{ $t('common.creator') }}: {{ item.username }}
-                  </auto-tooltip>
-                </el-text>
-              </template>
-              <div class="status-tag">
-                <el-tag type="warning" v-if="isWorkFlow(item.type)" style="height: 22px">
-                  {{ $t('views.application.workflow') }}
-                </el-tag>
-                <el-tag class="blue-tag" v-else style="height: 22px">
-                  {{ $t('views.application.simple') }}
-                </el-tag>
-              </div>
+              <el-option :label="$t('common.creator')" value="create_user" />
 
-              <template #footer>
-                <div class="footer-content">
-                  <el-tooltip
-                    effect="dark"
-                    :content="$t('views.application.setting.demo')"
-                    placement="top"
-                  >
-                    <el-button text @click.stop @click="getAccessToken(item.id)">
-                      <img class="icon-btn" src="@/assets/icon/app-view.png" alt="">
-                      <!-- <AppIcon iconName="app-view"></AppIcon> -->
-                    </el-button>
-                  </el-tooltip>
-                  <el-divider direction="vertical" />
-                  <el-tooltip effect="dark" :content="$t('common.setting')" placement="top">
-                    <el-button text @click.stop="settingApplication(item)">
-                      <!-- <AppIcon iconName="Setting"></AppIcon> -->
-                      <img class="icon-btn" src="@/assets/icon/setting.png" alt="">
-                       <img src="" alt="">
-                    </el-button>
-                  </el-tooltip>
-                  <el-divider direction="vertical" />
-                  <span @click.stop>
-                    <el-dropdown trigger="click">
-                      <el-button text @click.stop>
-                        <!-- <el-icon><MoreFilled /></el-icon> -->
-                        <img class="icon-btn" src="@/assets/icon/moreFilled.png" alt="">
-                      </el-button>
-                      <template #dropdown>
-                        <el-dropdown-menu>
-                          <el-dropdown-item
-                            v-if="is_show_copy_button(item)"
-                            @click="copyApplication(item)"
-                          >
-                            <AppIcon iconName="app-copy"></AppIcon>
-                            {{ $t('common.copy') }}
-                          </el-dropdown-item>
-                          <el-dropdown-item @click.stop="exportApplication(item)">
-                            <AppIcon iconName="app-export"></AppIcon>
+              <el-option :label="$t('common.name')" value="name" />
 
-                            {{ $t('common.export') }}
-                          </el-dropdown-item>
-                          <el-dropdown-item icon="Delete" @click.stop="deleteApplication(item)">{{
-                            $t('common.delete')
-                          }}</el-dropdown-item>
-                        </el-dropdown-menu>
-                      </template>
-                    </el-dropdown>
-                  </span>
-                </div>
-              </template>
-            </CardBox>
-          </el-col>
-        </el-row>
-      </InfiniteScroll>
-    </div>
+              <el-option :label="$t('views.application.publishStatus')" value="publish_status" />
+            </el-select>
+            <el-input
+              v-if="search_type === 'name'"
+              v-model="search_form.name"
+              @change="searchHandle"
+              :placeholder="$t('common.searchBar.placeholder')"
+              style="width: 220px"
+              clearable
+            />
+            <el-select
+              v-else-if="search_type === 'create_user'"
+              v-model="search_form.create_user"
+              @change="searchHandle"
+              filterable
+              clearable
+              style="width: 220px"
+            >
+              <el-option v-for="u in user_options" :key="u.id" :value="u.id" :label="u.nick_name" />
+            </el-select>
+            <el-select
+              v-else-if="search_type === 'publish_status'"
+              v-model="search_form.publish_status"
+              @change="searchHandle"
+              filterable
+              clearable
+              style="width: 220px"
+            >
+              <el-option :label="$t('common.status.published')" value="published" />
+              <el-option :label="$t('common.status.unpublished')" value="unpublished" />
+            </el-select>
+          </div>
+          <el-dropdown trigger="click" v-if="permissionPrecise.create()">
+            <el-button type="primary" class="ml-8">
+              {{ $t('common.create') }}
+              <el-icon class="el-icon--right">
+                <arrow-down />
+              </el-icon>
+            </el-button>
+            <template #dropdown>
+              <el-dropdown-menu class="create-dropdown">
+                <el-dropdown-item @click="openCreateDialog('SIMPLE')">
+                  <div class="flex">
+                    <el-avatar shape="square" class="avatar-blue mt-4" :size="32">
+                      <img
+                        src="@/assets/application/icon_simple_application.svg"
+                        style="width: 65%"
+                        alt=""
+                      />
+                    </el-avatar>
+                    <div class="pre-wrap ml-8">
+                      <div class="lighter">{{ $t('views.application.simple') }}</div>
+                      <el-text type="info" size="small"
+                        >{{ $t('views.application.simplePlaceholder') }}
+                      </el-text>
+                    </div>
+                  </div>
+                </el-dropdown-item>
+                <el-dropdown-item @click="openCreateDialog('WORK_FLOW')">
+                  <div class="flex">
+                    <el-avatar shape="square" class="avatar-purple mt-4" :size="32">
+                      <img
+                        src="@/assets/application/icon_workflow_application.svg"
+                        style="width: 65%"
+                        alt=""
+                      />
+                    </el-avatar>
+                    <div class="pre-wrap ml-8">
+                      <div class="lighter">{{ $t('views.application.workflow') }}</div>
+                      <el-text type="info" size="small"
+                        >{{ $t('views.application.workflowPlaceholder') }}
+                      </el-text>
+                    </div>
+                  </div>
+                </el-dropdown-item>
+                <el-upload
+                  class="import-button"
+                  ref="elUploadRef"
+                  :file-list="[]"
+                  action="#"
+                  multiple
+                  :auto-upload="false"
+                  :show-file-list="false"
+                  :limit="1"
+                  :on-change="(file: any, fileList: any) => importApplication(file)"
+                >
+                  <el-dropdown-item>
+                    <div class="flex align-center w-full">
+                      <el-avatar shape="square" class="mt-4" :size="32" style="background: none">
+                        <img src="@/assets/icon_import.svg" alt="" />
+                      </el-avatar>
+                      <div class="pre-wrap ml-8">
+                        <div class="lighter">{{ $t('common.importCreate') }}</div>
+                      </div>
+                    </div>
+                  </el-dropdown-item>
+                </el-upload>
+                <el-dropdown-item @click="openCreateFolder" divided>
+                  <div class="flex align-center">
+                    <AppIcon iconName="app-folder" style="font-size: 32px"></AppIcon>
+                    <div class="pre-wrap ml-4">
+                      <div class="lighter">
+                        {{ $t('components.folder.addFolder') }}
+                      </div>
+                    </div>
+                  </div>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+        </div>
+      </template>
+      <div
+        v-loading.fullscreen.lock="paginationConfig.current_page === 1 && loading"
+        style="max-height: calc(100vh - 120px)"
+      >
+        <InfiniteScroll
+          :size="applicationList.length"
+          :total="paginationConfig.total"
+          :page_size="paginationConfig.page_size"
+          v-model:current_page="paginationConfig.current_page"
+          @load="getList"
+          :loading="loading"
+        >
+          <el-row v-if="applicationList.length > 0" :gutter="15" class="w-full">
+            <template v-for="(item, index) in applicationList" :key="index">
+              <!-- <el-col
+                v-if="item.resource_type === 'folder'"
+                :xs="24"
+                :sm="12"
+                :md="12"
+                :lg="8"
+                :xl="6"
+                class="mb-16"
+              >
+                <CardBox
+                  :title="item.name"
+                  :description="item.desc || $t('components.noDesc')"
+                  class="cursor"
+                  @click="clickFolder(item)"
+                >
+                  <template #icon>
+                    <el-avatar shape="square" :size="32" style="background: none">
+                      <AppIcon iconName="app-folder" style="font-size: 32px"></AppIcon>
+                    </el-avatar>
+                  </template>
+                  <template #subTitle>
+                    <el-text class="color-secondary lighter" size="small">
+                      {{ $t('common.creator') }}: {{ i18n_name(item.nick_name) }}
+                    </el-text>
+                  </template>
+                </CardBox>
+              </el-col> -->
+              <el-col :xs="24" :sm="12" :md="12" :lg="8" :xl="6" class="mb-16">
+                <CardBox
+                  :title="item.name"
+                  :description="item.desc"
+                  class="cursor"
+                  @click="goApp(item)"
+                >
+                  <template #icon>
+                    <el-avatar shape="square" :size="32" style="background: none">
+                      <img :src="resetUrl(item?.icon, resetUrl('./favicon.ico'))" alt="" />
+                    </el-avatar>
+                  </template>
+                  <template #subTitle>
+                    <el-text class="color-secondary lighter" size="small">
+                      <auto-tooltip :content="item.username">
+                        {{ $t('common.creator') }}: {{ i18n_name(item.nick_name) }}
+                      </auto-tooltip>
+                    </el-text>
+                  </template>
+                  <template #tag>
+                    <el-tag v-if="isWorkFlow(item.type)" class="warning-tag">
+                      {{ $t('views.application.workflow') }}
+                    </el-tag>
+                    <el-tag class="blue-tag" v-else>
+                      {{ $t('views.application.simple') }}
+                    </el-tag>
+                  </template>
+
+                  <template #footer>
+                    <div v-if="item.is_publish" class="flex align-center">
+                      <el-icon class="color-success mr-8" style="font-size: 16px">
+                        <SuccessFilled />
+                      </el-icon>
+                      <span class="color-secondary">
+                        {{ $t('common.status.published') }}
+                      </span>
+                      <el-divider direction="vertical" />
+                      <AppIcon iconName="app-clock" class="color-secondary mr-8"></AppIcon>
+
+                      <span class="color-secondary">{{ dateFormat(item.update_time) }}</span>
+                    </div>
+                    <div v-else class="flex align-center">
+                      <AppIcon iconName="app-disabled" class="color-secondary mr-8"></AppIcon>
+                      <span class="color-secondary">
+                        {{ $t('common.status.unpublished') }}
+                      </span>
+                    </div>
+                  </template>
+                  <template #mouseEnter>
+                    <div @click.stop>
+                      <el-dropdown trigger="click">
+                        <el-button text @click.stop>
+                          <AppIcon iconName="app-more"></AppIcon>
+                        </el-button>
+                        <template #dropdown>
+                          <el-dropdown-menu>
+                            <el-dropdown-item @click.stop="toChat(item)">
+                              <AppIcon iconName="app-create-chat" class="color-secondary"></AppIcon>
+                              {{ $t('views.application.operation.toChat') }}
+                            </el-dropdown-item>
+
+                            <el-dropdown-item
+                              @mousedown.stop="settingApplication($event, item)"
+                              v-if="permissionPrecise.edit(item.id)"
+                              @click.stop
+                            >
+                              <AppIcon iconName="app-setting" class="color-secondary"></AppIcon>
+                              {{ $t('common.setting') }}
+                            </el-dropdown-item>
+
+                            <el-dropdown-item
+                              @click.stop="openAuthorization(item)"
+                              v-if="permissionPrecise.auth(item.id)"
+                            >
+                              <AppIcon
+                                iconName="app-resource-authorization"
+                                class="color-secondary"
+                              ></AppIcon>
+                              {{ $t('views.system.resourceAuthorization.title') }}
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                              @click.stop="openMoveToDialog(item)"
+                              v-if="permissionPrecise.edit(item.id) && apiType === 'workspace'"
+                            >
+                              <AppIcon iconName="app-migrate" class="color-secondary"></AppIcon>
+                              {{ $t('common.moveTo') }}
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                              @click="copyApplication(item)"
+                              v-if="permissionPrecise.create()"
+                            >
+                              <AppIcon iconName="app-copy" class="color-secondary"></AppIcon>
+                              {{ $t('common.copy') }}
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                              divided
+                              @click.stop="exportApplication(item)"
+                              v-if="permissionPrecise.export(item.id)"
+                            >
+                              <AppIcon iconName="app-export" class="color-secondary"></AppIcon>
+                              {{ $t('common.export') }}
+                            </el-dropdown-item>
+                            <el-dropdown-item
+                              divided
+                              @click.stop="deleteApplication(item)"
+                              v-if="permissionPrecise.delete(item.id)"
+                            >
+                              <AppIcon iconName="app-delete" class="color-secondary"></AppIcon>
+                              {{ $t('common.delete') }}
+                            </el-dropdown-item>
+                          </el-dropdown-menu>
+                        </template>
+                      </el-dropdown>
+                    </div>
+                  </template>
+                </CardBox>
+              </el-col>
+            </template>
+          </el-row>
+          <el-empty :description="$t('common.noData')" v-else />
+        </InfiniteScroll>
+      </div>
+    </ContentContainer>
     <CreateApplicationDialog ref="CreateApplicationDialogRef" />
     <CopyApplicationDialog ref="CopyApplicationDialogRef" />
-  </div>
+    <CreateFolderDialog ref="CreateFolderDialogRef" @refresh="refreshFolder" />
+    <MoveToDialog
+      ref="MoveToDialogRef"
+      :source="SourceTypeEnum.APPLICATION"
+      @refresh="refreshApplicationList"
+      v-if="apiType === 'workspace'"
+    />
+    <ResourceAuthorizationDrawer
+      :type="SourceTypeEnum.APPLICATION"
+      ref="ResourceAuthorizationDrawerRef"
+    />
+  </LayoutContainer>
 </template>
-<script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue'
-import applicationApi from '@/api/application'
-import CreateApplicationDialog from './component/CreateApplicationDialog.vue'
-import CopyApplicationDialog from './component/CopyApplicationDialog.vue'
-import { MsgSuccess, MsgConfirm, MsgAlert, MsgError } from '@/utils/message'
-import { isAppIcon } from '@/utils/application'
-import { useRouter } from 'vue-router'
-import { isWorkFlow } from '@/utils/application'
-import { ValidType, ValidCount } from '@/enums/common'
-import { t } from '@/locales'
-import useStore from '@/stores'
 
-const elUploadRef = ref<any>()
-const { application, user, common } = useStore()
+<script lang="ts" setup>
+import { onMounted, ref, reactive, computed } from 'vue'
+import CreateApplicationDialog from '@/views/application/component/CreateApplicationDialog.vue'
+import CreateFolderDialog from '@/components/folder-tree/CreateFolderDialog.vue'
+import CopyApplicationDialog from '@/views/application/component/CopyApplicationDialog.vue'
+import MoveToDialog from '@/components/folder-tree/MoveToDialog.vue'
+import ResourceAuthorizationDrawer from '@/components/resource-authorization-drawer/index.vue'
+import ApplicationApi from '@/api/application/application'
+import { MsgSuccess, MsgConfirm, MsgError } from '@/utils/message'
+import useStore from '@/stores'
+import { t } from '@/locales'
+import { i18n_name } from '@/utils/common'
+import { useRouter, useRoute } from 'vue-router'
+import { isWorkFlow } from '@/utils/application'
+import { resetUrl } from '@/utils/common'
+import { dateFormat } from '@/utils/time'
+import { SourceTypeEnum } from '@/enums/common'
+import permissionMap from '@/permission'
+import WorkspaceApi from '@/api/workspace/workspace'
+import { hasPermission } from '@/utils/permission'
+import { ComplexPermission } from '@/utils/permission/type'
+import { EditionConst, PermissionConst, RoleConst } from '@/utils/permission/data'
+
 const router = useRouter()
 
-const CopyApplicationDialogRef = ref()
-const CreateApplicationDialogRef = ref()
+const apiType = computed<'workspace'>(() => {
+  return 'workspace'
+})
+const permissionPrecise = computed(() => {
+  return permissionMap['application'][apiType.value]
+})
+
+const { folder, application, user } = useStore()
+
 const loading = ref(false)
 
-const applicationList = ref<any[]>([])
+const search_type = ref('name')
+const search_form = ref<any>({
+  name: '',
+  create_user: '',
+  publish_status: undefined,
+})
+
+const user_options = ref<any[]>([])
 
 const paginationConfig = reactive({
   current_page: 1,
   page_size: 30,
-  total: 0
+  total: 0,
 })
 
-interface UserOption {
-  label: string
-  value: string
+const folderList = ref<any[]>([])
+const applicationList = ref<any[]>([])
+const CopyApplicationDialogRef = ref()
+
+const ResourceAuthorizationDrawerRef = ref()
+function openAuthorization(item: any) {
+  ResourceAuthorizationDrawerRef.value.open(item.id)
 }
 
-const userOptions = ref<UserOption[]>([])
+const MoveToDialogRef = ref()
 
-const selectUserId = ref('all')
-
-const searchValue = ref('')
-
-const apiInputParams = ref([])
-
-function copyApplication(row: any) {
-  application.asyncGetApplicationDetail(row.id, loading).then((res: any) => {
-    if (res?.data) {
-      CopyApplicationDialogRef.value.open({ ...res.data, model_id: res.data.model })
-    }
-  })
-}
-
-const is_show_copy_button = (row: any) => {
-  return user.userInfo ? user.userInfo.id == row.user_id : false
-}
-
-function settingApplication(row: any) {
-  if (isWorkFlow(row.type)) {
-    router.push({ path: `/application/${row.id}/workflow` })
-  } else {
-    router.push({ path: `/application/${row.id}/${row.type}/setting` })
+function openMoveToDialog(data: any) {
+  const obj = {
+    id: data.id,
+    folder_id: data.folder,
   }
+  MoveToDialogRef.value?.open(obj)
 }
 
-const exportApplication = (application: any) => {
-  applicationApi.exportApplication(application.id, application.name, loading).catch((e) => {
-    if (e.response.status !== 403) {
-      e.response.data.text().then((res: string) => {
-        MsgError(`${t('views.application.tip.ExportError')}:${JSON.parse(res).message}`)
+function refreshApplicationList(row: any) {
+  const index = applicationList.value.findIndex((v) => v.id === row.id)
+  applicationList.value.splice(index, 1)
+}
+
+const goApp = (item: any) => {
+  router.push({ path: get_route(item) })
+}
+
+const get_route = (item: any) => {
+  if (
+    hasPermission(
+      [
+        new ComplexPermission(
+          [RoleConst.USER],
+          [PermissionConst.APPLICATION.getApplicationWorkspaceResourcePermission(item.id)],
+          [],
+          'AND',
+        ),
+        RoleConst.WORKSPACE_MANAGE.getWorkspaceRole,
+        PermissionConst.APPLICATION_OVERVIEW_READ.getWorkspacePermissionWorkspaceManageRole,
+        PermissionConst.APPLICATION_OVERVIEW_READ.getApplicationWorkspaceResourcePermission(
+          item.id,
+        ),
+      ],
+      'OR',
+    )
+  ) {
+    return `/application/workspace/${item.id}/${item.type}/overview`
+  } else if (
+    hasPermission(
+      [
+        new ComplexPermission(
+          [RoleConst.USER],
+          [PermissionConst.APPLICATION.getApplicationWorkspaceResourcePermission(item.id)],
+          [],
+          'AND',
+        ),
+        RoleConst.WORKSPACE_MANAGE.getWorkspaceRole,
+        PermissionConst.APPLICATION_EDIT.getWorkspacePermissionWorkspaceManageRole,
+        PermissionConst.APPLICATION_EDIT.getApplicationWorkspaceResourcePermission(item.id),
+      ],
+      'OR',
+    )
+  ) {
+    if (item.type == 'WORK_FLOW') {
+      return `/application/workspace/${item.id}/workflow`
+    } else {
+      return `/application/workspace/${item.id}/${item.type}/setting`
+    }
+  } else if (
+    hasPermission(
+      [
+        new ComplexPermission(
+          [RoleConst.USER],
+          [PermissionConst.APPLICATION.getApplicationWorkspaceResourcePermission(item.id)],
+          [EditionConst.IS_EE, EditionConst.IS_PE],
+          'AND',
+        ),
+        new ComplexPermission(
+          [RoleConst.WORKSPACE_MANAGE.getWorkspaceRole],
+          [PermissionConst.APPLICATION_ACCESS_READ.getWorkspacePermissionWorkspaceManageRole],
+          [EditionConst.IS_EE, EditionConst.IS_PE],
+          'OR',
+        ),
+        new ComplexPermission(
+          [],
+          [
+            PermissionConst.APPLICATION_ACCESS_READ.getApplicationWorkspaceResourcePermission(
+              item.id,
+            ),
+          ],
+          [EditionConst.IS_EE, EditionConst.IS_PE],
+          'OR',
+        ),
+      ],
+      'OR',
+    )
+  ) {
+    return `/application/workspace/${item.id}/${item.type}/access`
+  } else if (
+    hasPermission(
+      [
+        new ComplexPermission(
+          [RoleConst.USER],
+          [PermissionConst.APPLICATION.getApplicationWorkspaceResourcePermission(item.id)],
+          [EditionConst.IS_EE, EditionConst.IS_PE],
+          'AND',
+        ),
+        new ComplexPermission(
+          [RoleConst.WORKSPACE_MANAGE.getWorkspaceRole],
+          [PermissionConst.APPLICATION_CHAT_USER_READ.getWorkspacePermissionWorkspaceManageRole],
+          [EditionConst.IS_EE, EditionConst.IS_PE],
+          'OR',
+        ),
+        new ComplexPermission(
+          [],
+          [
+            PermissionConst.APPLICATION_CHAT_USER_READ.getApplicationWorkspaceResourcePermission(
+              item.id,
+            ),
+          ],
+          [EditionConst.IS_EE, EditionConst.IS_PE],
+          'OR',
+        ),
+      ],
+      'OR',
+    )
+  ) {
+    return `/application/workspace/${item.id}/${item.type}/chat-user`
+  } else if (
+    hasPermission(
+      [
+        new ComplexPermission(
+          [RoleConst.USER],
+          [PermissionConst.APPLICATION.getApplicationWorkspaceResourcePermission(item.id)],
+          [],
+          'AND',
+        ),
+        PermissionConst.APPLICATION_CHAT_LOG_READ.getWorkspacePermissionWorkspaceManageRole,
+        PermissionConst.APPLICATION_CHAT_LOG_READ.getApplicationWorkspaceResourcePermission(
+          item.id,
+        ),
+      ],
+      'OR',
+    )
+  ) {
+    return `/application//workspace${item.id}/${item.type}/chat-log`
+  } else return `/application/`
+}
+
+const CreateApplicationDialogRef = ref()
+
+function openCreateDialog(type?: string) {
+  CreateApplicationDialogRef.value.open(folder.currentFolder?.id || 'default', type)
+}
+
+const search_type_change = () => {
+  search_form.value = { name: '', create_user: '' }
+}
+
+function toChat(row: any) {
+  const api =
+    row.type == 'WORK_FLOW'
+      ? (id: string) => ApplicationApi.getApplicationDetail(id)
+      : (id: string) => Promise.resolve({ data: row })
+  api(row.id).then((ok) => {
+    let aips = ok.data?.work_flow?.nodes
+      ?.filter((v: any) => v.id === 'base-node')
+      .map((v: any) => {
+        return v.properties.api_input_field_list
+          ? v.properties.api_input_field_list.map((v: any) => {
+              return {
+                name: v.variable,
+                value: v.default_value,
+              }
+            })
+          : v.properties.input_field_list
+            ? v.properties.input_field_list
+                .filter((v: any) => v.assignment_method === 'api_input')
+                .map((v: any) => {
+                  return {
+                    name: v.variable,
+                    value: v.default_value,
+                  }
+                })
+            : []
       })
-    }
+      .reduce((x: Array<any>, y: Array<any>) => [...x, ...y])
+    aips = aips ? aips : []
+    const apiParams = mapToUrlParams(aips) ? '?' + mapToUrlParams(aips) : ''
+    ApplicationApi.getAccessToken(row.id, loading).then((res: any) => {
+      window.open(application.location + res?.data?.access_token + apiParams)
+    })
   })
-}
-const importApplication = (file: any) => {
-  const formData = new FormData()
-  formData.append('file', file.raw, file.name)
-  elUploadRef.value.clearFiles()
-  applicationApi
-    .importApplication(formData, loading)
-    .then(async (res: any) => {
-      if (res?.data) {
-        searchHandle()
-      }
-    })
-    .catch((e) => {
-      if (e.code === 400) {
-        MsgConfirm(t('common.tip'), t('views.application.tip.professionalMessage'), {
-          cancelButtonText: t('common.confirm'),
-          confirmButtonText: t('common.professional')
-        }).then(() => {
-          window.open('https://maxkb.cn/pricing.html', '_blank')
-        })
-      }
-    })
-}
-
-function openCreateDialog() {
-  common
-    .asyncGetValid(ValidType.Application, ValidCount.Application, loading)
-    .then(async (res: any) => {
-      if (res?.data) {
-        CreateApplicationDialogRef.value.open()
-      } else if (res?.code === 400) {
-        MsgConfirm(t('common.tip'), t('views.application.tip.professionalMessage'), {
-          cancelButtonText: t('common.confirm'),
-          confirmButtonText: t('common.professional')
-        }).then(() => {
-          window.open('https://maxkb.cn/pricing.html', '_blank')
-        })
-      }
-    })
-}
-
-function searchHandle() {
-  if (user.userInfo) {
-    localStorage.setItem(user.userInfo.id + 'application', selectUserId.value)
-  }
-  applicationList.value = []
-  paginationConfig.current_page = 1
-  paginationConfig.total = 0
-  getList()
 }
 
 function mapToUrlParams(map: any[]) {
@@ -307,51 +578,43 @@ function mapToUrlParams(map: any[]) {
   return params.toString() // 返回 URL 查询字符串
 }
 
-function getAccessToken(id: string) {
-  applicationList.value
-    .filter((app) => app.id === id)[0]
-    ?.work_flow?.nodes?.filter((v: any) => v.id === 'base-node')
-    .map((v: any) => {
-      apiInputParams.value = v.properties.api_input_field_list
-        ? v.properties.api_input_field_list.map((v: any) => {
-            return {
-              name: v.variable,
-              value: v.default_value
-            }
-          })
-        : v.properties.input_field_list
-          ? v.properties.input_field_list
-              .filter((v: any) => v.assignment_method === 'api_input')
-              .map((v: any) => {
-                return {
-                  name: v.variable,
-                  value: v.default_value
-                }
-              })
-          : []
-    })
-
-  const apiParams = mapToUrlParams(apiInputParams.value)
-    ? '?' + mapToUrlParams(apiInputParams.value)
-    : ''
-  application.asyncGetAccessToken(id, loading).then((res: any) => {
-    window.open(application.location + res?.data?.access_token + apiParams)
+function copyApplication(row: any) {
+  ApplicationApi.getApplicationDetail(row.id, loading).then((res: any) => {
+    if (res?.data) {
+      CopyApplicationDialogRef.value.open(
+        { ...res.data, model_id: res.data.model },
+        folder.currentFolder?.id || 'default',
+      )
+    }
   })
+}
+
+function settingApplication(event: any, row: any) {
+  if (isWorkFlow(row.type)) {
+    if (event?.ctrlKey) {
+      event?.preventDefault()
+      event.stopPropagation()
+      window.open(`/application/workspace/${row.id}/workflow`, '_blank')
+    } else {
+      router.push({ path: `/application/workspace/${row.id}/workflow` })
+    }
+  } else {
+    router.push({ path: `/application/workspace/${row.id}/${row.type}/setting` })
+  }
 }
 
 function deleteApplication(row: any) {
   MsgConfirm(
-    // @ts-ignore
     `${t('views.application.delete.confirmTitle')}${row.name} ?`,
     t('views.application.delete.confirmMessage'),
     {
       confirmButtonText: t('common.confirm'),
       cancelButtonText: t('common.cancel'),
-      confirmButtonClass: 'danger'
-    }
+      confirmButtonClass: 'danger',
+    },
   )
     .then(() => {
-      applicationApi.delApplication(row.id, loading).then(() => {
+      ApplicationApi.delApplication(row.id, loading).then(() => {
         const index = applicationList.value.findIndex((v) => v.id === row.id)
         applicationList.value.splice(index, 1)
         MsgSuccess(t('common.deleteSuccess'))
@@ -360,93 +623,110 @@ function deleteApplication(row: any) {
     .catch(() => {})
 }
 
-function getList() {
-  const params = {
-    ...(searchValue.value && { name: searchValue.value }),
-    ...(selectUserId.value &&
-      selectUserId.value !== 'all' && { select_user_id: selectUserId.value })
-  }
-  applicationApi.getApplication(paginationConfig, params, loading).then((res) => {
-    res.data.records.forEach((item: any) => {
-      if (user.userInfo && item.user_id === user.userInfo.id) {
-        item.username = user.userInfo.username
-      } else {
-        item.username = userOptions.value.find((v) => v.value === item.user_id)?.label
-      }
-    })
-    applicationList.value = [...applicationList.value, ...res.data.records]
-    paginationConfig.total = res.data.total
+const exportApplication = (application: any) => {
+  ApplicationApi.exportApplication(application.id, application.name, loading).catch((e) => {
+    if (e.response.status !== 403) {
+      e.response.data.text().then((res: string) => {
+        MsgError(`${t('views.application.tip.ExportError')}:${JSON.parse(res).message}`)
+      })
+    }
   })
 }
 
-function getUserList() {
-  applicationApi.getUserList('APPLICATION', loading).then((res) => {
-    if (res.data) {
-      userOptions.value = res.data.map((item: any) => {
-        return {
-          label: item.username,
-          value: item.id
-        }
-      })
-      if (user.userInfo) {
-        const selectUserIdValue = localStorage.getItem(user.userInfo.id + 'application')
-        if (selectUserIdValue && userOptions.value.find((v) => v.value === selectUserIdValue)) {
-          selectUserId.value = selectUserIdValue
-        }
+const elUploadRef = ref()
+const importApplication = (file: any) => {
+  const formData = new FormData()
+  formData.append('file', file.raw, file.name)
+  elUploadRef.value.clearFiles()
+  ApplicationApi.importApplication(folder.currentFolder.id, formData, loading)
+    .then(async (res: any) => {
+      if (res?.data) {
+        applicationList.value = []
+        user.profile()
       }
+    })
+    .then(() => {
       getList()
+    })
+    .catch((e) => {
+      if (e.code === 400) {
+        MsgConfirm(t('common.tip'), t('views.application.tip.professionalMessage'), {
+          cancelButtonText: t('common.confirm'),
+          confirmButtonText: t('common.professional'),
+        }).then(() => {
+          window.open('https://maxkb.cn/pricing.html', '_blank')
+        })
+      }
+    })
+}
+
+// 文件夹相关
+const CreateFolderDialogRef = ref()
+
+function openCreateFolder() {
+  CreateFolderDialogRef.value.open(SourceTypeEnum.APPLICATION, folder.currentFolder.id)
+}
+
+function getFolder(bool?: boolean) {
+  const params = {}
+  folder.asyncGetFolder(SourceTypeEnum.APPLICATION, params, loading).then((res: any) => {
+    folderList.value = res.data
+    if (bool) {
+      // 初始化刷新
+      folder.setCurrentFolder(res.data?.[0] || {})
     }
+    getList()
+  })
+}
+
+function clickFolder(item: any) {
+  folder.setCurrentFolder(item)
+  paginationConfig.current_page = 1
+  applicationList.value = []
+  getList()
+}
+
+function folderClickHandle(row: any) {
+  if (row.id === folder.currentFolder?.id) {
+    return
+  }
+  folder.setCurrentFolder(row)
+  paginationConfig.current_page = 1
+  applicationList.value = []
+  getList()
+}
+
+function refreshFolder() {
+  paginationConfig.current_page = 1
+  applicationList.value = []
+  getFolder()
+}
+
+function searchHandle() {
+  paginationConfig.current_page = 1
+  applicationList.value = []
+  getList()
+}
+
+function getList() {
+  const params: any = {
+    folder_id: folder.currentFolder?.id || 'default',
+  }
+  if (search_form.value[search_type.value]) {
+    params[search_type.value] = search_form.value[search_type.value]
+  }
+  ApplicationApi.getApplication(paginationConfig, params, loading).then((res) => {
+    paginationConfig.total = res.data.total
+    applicationList.value = [...applicationList.value, ...res.data.records]
   })
 }
 
 onMounted(() => {
-  getUserList()
+  getFolder(folder.currentFolder?.id ? false : true)
+  WorkspaceApi.getAllMemberList(user.getWorkspaceId(), loading).then((res) => {
+    user_options.value = res.data
+  })
 })
 </script>
-<style lang="scss" scoped>
-.application-card-add {
-  width: 100%;
-  font-size: 14px;
-  min-height: var(--card-min-height);
-  border: 1px dashed var(--el-border-color);
-  background: var(--el-disabled-bg-color);
-  border-radius: 8px;
-  box-sizing: border-box;
 
-  &:hover {
-    border: 1px solid var(--el-card-bg-color);
-    background-color: var(--el-card-bg-color);
-  }
-
-  .card-add-button {
-    &:hover {
-      border-radius: 4px;
-      background: var(--app-text-color-light-1);
-    }
-
-    :deep(.el-upload) {
-      display: block;
-      width: 100%;
-      color: var(--el-text-color-regular);
-    }
-  }
-}
-
-.application-card {
-  .status-tag {
-    position: absolute;
-    right: 16px;
-    top: 15px;
-  }
-}
-
-.dropdown-custom-switch {
-  padding: 5px 11px;
-  font-size: 14px;
-  font-weight: 400;
-
-  span {
-    margin-right: 26px;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

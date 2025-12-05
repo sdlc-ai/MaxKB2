@@ -7,12 +7,6 @@
     width="650"
   >
     <el-form label-position="top" ref="limitFormRef" :model="form">
-      <!-- <el-form-item
-        :label="$t('views.applicationOverview.appInfo.LimitDialog.showSourceLabel')"
-        @click.prevent
-      >
-        <el-switch size="small" v-model="form.show_source"></el-switch>
-      </el-form-item> -->
       <el-form-item
         :label="$t('views.applicationOverview.appInfo.LimitDialog.clientQueryLimitLabel')"
       >
@@ -20,7 +14,7 @@
           v-model="form.access_num"
           :min="0"
           :step="1"
-          :max="10000"
+          :max="10000000"
           :value-on-clear="0"
           controls-position="right"
           style="width: 268px"
@@ -30,50 +24,7 @@
           $t('views.applicationOverview.appInfo.LimitDialog.timesDays')
         }}</span>
       </el-form-item>
-      <!--     身份验证 -->
-      <el-form-item
-        :label="$t('views.applicationOverview.appInfo.LimitDialog.authentication')"
-        v-hasPermission="new ComplexPermission([], ['x-pack'], 'OR')"
-      >
-        <el-switch size="small" v-model="form.authentication" @change="firstGeneration"></el-switch>
-      </el-form-item>
-      <el-form-item
-        prop="authentication_value"
-        v-if="form.authentication"
-        :label="$t('views.applicationOverview.appInfo.LimitDialog.authenticationValue')"
-        v-hasPermission="new ComplexPermission([], ['x-pack'], 'OR')"
-      >
-        <el-input
-          class="authentication-append-input"
-          v-model="form.authentication_value"
-          readonly
-          style="width: 268px"
-          disabled
-        >
-          <template #append>
-            <el-tooltip :content="$t('common.copy')" placement="top">
-              <el-button
-                type="primary"
-                text
-                @click="copyClick(form.authentication_value)"
-                style="margin: 0 4px !important"
-              >
-                <AppIcon iconName="app-copy"></AppIcon>
-              </el-button>
-            </el-tooltip>
-            <el-tooltip :content="$t('common.refresh')" placement="top">
-              <el-button
-                @click="refreshAuthentication"
-                type="primary"
-                text
-                style="margin: 0 4px 0 0 !important"
-              >
-                <el-icon><RefreshRight /></el-icon>
-              </el-button>
-            </el-tooltip>
-          </template>
-        </el-input>
-      </el-form-item>
+
       <el-form-item
         :label="$t('views.applicationOverview.appInfo.LimitDialog.whitelistLabel')"
         @click.prevent
@@ -92,7 +43,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click.prevent="dialogVisible = false">{{ $t('common.cancel') }} </el-button>
-        <el-button type="primary" class="custom-btn" @click="submit(limitFormRef)" :loading="loading">
+        <el-button type="primary" @click="submit(limitFormRef)" :loading="loading">
           {{ $t('common.save') }}
         </el-button>
       </span>
@@ -100,19 +51,24 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import type { FormInstance, FormRules } from 'element-plus'
-import applicationApi from '@/api/application'
 import { MsgSuccess } from '@/utils/message'
 import { t } from '@/locales'
-import { copyClick } from '@/utils/clipboard'
-import { ComplexPermission } from '@/utils/permission/type'
-
+import { loadSharedApi } from '@/utils/dynamics-api/shared-api'
 const route = useRoute()
 const {
-  params: { id }
+  params: { id },
 } = route
+
+const apiType = computed(() => {
+  if (route.path.includes('resource-management')) {
+    return 'systemManage'
+  } else {
+    return 'workspace'
+  }
+})
 
 const emit = defineEmits(['refresh'])
 
@@ -122,7 +78,7 @@ const form = ref<any>({
   white_active: true,
   white_list: '',
   authentication_value: '',
-  authentication: false
+  authentication: false,
 })
 
 const dialogVisible = ref<boolean>(false)
@@ -133,7 +89,7 @@ watch(dialogVisible, (bool) => {
     form.value = {
       access_num: 0,
       white_active: true,
-      white_list: ''
+      white_list: '',
     }
   }
 })
@@ -156,41 +112,19 @@ const submit = async (formEl: FormInstance | undefined) => {
         white_active: form.value.white_active,
         access_num: form.value.access_num,
         authentication: form.value.authentication,
-        authentication_value: form.value.authentication_value
+        authentication_value: form.value.authentication_value,
       }
-      applicationApi.putAccessToken(id as string, obj, loading).then((res) => {
-        emit('refresh')
-        // @ts-ignore
-        MsgSuccess(t('common.settingSuccess'))
-        dialogVisible.value = false
-      })
+      loadSharedApi({ type: 'application', systemType: apiType.value })
+        .putAccessToken(id as string, obj, loading)
+        .then(() => {
+          emit('refresh')
+
+          MsgSuccess(t('common.settingSuccess'))
+          dialogVisible.value = false
+        })
     }
   })
 }
-function generateAuthenticationValue(length: number = 10) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  const randomValues = new Uint8Array(length)
-  window.crypto.getRandomValues(randomValues)
-  return Array.from(randomValues)
-    .map((value) => chars[value % chars.length])
-    .join('')
-}
-function refreshAuthentication() {
-  form.value.authentication_value = generateAuthenticationValue()
-}
-
-function firstGeneration() {
-  if (form.value.authentication && !form.value.authentication_value) {
-    form.value.authentication_value = generateAuthenticationValue()
-  }
-}
-
 defineExpose({ open })
 </script>
-<style lang="scss" scoped>
-.authentication-append-input {
-  .el-input-group__append {
-    padding: 0 !important;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

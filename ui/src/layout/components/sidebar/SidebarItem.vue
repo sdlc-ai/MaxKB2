@@ -6,11 +6,9 @@
       popper-class="sidebar-container-popper"
     >
       <template #title>
-        <!-- <el-icon>
+        <el-icon>
           <AppIcon v-if="menu.meta && menu.meta.icon" :iconName="menuIcon" class="sidebar-icon" />
-        </el-icon> -->
-        <!-- <img v-if="menu.meta && menu.meta.icon" class="sidebar-img"  :src="returnImgSrc(menuIcon)" alt=""> -->
-        <i v-if="menu.meta && menu.meta.icon" :class="menuIcon" style="font-size: 20px;margin-right: 5px;"></i>
+        </el-icon>
         <span>{{ $t(menu.meta?.title as string) }}</span>
       </template>
       <sidebar-item
@@ -30,9 +28,7 @@
       @click="clickHandle(menu)"
     >
       <template #title>
-        <i v-if="menu.meta && menu.meta.icon" :class="menuIcon" style="font-size: 20px;margin-right: 5px;"></i>
-        <!-- <AppIcon v-if="menu.meta && menu.meta.icon" :iconName="menuIcon" class="sidebar-icon" /> -->
-         <!-- <img v-if="menu.meta && menu.meta.icon" class="sidebar-img"  :src="returnImgSrc(menuIcon)" alt=""> -->
+        <AppIcon v-if="menu.meta && menu.meta.icon" :iconName="menuIcon" class="sidebar-icon" />
         <span v-if="menu.meta && menu.meta.title">{{ $t(menu.meta?.title as string) }}</span>
       </template>
     </el-menu-item>
@@ -51,7 +47,7 @@ const props = defineProps<{
 const router = useRouter()
 const route = useRoute()
 const {
-  params: { id, type }
+  params: { id, type, from },
 } = route as any
 
 function showMenu() {
@@ -64,7 +60,7 @@ function showMenu() {
 
 function clickHandle(item?: any) {
   if (isWorkFlow(type) && item?.name === 'AppSetting') {
-    router.push({ path: `/application/${id}/workflow` })
+    router.push({ path: `/application/${from}/${id}/workflow` })
   }
 }
 const menuIcon = computed(() => {
@@ -82,22 +78,17 @@ const menuIcon = computed(() => {
     font-size: 20px;
     margin-top: -2px;
   }
-  .sidebar-img{
-    width: 22px;
-    height: 22px;
-    margin-right: 5px;
-  }
   .el-menu-item {
-    padding: 13px 12px 13px 16px !important;
+    padding: 13px 12px 13px 8px !important;
     font-weight: 500;
     border-radius: 4px;
     &:hover {
-      background: none;
-      color: var(--el-color-primary);
+      background: var(--app-text-color-light-1);
+      color: var(--el-menu-text-color);
     }
   }
   :deep(.el-sub-menu__title) {
-    padding: 13px 12px 13px 16px !important;
+    padding: 13px 12px 13px 10px !important;
     &:hover {
       background: none;
       color: var(--el-color-primary);

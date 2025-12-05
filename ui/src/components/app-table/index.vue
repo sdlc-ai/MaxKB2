@@ -15,12 +15,16 @@
             clearable
           />
 
-          <el-button type="primary" class="custom-btn" @click="submitHandle" :disabled="loading">{{$t('common.create')}}</el-button>
-          <el-button @click="showInput = false" class="custom-btn" :disabled="loading">{{$t('common.cancel')}}</el-button>
+          <el-button type="primary" @click="submitHandle" :disabled="loading">{{
+            $t('common.create')
+          }}</el-button>
+          <el-button @click="showInput = false" :disabled="loading">{{
+            $t('common.cancel')
+          }}</el-button>
         </div>
         <div v-else @click="quickCreateHandle" class="w-full">
           <el-button type="primary" link class="quich-button">
-            <el-icon><Plus /></el-icon>
+            <AppIcon iconName="app-add-outlined"></AppIcon>
             <span class="ml-4">{{ quickCreatePlaceholder }}</span>
           </el-button>
         </div>
@@ -32,7 +36,7 @@
         <el-pagination
           v-model:current-page="paginationConfig.current_page"
           v-model:page-size="paginationConfig.page_size"
-          :page-sizes="pageSizes"
+          :page-sizes="paginationConfig.page_sizes || pageSizes"
           :total="paginationConfig.total"
           layout="total, prev, pager, next, sizes"
           @size-change="handleSizeChange"
@@ -54,25 +58,29 @@ const { common } = useStore()
 const props = defineProps({
   paginationConfig: {
     type: Object,
-    default: () => {}
+    default: () => {},
   },
   quickCreate: {
     type: Boolean,
-    default: false
+    default: false,
   },
   quickCreateName: {
     type: String,
-    default: t('components.quickCreateName')
+    default: t('components.quickCreateName'),
   },
   quickCreatePlaceholder: {
     type: String,
-    default: t('components.quickCreatePlaceholder')
+    default: t('components.quickCreatePlaceholder'),
   },
   quickCreateMaxlength: {
     type: Number,
-    default: () => 0
+    default: () => 0,
   },
-  storeKey: String
+  storeKey: String,
+  maxTableHeight: {
+    type: Number,
+    default: 300,
+  },
 })
 const emit = defineEmits(['changePage', 'sizeChange', 'creatQuick'])
 
@@ -86,9 +94,8 @@ const appTableRef = ref()
 const loading = ref(false)
 const showInput = ref(false)
 const inputValue = ref('')
-const tableHeight = ref(0)
-
-watch(showInput, (bool) => {
+const tableHeight = ref<number | string>('')
+watch(showInput, (bool: boolean) => {
   if (!bool) {
     inputValue.value = ''
   }
@@ -130,15 +137,23 @@ function handleCurrentChange() {
 function clearSelection() {
   appTableRef.value?.clearSelection()
 }
+function toggleRowSelection(row: any, selected?: boolean, ignoreSelectable = true) {
+  appTableRef.value?.toggleRowSelection(row, selected, ignoreSelectable)
+}
+function getSelectionRows() {
+  return appTableRef.value?.getSelectionRows()
+}
 defineExpose({
-  clearSelection
+  clearSelection,
+  toggleRowSelection,
+  getSelectionRows,
 })
 
 onMounted(() => {
-  tableHeight.value = window.innerHeight - 300
+  tableHeight.value = window.innerHeight - props.maxTableHeight
   window.onresize = () => {
     return (() => {
-      tableHeight.value = window.innerHeight - 300
+      tableHeight.value = window.innerHeight - props.maxTableHeight
     })()
   }
 })

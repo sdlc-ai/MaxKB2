@@ -9,12 +9,12 @@
               <el-card shadow="never" style="--el-card-padding: 8px" class="download-file cursor">
                 <div class="download-button flex align-center" @click="downloadFile(item)">
                   <el-icon class="mr-4">
-                    <Download />
+                    <Download/>
                   </el-icon>
                   {{ $t('chat.download') }}
                 </div>
                 <div class="show flex align-center">
-                  <img :src="getImgUrl(item && item?.name)" alt="" width="24" />
+                  <img :src="getImgUrl(item && item?.name)" alt="" width="24"/>
                   <div class="ml-4 ellipsis-1" :title="item && item?.name">
                     {{ item && item?.name }}
                   </div>
@@ -26,7 +26,7 @@
         <div class="mb-8" v-if="image_list.length">
           <el-space wrap>
             <template v-for="(item, index) in image_list" :key="index">
-              <div class="file cursor border-r-4" v-if="item.url">
+              <div class="file cursor border-r-6" v-if="item.url">
                 <el-image
                   :src="item.url"
                   :zoom-rate="1.2"
@@ -37,7 +37,7 @@
                   alt=""
                   fit="cover"
                   style="width: 170px; height: 170px; display: block"
-                  class="border-r-4"
+                  class="border-r-6"
                 />
               </div>
             </template>
@@ -46,12 +46,27 @@
         <div class="mb-8" v-if="audio_list.length">
           <el-space wrap>
             <template v-for="(item, index) in audio_list" :key="index">
-              <div class="file cursor border-r-4" v-if="item.url">
+              <div class="file cursor border-r-6" v-if="item.url">
                 <audio
                   :src="item.url"
                   controls
                   style="width: 350px; height: 43px"
-                  class="border-r-4"
+                  class="border-r-6"
+                />
+              </div>
+            </template>
+          </el-space>
+        </div>
+        <div class="mb-8" v-if="video_list.length">
+          <el-space wrap>
+            <template v-for="(item, index) in video_list" :key="index">
+              <div class="file cursor border-r-6" v-if="item.url">
+                <video
+                  :src="item.url"
+                  style="width: 170px; display: block"
+                  class="border-r-6"
+                  controls
+                  autoplay
                 />
               </div>
             </template>
@@ -63,12 +78,12 @@
               <el-card shadow="never" style="--el-card-padding: 8px" class="download-file cursor">
                 <div class="download-button flex align-center" @click="downloadFile(item)">
                   <el-icon class="mr-4">
-                    <Download />
+                    <Download/>
                   </el-icon>
                   {{ $t('chat.download') }}
                 </div>
                 <div class="show flex align-center">
-                  <img :src="getImgUrl(item && item?.name)" alt="" width="24" />
+                  <img :src="getImgUrl(item && item?.name)" alt="" width="24"/>
                   <div class="ml-4 ellipsis-1" :title="item && item?.name">
                     {{ item && item?.name }}
                   </div>
@@ -88,27 +103,26 @@
         fit="cover"
         style="width: 28px; height: 28px; display: block"
       />
-      <AppAvatar v-else>
-        <img src="@/assets/user-icon.svg" style="width: 50%" alt="" />
-      </AppAvatar>
+      <el-avatar v-else :size="28">
+        <img src="@/assets/user-icon.svg" style="width: 50%" alt=""/>
+      </el-avatar>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { type chatType } from '@/api/type/application'
-import { getImgUrl, getAttrsArray, downloadByURL } from '@/utils/utils'
-import { onMounted, computed } from 'vue'
-import useStore from '@/stores'
+import {type chatType} from '@/api/type/application'
+import {getImgUrl, downloadByURL} from '@/utils/common'
+import {getAttrsArray} from '@/utils/array'
+import {onMounted, computed} from 'vue'
+
 const props = defineProps<{
   application: any
   chatRecord: chatType
   type: 'log' | 'ai-chat' | 'debug-ai-chat'
 }>()
 
-const { user } = useStore()
-
 const showAvatar = computed(() => {
-  return user.isEnterprise() ? props.application.show_user_avatar : true
+  return props.application.show_user_avatar == undefined ? true : props.application.show_user_avatar
 })
 
 const document_list = computed(() => {
@@ -116,7 +130,7 @@ const document_list = computed(() => {
     return props.chatRecord.upload_meta?.document_list || []
   }
   const startNode = props.chatRecord.execution_details?.find(
-    (detail) => detail.type === 'start-node'
+    (detail) => detail.type === 'start-node',
   )
   return startNode?.document_list || []
 })
@@ -125,16 +139,25 @@ const image_list = computed(() => {
     return props.chatRecord.upload_meta?.image_list || []
   }
   const startNode = props.chatRecord.execution_details?.find(
-    (detail) => detail.type === 'start-node'
+    (detail) => detail.type === 'start-node',
   )
   return startNode?.image_list || []
+})
+const video_list = computed(() => {
+  if (props.chatRecord?.upload_meta) {
+    return props.chatRecord.upload_meta?.video_list || []
+  }
+  const startNode = props.chatRecord.execution_details?.find(
+    (detail) => detail.type === 'start-node',
+  )
+  return startNode?.video_list || []
 })
 const audio_list = computed(() => {
   if (props.chatRecord?.upload_meta) {
     return props.chatRecord.upload_meta?.audio_list || []
   }
   const startNode = props.chatRecord.execution_details?.find(
-    (detail) => detail.type === 'start-node'
+    (detail) => detail.type === 'start-node',
   )
   return startNode?.audio_list || []
 })
@@ -143,7 +166,7 @@ const other_list = computed(() => {
     return props.chatRecord.upload_meta?.other_list || []
   }
   const startNode = props.chatRecord.execution_details?.find(
-    (detail) => detail.type === 'start-node'
+    (detail) => detail.type === 'start-node',
   )
   return startNode?.other_list || []
 })
@@ -156,11 +179,13 @@ const getClassName = computed(() => {
         ? `media_${other_list.value.length}`
         : `media_0`
 })
+
 function downloadFile(item: any) {
   downloadByURL(item.url, item.name)
 }
 
-onMounted(() => {})
+onMounted(() => {
+})
 </script>
 <style lang="scss" scoped>
 .question-content {
@@ -198,21 +223,26 @@ onMounted(() => {})
       display: none;
     }
   }
+
   .media-file-width {
     :deep(.el-space__item) {
       width: 49% !important;
     }
   }
+
   .media_2 {
     flex: 1;
   }
+
   .media_0 {
     flex: inherit;
   }
+
   .media_1 {
     width: 50%;
   }
 }
+
 @media only screen and (max-width: 768px) {
   .question-content {
     .media-file-width {
@@ -220,11 +250,13 @@ onMounted(() => {})
         min-width: 100% !important;
       }
     }
+
     .media_1 {
       width: 100%;
     }
   }
 }
+
 .debug-ai-chat {
   .question-content {
     .media-file-width {
@@ -232,6 +264,7 @@ onMounted(() => {})
         min-width: 100% !important;
       }
     }
+
     .media_1 {
       width: 100%;
     }

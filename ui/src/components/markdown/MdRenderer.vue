@@ -5,14 +5,16 @@
     <template v-for="(item, index) in md_view_list" :key="index">
       <div
         v-if="item.type === 'question'"
-        @click="sendMessage ? sendMessage(item.content, 'new') : (content: string) => {}"
-        class="problem-button mt-4 mb-4 flex"
-        :class="sendMessage ? 'cursor' : 'disabled'"
+        @click="
+          sendMessage && type !== 'log' ? sendMessage(item.content, 'new') : (content: string) => {}
+        "
+        class="problem-button mt-4 mb-4"
+        :class="sendMessage && type !== 'log' ? 'cursor' : 'disabled'"
       >
-        <el-icon class="mr-8" style="margin-top: 2px;">
-          <EditPen />
-        </el-icon>
-        {{ item.content }}
+        <el-space :size="8" alignment="flex-start">
+          <AppIcon iconName="app-edit" class="color-primary" style="margin-top: 3px"></AppIcon>
+          {{ item.content }}
+        </el-space>
       </div>
       <HtmlRander v-else-if="item.type === 'html_rander'" :source="item.content"></HtmlRander>
       <EchartsRander
@@ -46,6 +48,7 @@ import HtmlRander from './HtmlRander.vue'
 import EchartsRander from './EchartsRander.vue'
 import FormRander from './FormRander.vue'
 import ReasoningRander from './ReasoningRander.vue'
+import { nanoid } from 'nanoid'
 config({
   markdownItConfig(md) {
     md.renderer.rules.image = (tokens, idx, options, env, self) => {
@@ -55,7 +58,7 @@ config({
       }
       tokens[idx].attrSet(
         'onerror',
-        'this.src="/ui/assets/load_error.png";this.onerror=null;this.height="33px"'
+        `this.src="./assets/load_error.png";this.onerror=null;this.height="33px"`,
       )
       return md.renderer.renderToken(tokens, idx, options)
     }
@@ -63,8 +66,9 @@ config({
       tokens[idx].attrSet('target', '_blank')
       return md.renderer.renderToken(tokens, idx, options)
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     document.appendChild
-  }
+  },
 })
 const props = withDefaults(
   defineProps<{
@@ -76,17 +80,18 @@ const props = withDefaults(
     chat_record_id?: string
     runtime_node_id?: string
     disabled?: boolean
+    type?: 'log' | 'ai-chat' | 'debug-ai-chat'
   }>(),
   {
     source: '',
-    disabled: false
-  }
+    disabled: false,
+  },
 )
 const editorRef = ref()
 const md_view_list = computed(() => {
   const temp_source = props.source
   return split_form_rander(
-    split_echarts_rander(split_html_rander(split_quick_question([temp_source])))
+    split_echarts_rander(split_html_rander(split_quick_question([temp_source]))),
   )
 })
 
@@ -108,7 +113,7 @@ const split_quick_question_ = (source: string) => {
     .filter((item) => !md_quick_question_list?.includes(item))
   const result = Array.from(
     { length: md_quick_question_list.length + split_quick_question_value.length },
-    (v, i) => i
+    (v, i) => i,
   ).map((index) => {
     if (index % 2 == 0) {
       return { type: 'md', content: split_quick_question_value[Math.floor(index / 2)] }
@@ -117,7 +122,7 @@ const split_quick_question_ = (source: string) => {
         type: 'question',
         content: md_quick_question_list[Math.floor(index / 2)]
           .replace('<quick_question>', '')
-          .replace('</quick_question>', '')
+          .replace('</quick_question>', ''),
       }
     }
   })
@@ -142,7 +147,7 @@ const split_html_rander_ = (source: string, type: string) => {
     .filter((item) => !md_quick_question_list?.includes(item))
   const result = Array.from(
     { length: md_quick_question_list.length + split_quick_question_value.length },
-    (v, i) => i
+    (v, i) => i,
   ).map((index) => {
     if (index % 2 == 0) {
       return { type: type, content: split_quick_question_value[Math.floor(index / 2)] }
@@ -151,7 +156,7 @@ const split_html_rander_ = (source: string, type: string) => {
         type: 'html_rander',
         content: md_quick_question_list[Math.floor(index / 2)]
           .replace('<html_rander>', '')
-          .replace('</html_rander>', '')
+          .replace('</html_rander>', ''),
       }
     }
   })
@@ -177,7 +182,7 @@ const split_echarts_rander_ = (source: string, type: string) => {
     .filter((item) => !md_quick_question_list?.includes(item))
   const result = Array.from(
     { length: md_quick_question_list.length + split_quick_question_value.length },
-    (v, i) => i
+    (v, i) => i,
   ).map((index) => {
     if (index % 2 == 0) {
       return { type: type, content: split_quick_question_value[Math.floor(index / 2)] }
@@ -186,7 +191,7 @@ const split_echarts_rander_ = (source: string, type: string) => {
         type: 'echarts_rander',
         content: md_quick_question_list[Math.floor(index / 2)]
           .replace('<echarts_rander>', '')
-          .replace('</echarts_rander>', '')
+          .replace('</echarts_rander>', ''),
       }
     }
   })
@@ -200,31 +205,82 @@ const split_form_rander = (result: Array<any>) => {
       return [...x, ...y]
     }, [])
 }
+function extractFormRanderContent(html: string) {
+  const results = []
+  const startTag = '<form_rander>'
+  const endTag = '</form_rander>'
 
+  let startIndex = html.indexOf(startTag)
+
+  while (startIndex !== -1) {
+    let endIndex = html.indexOf(endTag, startIndex)
+    let depth = 1
+    let tempIndex = startIndex + startTag.length
+
+    // 查找匹配的结束标签
+    while (depth > 0 && tempIndex < html.length) {
+      const nextStart = html.indexOf(startTag, tempIndex)
+      const nextEnd = html.indexOf(endTag, tempIndex)
+
+      if (nextStart !== -1 && nextStart < nextEnd) {
+        depth++
+        tempIndex = nextStart + startTag.length
+      } else if (nextEnd !== -1) {
+        depth--
+        tempIndex = nextEnd + endTag.length
+        if (depth === 0) {
+          endIndex = nextEnd
+        }
+      } else {
+        break
+      }
+    }
+
+    if (endIndex !== -1) {
+      // 提取内容（去掉开始和结束标签）
+      const contentStart = startIndex + startTag.length
+      const content = html.substring(contentStart, endIndex)
+      results.push(content)
+      startIndex = html.indexOf(startTag, endIndex + endTag.length)
+    } else {
+      break
+    }
+  }
+
+  return results
+}
+const _split_form_rander = (source: string, form_rander_list: Array<string>) => {
+  const uuid = nanoid()
+  if (form_rander_list.length > 0) {
+    form_rander_list.forEach((item) => {
+      source = source.replace(`<form_rander>${item}</form_rander>`, uuid)
+    })
+  }
+  return source
+    .split(uuid)
+    .filter((item) => item !== undefined)
+    .filter((item) => !form_rander_list?.includes(item))
+}
 const split_form_rander_ = (source: string, type: string) => {
-  const temp_md_quick_question_list = source.match(/<form_rander>[\d\D]*?<\/form_rander>/g)
+  const temp_md_quick_question_list = extractFormRanderContent(source)
   const md_quick_question_list = temp_md_quick_question_list
     ? temp_md_quick_question_list.filter((i) => i)
     : []
-  const split_quick_question_value = source
-    .split(/<form_rander>[\d\D]*?<\/form_rander>/g)
-    .filter((item) => item !== undefined)
-    .filter((item) => !md_quick_question_list?.includes(item))
+  const split_quick_question_value = _split_form_rander(source, md_quick_question_list)
   const result = Array.from(
     { length: md_quick_question_list.length + split_quick_question_value.length },
-    (v, i) => i
+    (v, i) => i,
   ).map((index) => {
     if (index % 2 == 0) {
       return { type: type, content: split_quick_question_value[Math.floor(index / 2)] }
     } else {
       return {
         type: 'form_rander',
-        content: md_quick_question_list[Math.floor(index / 2)]
-          .replace('<form_rander>', '')
-          .replace('</form_rander>', '')
+        content: md_quick_question_list[Math.floor(index / 2)],
       }
     }
   })
+
   return result
 }
 </script>
@@ -249,8 +305,9 @@ const split_form_rander_ = (source: string, type: string) => {
     }
   }
 
-  :deep(.el-icon) {
-    color: var(--el-color-primary);
-  }
+  // :deep(.el-icon) {
+  //   color: var(--el-color-primary);
+  //   margin-top: 3px;
+  // }
 }
 </style>

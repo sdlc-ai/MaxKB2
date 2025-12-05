@@ -10,36 +10,36 @@
       ref="baseNodeFormRef"
     >
       <el-form-item
-        :label="$t('views.applicationWorkflow.nodes.baseNode.appName.label')"
+        :label="$t('views.workflow.nodes.baseNode.appName.label')"
         prop="name"
         :rules="{
-          message: t('views.application.applicationForm.form.appName.requiredMessage'),
+          message: t('views.application.form.appName.requiredMessage'),
           trigger: 'blur',
-          required: true
+          required: true,
         }"
       >
         <el-input
           v-model="form_data.name"
           maxlength="64"
-          :placeholder="t('views.application.applicationForm.form.appName.placeholder')"
+          :placeholder="t('views.application.form.appName.placeholder')"
           show-word-limit
           @blur="form_data.name = form_data.name?.trim()"
         />
       </el-form-item>
-      <el-form-item :label="$t('views.applicationWorkflow.nodes.baseNode.appDescription.label')">
+      <el-form-item :label="$t('views.workflow.nodes.baseNode.appDescription.label')">
         <el-input
           v-model="form_data.desc"
-          :placeholder="$t('views.application.applicationForm.form.appDescription.placeholder')"
+          :placeholder="$t('views.application.form.appDescription.placeholder')"
           :rows="3"
           type="textarea"
           maxlength="256"
           show-word-limit
         />
       </el-form-item>
-      <el-form-item :label="$t('views.application.applicationForm.form.prologue')">
+      <el-form-item :label="$t('views.application.form.prologue')">
         <MdEditorMagnify
           @wheel="wheel"
-          :title="$t('views.application.applicationForm.form.prologue')"
+          :title="$t('views.application.form.prologue')"
           v-model="form_data.prologue"
           style="height: 150px"
           @submitDialog="submitDialog"
@@ -50,11 +50,11 @@
           <div class="flex-between">
             <div class="flex align-center">
               <span class="mr-4">{{
-                $t('views.applicationWorkflow.nodes.baseNode.fileUpload.label')
+                $t('views.workflow.nodes.baseNode.fileUpload.label')
               }}</span>
               <el-tooltip
                 effect="dark"
-                :content="$t('views.applicationWorkflow.nodes.baseNode.fileUpload.tooltip')"
+                :content="$t('views.workflow.nodes.baseNode.fileUpload.tooltip')"
                 placement="right"
               >
                 <AppIcon iconName="app-warning" class="app-warning-icon"></AppIcon>
@@ -68,9 +68,7 @@
                 @click="openFileUploadSettingDialog"
                 class="mr-4"
               >
-                <el-icon class="mr-4">
-                  <Setting />
-                </el-icon>
+                <AppIcon iconName="app-setting" class="mr-4"></AppIcon>
               </el-button>
               <el-switch
                 size="small"
@@ -83,15 +81,14 @@
       </el-form-item>
       <UserInputFieldTable ref="UserInputFieldTableFef" :node-model="nodeModel" />
       <ApiInputFieldTable ref="ApiInputFieldTableFef" :node-model="nodeModel" />
+      <ChatFieldTable ref="ChatFieldTeble" :node-model="nodeModel"></ChatFieldTable>
       <el-form-item>
         <template #label>
           <div class="flex-between">
-            <span class="mr-4">{{
-              $t('views.application.applicationForm.form.voiceInput.label')
-            }}</span>
+            <span class="mr-4">{{ $t('views.application.form.voiceInput.label') }}</span>
             <div class="flex">
               <el-checkbox v-if="form_data.stt_model_enable" v-model="form_data.stt_autosend">{{
-                $t('views.application.applicationForm.form.voiceInput.autoSend')
+                $t('views.application.form.voiceInput.autoSend')
               }}</el-checkbox>
               <el-switch
                 class="ml-8"
@@ -106,7 +103,7 @@
           @wheel="wheel"
           v-show="form_data.stt_model_enable"
           v-model="form_data.stt_model_id"
-          :placeholder="$t('views.application.applicationForm.form.voiceInput.placeholder')"
+          :placeholder="$t('views.application.form.voiceInput.placeholder')"
           :options="sttModelOptions"
           showFooter
           :model-type="'STT'"
@@ -115,12 +112,10 @@
       <el-form-item>
         <template #label>
           <div class="flex-between">
-            <span class="mr-4">{{
-              $t('views.application.applicationForm.form.voicePlay.label')
-            }}</span>
+            <span class="mr-4">{{ $t('views.application.form.voicePlay.label') }}</span>
             <div class="flex">
               <el-checkbox v-if="form_data.tts_model_enable" v-model="form_data.tts_autoplay">{{
-                $t('views.application.applicationForm.form.voicePlay.autoPlay')
+                $t('views.application.form.voicePlay.autoPlay')
               }}</el-checkbox>
               <el-switch
                 class="ml-8"
@@ -133,14 +128,8 @@
         </template>
         <div class="w-full">
           <el-radio-group v-model="form_data.tts_type" v-show="form_data.tts_model_enable">
-            <el-radio
-              :label="$t('views.application.applicationForm.form.voicePlay.browser')"
-              value="BROWSER"
-            />
-            <el-radio
-              :label="$t('views.application.applicationForm.form.voicePlay.tts')"
-              value="TTS"
-            />
+            <el-radio :label="$t('views.application.form.voicePlay.browser')" value="BROWSER" />
+            <el-radio :label="$t('views.application.form.voicePlay.tts')" value="TTS" />
           </el-radio-group>
         </div>
         <div class="flex-between w-full">
@@ -148,7 +137,7 @@
             @wheel="wheel"
             v-if="form_data.tts_type === 'TTS' && form_data.tts_model_enable"
             v-model="form_data.tts_model_id"
-            :placeholder="$t('views.application.applicationForm.form.voicePlay.placeholder')"
+            :placeholder="$t('views.application.form.voicePlay.placeholder')"
             :options="ttsModelOptions"
             @change="ttsModelChange()"
             showFooter
@@ -177,22 +166,33 @@
   </NodeContainer>
 </template>
 <script setup lang="ts">
-import { app } from '@/main'
 import { groupBy, set } from 'lodash'
 import NodeContainer from '@/workflow/common/NodeContainer.vue'
 import type { FormInstance } from 'element-plus'
-import { ref, computed, onMounted } from 'vue'
-import applicationApi from '@/api/application'
+import { ref, computed, onMounted, nextTick, inject } from 'vue'
 import { MsgError, MsgSuccess, MsgWarning } from '@/utils/message'
 import { t } from '@/locales'
 import TTSModeParamSettingDialog from '@/views/application/component/TTSModeParamSettingDialog.vue'
 import ApiInputFieldTable from './component/ApiInputFieldTable.vue'
 import UserInputFieldTable from './component/UserInputFieldTable.vue'
 import FileUploadSettingDialog from '@/workflow/nodes/base-node/component/FileUploadSettingDialog.vue'
+import ChatFieldTable from './component/ChatFieldTable.vue'
+import { useRoute } from 'vue-router'
+import { loadSharedApi } from '@/utils/dynamics-api/shared-api'
+const getResourceDetail = inject('getResourceDetail') as any
+const route = useRoute()
 
 const {
-  params: { id }
-} = app.config.globalProperties.$route as any
+  params: { id },
+} = route as any
+
+const apiType = computed(() => {
+  if (route.path.includes('resource-management')) {
+    return 'systemManage'
+  } else {
+    return 'workspace'
+  }
+})
 
 const props = defineProps<{ nodeModel: any }>()
 
@@ -206,7 +206,7 @@ const FileUploadSettingDialogRef = ref<InstanceType<typeof FileUploadSettingDial
 const form = {
   name: '',
   desc: '',
-  prologue: t('views.application.applicationForm.form.defaultPrologue')
+  prologue: t('views.application.form.defaultPrologue'),
 }
 
 const wheel = (e: any) => {
@@ -234,7 +234,7 @@ const form_data = computed({
   },
   set: (value) => {
     set(props.nodeModel.properties, 'node_data', value)
-  }
+  },
 })
 
 const baseNodeFormRef = ref<FormInstance>()
@@ -247,13 +247,13 @@ const validate = () => {
   ) {
     return Promise.reject({
       node: props.nodeModel,
-      errMessage: t('views.application.applicationForm.form.voicePlay.requiredMessage')
+      errMessage: t('views.application.form.voicePlay.requiredMessage'),
     })
   }
   if (form_data.value.stt_model_enable && !form_data.value.stt_model_id) {
     return Promise.reject({
       node: props.nodeModel,
-      errMessage: t('views.application.applicationForm.form.voiceInput.requiredMessage')
+      errMessage: t('views.application.form.voiceInput.requiredMessage'),
     })
   }
   return baseNodeFormRef.value?.validate().catch((err) => {
@@ -261,24 +261,49 @@ const validate = () => {
   })
 }
 
+const resource = getResourceDetail()
 function getSTTModel() {
-  applicationApi.getApplicationSTTModel(id).then((res: any) => {
-    sttModelOptions.value = groupBy(res?.data, 'provider')
-  })
+  const obj =
+    apiType.value === 'systemManage'
+      ? {
+          model_type: 'STT',
+          workspace_id: resource.value?.workspace_id,
+        }
+      : {
+          model_type: 'STT',
+        }
+  loadSharedApi({ type: 'model', systemType: apiType.value })
+    .getSelectModelList(obj)
+    .then((res: any) => {
+      sttModelOptions.value = groupBy(res?.data, 'provider')
+    })
 }
 
 function getTTSModel() {
-  applicationApi.getApplicationTTSModel(id).then((res: any) => {
-    ttsModelOptions.value = groupBy(res?.data, 'provider')
-  })
+  const obj =
+    apiType.value === 'systemManage'
+      ? {
+          model_type: 'TTS',
+          workspace_id: resource.value?.workspace_id,
+        }
+      : {
+          model_type: 'TTS',
+        }
+  loadSharedApi({ type: 'model', systemType: apiType.value })
+    .getSelectModelList(obj)
+    .then((res: any) => {
+      ttsModelOptions.value = groupBy(res?.data, 'provider')
+    })
 }
 
 function ttsModelChange() {
-  if (form_data.value.tts_model_id) {
-    TTSModeParamSettingDialogRef.value?.reset_default(form_data.value.tts_model_id, id)
-  } else {
-    refreshTTSForm({})
-  }
+  nextTick(() => {
+    if (form_data.value.tts_model_id) {
+      TTSModeParamSettingDialogRef.value?.reset_default(form_data.value.tts_model_id, id)
+    } else {
+      refreshTTSForm({})
+    }
+  })
 }
 
 function ttsModelEnableChange() {
@@ -297,7 +322,7 @@ function sttModelEnableChange() {
 const openTTSParamSettingDialog = () => {
   const model_id = form_data.value.tts_model_id
   if (!model_id) {
-    MsgSuccess(t('views.application.applicationForm.form.voicePlay.requiredMessage'))
+    MsgSuccess(t('views.application.form.voicePlay.requiredMessage'))
     return
   }
   TTSModeParamSettingDialogRef.value?.open(model_id, id, form_data.value.tts_model_params_setting)
@@ -316,7 +341,7 @@ const switchFileUpload = () => {
     audio: false,
     video: false,
     other: false,
-    otherExtensions: ['PPT', 'DOC']
+    otherExtensions: ['ppt', 'doc'],
   }
 
   if (form_data.value.file_upload_enable) {

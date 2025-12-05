@@ -17,7 +17,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click.prevent="dialogVisible = false"> {{ $t('common.cancel') }} </el-button>
-        <el-button type="primary" class="custom-btn" @click="submit()" :loading="loading">
+        <el-button type="primary" @click="submit()" :loading="loading">
           {{ $t('common.modify') }}
         </el-button>
       </span>
@@ -30,7 +30,7 @@ import DynamicsFormConstructor from '@/components/dynamics-form/constructor/inde
 import { t } from '@/locales'
 const props = withDefaults(
   defineProps<{ title?: string; editFormField: (form_data: any, index: number) => void }>(),
-  { title: t('views.template.templateForm.title.editParam') }
+  { title: t('common.param.editParam') }
 )
 const dialogVisible = ref<boolean>(false)
 const dynamicsFormConstructorRef = ref<InstanceType<typeof DynamicsFormConstructor>>()
