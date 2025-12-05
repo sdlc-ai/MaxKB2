@@ -17,9 +17,6 @@ export interface userStateTypes {
   XPACK_LICENSE_IS_VALID: false
   isXPack: false
   themeInfo: any
-  workspace_id: string
-  edition: 'CE' | 'PE' | 'EE'
-  license_is_valid: boolean
 }
 
 const useUserStore = defineStore('user', {
@@ -31,10 +28,7 @@ const useUserStore = defineStore('user', {
     userAccessToken: '',
     XPACK_LICENSE_IS_VALID: false,
     isXPack: false,
-    themeInfo: null,
-    workspace_id: '',
-    edition: 'CE',
-    license_is_valid: false,
+    themeInfo: null
   }),
   actions: {
     getLanguage() {
@@ -76,14 +70,7 @@ const useUserStore = defineStore('user', {
       }
       return localStorage.getItem(`accessToken`)
     },
-    setWorkspaceId(workspace_id: string) {
-      this.workspace_id = workspace_id
-      localStorage.setItem('workspace_id', workspace_id)
-    },
-    getWorkspaceId(): string | null {
-      this.workspace_id = this.workspace_id || localStorage.getItem('workspace_id') || 'default'
-      return this.workspace_id
-    },
+
     getPermissions() {
       if (this.userInfo) {
         return this.isXPack && this.XPACK_LICENSE_IS_VALID
@@ -99,15 +86,6 @@ const useUserStore = defineStore('user', {
       } else {
         return ''
       }
-    },
-    isCE() {
-      return this.edition == 'CE'
-    },
-    isPE() {
-      return this.edition == 'PE' && this.license_is_valid
-    },
-    isEE() {
-      return this.edition == 'EE' && this.license_is_valid
     },
     changeUserType(num: number, token?: string) {
       this.userType = num

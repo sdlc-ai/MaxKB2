@@ -940,44 +940,6 @@ export const applicationNode = {
   },
 }
 
-/**
- * 自定义函数配置数据
- */
-export const functionNode = {
-  type: WorkflowType.FunctionLibCustom,
-  text: t('views.applicationWorkflow.nodes.functionNode.text'),
-  label: t('views.applicationWorkflow.nodes.functionNode.label'),
-  height: 260,
-  properties: {
-    stepName: t('views.applicationWorkflow.nodes.functionNode.label'),
-    config: {
-      fields: [
-        {
-          label: t('common.result'),
-          value: 'result'
-        }
-      ]
-    }
-  }
-}
-export const functionLibNode = {
-  type: WorkflowType.FunctionLib,
-  text: t('views.applicationWorkflow.nodes.functionNode.text'),
-  label: t('views.applicationWorkflow.nodes.functionNode.label'),
-  height: 170,
-  properties: {
-    stepName: t('views.applicationWorkflow.nodes.functionNode.label'),
-    config: {
-      fields: [
-        {
-          label: t('common.result'),
-          value: 'result'
-        }
-      ]
-    }
-  }
-}
-
 export const compareList = [
   { value: 'is_null', label: t('views.workflow.compare.is_null') },
   { value: 'is_not_null', label: t('views.workflow.compare.is_not_null') },
@@ -1036,8 +998,6 @@ export const nodeDict: any = {
   [WorkflowType.DataSourceLocalNode]: dataSourceLocalNode,
   [WorkflowType.DataSourceWebNode]: dataSourceWebNode,
   [WorkflowType.KnowledgeWriteNode]: knowledgeWriteNode,
-  [WorkflowType.FunctionLibCustom]: functionNode,
-  [WorkflowType.FunctionLib]: functionLibNode,
 }
 
 export function isWorkFlow(type: string | undefined) {
