@@ -33,6 +33,10 @@ export default {
       placeholder: 'Please enter phone',
       invalidMessage: 'Invalid phone format',
     },
+    captcha: {
+      label: 'captcha',
+      placeholder: 'Please enter the captcha'
+    },
   },
   source: {
     label: 'User Source',

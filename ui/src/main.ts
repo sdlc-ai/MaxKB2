@@ -26,6 +26,8 @@ import mermaid from 'mermaid'
 import highlight from 'highlight.js'
 import 'highlight.js/styles/atom-one-dark.css'
 
+import 'remixicon/fonts/remixicon.css'
+
 config({
   editorExtensions: {
     highlight: {

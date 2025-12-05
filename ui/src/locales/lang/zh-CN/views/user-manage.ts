@@ -25,7 +25,10 @@ export default {
       placeholder: '请输入姓名',
       lengthMessage: '长度在 1 到 20 个字符',
     },
-
+    captcha: {
+      label: '验证码',
+      placeholder: '请输入验证码'
+    },
     phone: {
       label: '手机号',
       placeholder: '请输入手机号',

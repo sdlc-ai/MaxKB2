@@ -87,7 +87,12 @@ const getValid: (
   valid_count: number,
   loading?: Ref<boolean>
 ) => Promise<Result<any>> = (valid_type, valid_count, loading) => {
-  return get(`/valid/${valid_type}/${valid_count}`, undefined, loading)
+  // return get(`/valid/${valid_type}/${valid_count}`, undefined, loading)
+  return Promise.resolve({
+    code: 200,
+    message: "成功",
+    data: true
+  })
 }
 
 

@@ -18,7 +18,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click.prevent="dialogVisible = false"> {{ $t('common.cancel') }} </el-button>
-        <el-button type="primary" @click="submitForm" :loading="loading">
+        <el-button type="primary" class="custom-btn" @click="submitForm" :loading="loading">
           {{ $t('views.document.setting.migration') }}
         </el-button>
       </span>

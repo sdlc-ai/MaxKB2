@@ -5,6 +5,7 @@
     :class="type"
     :style="{
       height: firsUserInput ? '100%' : undefined,
+      paddingBottom: applicationDetails.disclaimer ? '20px' : 0
     }"
   >
     <div
@@ -155,6 +156,7 @@ const props = withDefaults(
     available?: boolean
     chatId?: string
     executionIsRightPanel?: boolean
+    isCustom?: boolean
   }>(),
   {
     applicationDetails: () => ({}),

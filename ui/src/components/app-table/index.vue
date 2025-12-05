@@ -15,10 +15,10 @@
             clearable
           />
 
-          <el-button type="primary" @click="submitHandle" :disabled="loading">{{
+          <el-button type="primary" class="custom-btn" @click="submitHandle" :disabled="loading">{{
             $t('common.create')
           }}</el-button>
-          <el-button @click="showInput = false" :disabled="loading">{{
+          <el-button @click="showInput = false" class="custom-btn" :disabled="loading">{{
             $t('common.cancel')
           }}</el-button>
         </div>

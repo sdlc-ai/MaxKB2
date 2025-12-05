@@ -26,7 +26,10 @@ export default {
       placeholder: '請輸入姓名',
       lengthMessage: '長度須介於 2 到 20 個字元之間',
     },
-
+    captcha: {
+      label: '驗證碼',
+      placeholder: '請輸入驗證碼'
+    },
     phone: {
       label: '手機號碼',
       placeholder: '請輸入手機號碼',

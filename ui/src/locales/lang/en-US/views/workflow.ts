@@ -128,6 +128,7 @@ export default {
           imageText: 'Requires "Image Understanding" node to parse image content',
           videoText: 'Requires "Video Understanding" node to parse video content',
           audioText: 'Requires "Speech-to-Text" node to parse audio content',
+          otherText: 'Need to parse this type of file by yourself',
           uploadMethod: 'Upload Method',
         },
       },

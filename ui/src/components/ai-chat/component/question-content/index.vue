@@ -114,6 +114,7 @@ import {type chatType} from '@/api/type/application'
 import {getImgUrl, downloadByURL} from '@/utils/common'
 import {getAttrsArray} from '@/utils/array'
 import {onMounted, computed} from 'vue'
+import useStore from '@/stores'
 
 const props = defineProps<{
   application: any
@@ -121,8 +122,10 @@ const props = defineProps<{
   type: 'log' | 'ai-chat' | 'debug-ai-chat'
 }>()
 
+const { user } = useStore()
+
 const showAvatar = computed(() => {
-  return props.application.show_user_avatar == undefined ? true : props.application.show_user_avatar
+  return user.isEnterprise() ? props.application.show_user_avatar : true
 })
 
 const document_list = computed(() => {

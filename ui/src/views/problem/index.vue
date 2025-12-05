@@ -8,6 +8,7 @@
             <div>
               <el-button
                 type="primary"
+                class="custom-btn"
                 @click="createProblem"
                 v-if="permissionPrecise.problem_create(id)"
               >

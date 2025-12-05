@@ -128,6 +128,7 @@ export default {
           imageText: '需要使用「圖片理解」節點解析圖片內容',
           videoText: '需要使用「視頻理解」節點解析視頻內容',
           audioText: '需要使用「語音轉文本」節點解析音頻內容',
+          otherText: '需要自行解析該類型文件',
           uploadMethod: '上傳方式',
         },
       },

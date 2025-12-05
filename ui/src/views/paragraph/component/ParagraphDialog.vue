@@ -49,7 +49,7 @@
     <template #footer v-if="!paragraphId">
       <span class="dialog-footer">
         <el-button @click.prevent="dialogVisible = false"> {{ $t('common.cancel') }} </el-button>
-        <el-button :disabled="loading" type="primary" @click="handleDebounceClick">
+        <el-button :disabled="loading" type="primary" class="custom-btn" @click="handleDebounceClick">
           {{ $t('common.submit') }}
         </el-button>
       </span>

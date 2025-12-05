@@ -16,7 +16,7 @@
         >
       </div>
       <div v-if="showHistory && disablePublic">
-        <el-button type="primary" class="mr-8" @click="refreshVersion()">
+        <el-button type="primary" class="mr-8 custom-btn" @click="refreshVersion()">
           {{ $t('views.workflow.setting.restoreVersion') }}
         </el-button>
         <el-divider direction="vertical" />
@@ -216,6 +216,7 @@ function back() {
       confirmButtonText: t('views.workflow.setting.exitSave'),
       cancelButtonText: t('views.workflow.setting.exit'),
       distinguishCancelAndClose: true,
+      confirmButtonClass:'custom-btn'
     })
       .then(() => {
         saveApplication(true, true)

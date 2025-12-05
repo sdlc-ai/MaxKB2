@@ -10,6 +10,7 @@
                 <el-button
                   v-if="knowledgeDetail?.type === 0 && permissionPrecise.doc_create(id)"
                   type="primary"
+                  class="custom-btn"
                   @click="
                     router.push({
                       path: `/knowledge/document/upload/${folderId}/${type}`,
@@ -21,6 +22,7 @@
                 <el-button
                   v-if="knowledgeDetail?.type === 1 && permissionPrecise.doc_create(id)"
                   type="primary"
+                  class="custom-btn"
                   @click="importDoc"
                   >{{ $t('views.document.importDocument') }}
                 </el-button>

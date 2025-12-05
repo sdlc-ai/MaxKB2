@@ -37,11 +37,11 @@
       </el-scrollbar>
 
       <div class="text-left ml-8">
-        <el-button type="primary" class="w-full" v-if="first" @click="confirmHandle">
+        <el-button type="primary" class="w-full custom-btn" v-if="first" @click="confirmHandle">
           <AppIcon iconName="app-chat" class="mr-4"></AppIcon>
           {{ $t('chat.operation.startChat') }}</el-button
         >
-        <el-button type="primary" v-if="!first" @click="confirmHandle">{{
+        <el-button type="primary" class="custom-btn" v-if="!first" @click="confirmHandle">{{
           $t('common.confirm')
         }}</el-button>
         <el-button v-if="!first" @click="cancelHandle">{{ $t('common.cancel') }}</el-button>

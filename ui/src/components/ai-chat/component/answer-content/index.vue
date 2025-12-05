@@ -2,7 +2,8 @@
   <div class="item-content mb-16 lighter">
     <template v-for="(answer_text, index) in answer_text_list" :key="index">
       <div class="avatar mr-8" v-if="showAvatar">
-        <img v-if="application.avatar" :src="application.avatar" height="28px" width="28px" />
+        <img v-if="isCustom" src="@/assets/logo/temp_logo.png" height="28px" width="28px" alt="">
+        <img v-else-if="application.avatar" :src="application.avatar" height="28px" width="28px" />
         <LogoIcon v-else height="28px" width="28px" />
       </div>
       <div
@@ -81,7 +82,7 @@ import MdRenderer from '@/components/markdown/MdRenderer.vue'
 import OperationButton from '@/components/ai-chat/component/operation-button/index.vue'
 import { type chatType } from '@/api/type/application'
 import bus from '@/bus'
-
+import useStore from '@/stores'
 const props = defineProps<{
   chatRecord: chatType
   application: any
@@ -90,7 +91,10 @@ const props = defineProps<{
   chatManagement: any
   type: 'log' | 'ai-chat' | 'debug-ai-chat'
   executionIsRightPanel?: boolean
+  isCustom?: boolean
 }>()
+
+const { user } = useStore()
 
 const emit = defineEmits([
   'update:chatRecord',
@@ -100,10 +104,10 @@ const emit = defineEmits([
 ])
 
 const showAvatar = computed(() => {
-  return props.application.show_avatar == undefined ? true : props.application.show_avatar
+  return user.isEnterprise() ? props.application.show_avatar : true
 })
 const showUserAvatar = computed(() => {
-  return props.application.show_user_avatar == undefined ? true : props.application.show_user_avatar
+  return user.isEnterprise() ? props.application.show_user_avatar : true
 })
 const chatMessage = (question: string, type: 'old' | 'new', other_params_data?: any) => {
   if (type === 'old') {

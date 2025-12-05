@@ -55,7 +55,7 @@
         />
       </g>
     </svg>
-    <img v-else src="@/assets/logo/MaxKB-logo.svg" :height="height" />
+    <img v-else src="@/assets/logo/logo-sdlc.png" :height="height" />
   </template>
 </template>
 <script setup lang="ts">
@@ -66,7 +66,7 @@ defineOptions({ name: 'LogoFull' })
 defineProps({
   height: {
     type: String,
-    default: '36px',
+    default: '28px',
   },
 })
 const { theme } = useStore()
