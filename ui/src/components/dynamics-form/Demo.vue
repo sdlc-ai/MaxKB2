@@ -80,7 +80,7 @@ const damo_data: Array<FormField> = [
     ],
   },
   {
-    field: 'maxkb_tokens',
+    field: 'porsche_tokens',
     input_type: 'Slider',
     default_value: 1,
     attrs: {

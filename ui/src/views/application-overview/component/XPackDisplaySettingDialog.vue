@@ -166,7 +166,7 @@
           />
           <img
             v-else
-            src="/MaxKB.gif"
+            src="/Porsche.gif"
             height="50px"
             style="width: 40px; height: 40px; display: block"
           />
