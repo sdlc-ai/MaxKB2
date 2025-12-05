@@ -42,6 +42,8 @@ export enum WorkflowType {
   DataSourceLocalNode = 'data-source-local-node',
   DataSourceWebNode = 'data-source-web-node',
   KnowledgeWriteNode = 'knowledge-write-node',
+  FunctionLibCustom = 'function-node',
+  FunctionLib = 'function-lib-node',
 }
 export enum WorkflowKind {
   DataSource = 'data-source',
