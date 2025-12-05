@@ -9,11 +9,6 @@ import usePromptStore from './modules/prompt'
 import useApplicationStore from './modules/application'
 import useChatUserStore from './modules/chat-user'
 import useToolStore from './modules/tool'
-import useDatasetStore from './modules/dataset'
-import useLogStore from './modules/log'
-import useDocumentStore from './modules/document'
-import useProblemStore from './modules/problem'
-import useParagraphStore from './modules/paragraph'
 const useStore = () => ({
   common: useCommonStore(),
   login: useLoginStore(),
@@ -26,11 +21,6 @@ const useStore = () => ({
   application: useApplicationStore(),
   chatUser: useChatUserStore(),
   tool: useToolStore(),
-  dataset: useDatasetStore(),
-  log: useLogStore(),
-  document: useDocumentStore(),
-  problem: useProblemStore(),
-  paragraph: useParagraphStore(),
 })
 
 export default useStore

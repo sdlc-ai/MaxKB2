@@ -198,6 +198,6 @@ function getModel() {
     })
 }
 
-defineExpose({ open, dialogVisible })
+defineExpose({ open })
 </script>
 <style lang="scss" scoped></style>

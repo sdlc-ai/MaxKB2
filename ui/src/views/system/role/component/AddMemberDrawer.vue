@@ -54,7 +54,7 @@ const workspaceFormItem = ref<FormItemModel[]>([])
 
 async function getUserFormItem() {
   try {
-    const res = await UserApi.getUserList(memberFormContentLoading)
+    const res = await UserApi.getUserList('', memberFormContentLoading)
     userFormItem.value = [
       {
         path: 'user_ids',

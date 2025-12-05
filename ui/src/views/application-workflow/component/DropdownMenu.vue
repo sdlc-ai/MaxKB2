@@ -169,7 +169,7 @@ const filter_menu_nodes = computed(() => {
   return menuNodes.filter((item) =>
     item.label.toLocaleLowerCase().includes(search_text.value.toLocaleLowerCase())
   )
-}) as any
+})
 function clickNodes(item: any, data?: any, type?: string) {
   if (data) {
     item['properties']['stepName'] = data.name

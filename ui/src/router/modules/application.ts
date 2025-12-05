@@ -57,7 +57,7 @@ const applicationRouter = {
             active: 'access',
             parentPath: '/application/:id/:type',
             parentName: 'ApplicationDetail',
-            permission: new ComplexPermission([], ['x-pack'], [],'OR')
+            permission: new ComplexPermission([], ['x-pack'], 'OR')
           },
           component: () => import('@/views/application/ApplicationAccess.vue')
         },

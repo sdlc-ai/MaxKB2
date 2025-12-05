@@ -392,7 +392,7 @@ const checkMaxFilesLimit = () => {
       uploadOtherList.value.length
   )
 }
-const file_name_eq = (str: any, str1: any) => {
+const file_name_eq = (str: string, str1: string) => {
   return (
     str.replaceAll(' ', '') === str1.replaceAll(' ', '') ||
     decodeHtmlEntities(str) === decodeHtmlEntities(str1)

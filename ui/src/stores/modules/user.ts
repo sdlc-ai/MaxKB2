@@ -8,7 +8,6 @@ import { useElementPlusTheme } from 'use-element-plus-theme'
 import { defaultPlatformSetting } from '@/utils/theme'
 import { useLocalStorage } from '@vueuse/core'
 import { localeConfigKey, getBrowserLang } from '@/locales/index'
-import useThemeStore from './theme'
 export interface userStateTypes {
   userType: number // 1 系统操作者 2 对话用户
   userInfo: User | null
@@ -21,7 +20,6 @@ export interface userStateTypes {
   workspace_id: string
   edition: 'CE' | 'PE' | 'EE'
   license_is_valid: boolean
-  workspace_list: Array<any>
 }
 
 const useUserStore = defineStore('user', {
@@ -37,7 +35,6 @@ const useUserStore = defineStore('user', {
     workspace_id: '',
     edition: 'CE',
     license_is_valid: false,
-    workspace_list: [],
   }),
   actions: {
     getLanguage() {
@@ -96,27 +93,12 @@ const useUserStore = defineStore('user', {
         return []
       }
     },
-    getEdition() {
-      if (this.userInfo) {
-        if (this.isEE()) {
-          return 'X-PACK-EE'
-        } else if (this.isPE()) {
-          return 'X-PACK-PE'
-        } else {
-          return 'X-PACK-CE'
-        }
-      }
-      return 'X-PACK-CE'
-    },
     getRole() {
       if (this.userInfo) {
         return this.userInfo?.role
       } else {
-        return []
+        return ''
       }
-    },
-    is_admin() {
-      return this.userInfo?.role.includes('ADMIN')
     },
     isCE() {
       return this.edition == 'CE'
@@ -131,24 +113,7 @@ const useUserStore = defineStore('user', {
       this.userType = num
       this.userAccessToken = token
     },
-    getHasPermissionWorkspaceManage() {
-      const workspaceManagePermissions = this.userInfo?.role
-        .filter((permission) => permission.startsWith('WORKSPACE_MANAGE'))
-        .map((permission) => {
-          const parts = permission.split('/WORKSPACE/');
-          return parts.length > 1 ? parts[1] : null; // 提取工作空间ID
-        })
-        .filter((id) => id !== null); // 过滤掉无效的ID
-      if (workspaceManagePermissions && workspaceManagePermissions.length > 0) {
-        if (workspaceManagePermissions.includes(localStorage.getItem('workspace_id') || 'default')) {
-          return
-        }
-        this.setWorkspaceId(workspaceManagePermissions[0])
-      }
-    },
-    getEditionName() {
-      return this.edition
-    },
+
     async asyncGetProfile() {
       return new Promise((resolve, reject) => {
         UserApi.getProfile()
@@ -183,22 +148,10 @@ const useUserStore = defineStore('user', {
       })
     },
 
-    async profile(loading?: Ref<boolean>) {
-      return UserApi.getUserProfile(loading).then((ok) => {
+    async profile() {
+      return UserApi.profile().then(async (ok) => {
         this.userInfo = ok.data
-        const workspace_list =
-          ok.data.workspace_list && ok.data.workspace_list.length > 0
-            ? ok.data.workspace_list
-            : [{id: 'default', name: 'default'}]
-        const workspace_id = this.getWorkspaceId()
-        if (!workspace_id || !workspace_list.some((w) => w.id == workspace_id)) {
-          this.setWorkspaceId(workspace_list[0].id)
-        }
-        this.workspace_list = workspace_list
-        useLocalStorage<string>(localeConfigKey, 'en-US').value =
-          ok?.data?.language || this.getLanguage()
-        const theme = useThemeStore()
-        theme.setTheme()
+        useLocalStorage(localeConfigKey, 'en-US').value = ok.data?.language || this.getLanguage()
         return this.asyncGetProfile()
       })
     },
