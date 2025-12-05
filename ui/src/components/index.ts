@@ -4,6 +4,8 @@ import LogoIcon from './logo/LogoIcon.vue'
 import SendIcon from './logo/SendIcon.vue'
 import dynamicsForm from './dynamics-form'
 import AppIcon from './app-icon/AppIcon.vue'
+import LoginLayout from './login-layout/index.vue'
+import LoginContainer from './login-container/index.vue'
 import LayoutContainer from './layout-container/index.vue'
 import ContentContainer from './layout-container/ContentContainer.vue'
 import CardBox from './card-box/index.vue'
@@ -34,6 +36,8 @@ export default {
     app.component('SendIcon', SendIcon)
     app.use(dynamicsForm)
     app.component('AppIcon', AppIcon)
+    app.component('LoginLayout', LoginLayout)
+    app.component('LoginContainer', LoginContainer)
     app.component('LayoutContainer', LayoutContainer)
     app.component('ContentContainer', ContentContainer)
     app.component('CardBox', CardBox)
