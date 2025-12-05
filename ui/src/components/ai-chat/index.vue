@@ -626,7 +626,7 @@ defineExpose({
 })
 </script>
 <style lang="scss">
-@use './index.scss';
+@import './index.scss';
 .firstUserInput {
   height: 100%;
   display: flex;
