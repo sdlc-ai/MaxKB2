@@ -107,6 +107,14 @@ const resetCurrentUserPassword: (
  * @param loading 接口加载器
  * @returns 用户基本信息
  */
+const getUserProfile: (loading?: Ref<boolean>) => Promise<Result<User>> = (loading) => {
+  return get('/user/profile', undefined, loading)
+}
+/**
+ * 获取用户基本信息
+ * @param loading 接口加载器
+ * @returns 用户基本信息
+ */
 const profile: (loading?: Ref<boolean>) => Promise<Result<User>> = (loading) => {
   return get('/user', undefined, loading)
 }
@@ -222,6 +230,7 @@ export default {
   register,
   sendEmit,
   checkCode,
+  getUserProfile,
   profile,
   resetPassword,
   sendEmailToCurrent,

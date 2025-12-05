@@ -208,7 +208,7 @@ function redirectAuth(authType: string) {
           return
         }
         const config = res.data.config_data
-        const redirectUrl = eval(`\`${config.redirectUrl}\``)
+        const redirectUrl = `${config.redirectUrl}`
         let url
         if (authType === 'CAS') {
           url = config.ldpUri

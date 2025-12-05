@@ -7,67 +7,77 @@
     destroy-on-close
     :close-on-click-modal="false"
     :close-on-press-escape="false"
+    append-to-body
   >
     <el-row v-loading="loading">
       <el-col :span="18">
         <el-scrollbar height="500" wrap-class="paragraph-scrollbar">
           <div class="p-24" style="padding-bottom: 8px">
-            <div style="position: absolute; right: 20px; top: 20px; ">
-              <el-button text @click="isEdit = true" v-if="problemId && !isEdit">
-                <el-icon><EditPen /></el-icon>
+            <div style="position: absolute; right: 20px; top: 20px">
+              <el-button text @click="isEdit = true" v-if="paragraphId && !isEdit">
+                <AppIcon iconName="app-edit"></AppIcon>
               </el-button>
             </div>
 
-            <ParagraphForm ref="paragraphFormRef" :data="detail" :isEdit="isEdit" />
+            <ParagraphForm
+              ref="paragraphFormRef"
+              :data="detail"
+              :isEdit="isEdit"
+              :knowledge-id="id"
+            />
           </div>
         </el-scrollbar>
-        <div class="text-right p-24 pt-0" v-if="problemId && isEdit">
-          <el-button @click.prevent="cancelEdit"> {{$t('common.cancel')}} </el-button>
+        <div class="text-right p-24 pt-0" v-if="paragraphId && isEdit">
+          <el-button @click.prevent="cancelEdit"> {{ $t('common.cancel') }} </el-button>
           <el-button type="primary" class="custom-btn" :disabled="loading" @click="handleDebounceClick">
-            {{$t('common.save')}}
+            {{ $t('common.save') }}
           </el-button>
         </div>
       </el-col>
       <el-col :span="6" class="border-l" style="width: 300px">
         <!-- 关联问题 -->
         <ProblemComponent
-          :problemId="problemId"
+          v-if="permissionPrecise.problem_read(id)"
+          :paragraphId="paragraphId"
           :docId="document_id"
-          :datasetId="dataset_id"
+          :knowledgeId="id"
+          :apiType="apiType"
           ref="ProblemRef"
         />
       </el-col>
     </el-row>
-    <template #footer v-if="!problemId">
+    <template #footer v-if="!paragraphId">
       <span class="dialog-footer">
-        <el-button @click.prevent="dialogVisible = false"> {{$t('common.cancel')}} </el-button>
+        <el-button @click.prevent="dialogVisible = false"> {{ $t('common.cancel') }} </el-button>
         <el-button :disabled="loading" type="primary" @click="handleDebounceClick">
-          {{$t('common.submit')}}
+          {{ $t('common.submit') }}
         </el-button>
       </span>
     </template>
   </el-dialog>
 </template>
 <script setup lang="ts">
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { cloneDeep, debounce } from 'lodash'
-
 import ParagraphForm from '@/views/paragraph/component/ParagraphForm.vue'
 import ProblemComponent from '@/views/paragraph/component/ProblemComponent.vue'
-import paragraphApi from '@/api/paragraph'
-import useStore from '@/stores'
+import { loadSharedApi } from '@/utils/dynamics-api/shared-api'
+import permissionMap from '@/permission'
 
-const props = defineProps({
-  title: String
-})
-
-const { paragraph } = useStore()
+const props = defineProps<{
+  title: string
+  apiType: 'systemShare' | 'workspace' | 'systemManage'
+}>()
 
 const route = useRoute()
 const {
-  params: { id, documentId }
+  params: { id, documentId },
 } = route as any
+
+const permissionPrecise = computed(() => {
+  return permissionMap['knowledge'][props.apiType]
+})
 
 const emit = defineEmits(['refresh'])
 
@@ -77,16 +87,17 @@ const paragraphFormRef = ref<any>()
 const dialogVisible = ref<boolean>(false)
 
 const loading = ref(false)
-const problemId = ref('')
+const paragraphId = ref('')
 const detail = ref<any>({})
 const isEdit = ref(false)
 const document_id = ref('')
 const dataset_id = ref('')
 const cloneData = ref(null)
+const position = ref(null)
 
 watch(dialogVisible, (bool) => {
   if (!bool) {
-    problemId.value = ''
+    paragraphId.value = ''
     detail.value = {}
     isEdit.value = false
     document_id.value = ''
@@ -100,14 +111,22 @@ const cancelEdit = () => {
   detail.value = cloneDeep(cloneData.value)
 }
 
-const open = (data: any) => {
-  if (data) {
+const open = (data: any, str: any) => {
+  if (data && str === 'add') {
+    isEdit.value = true
+    position.value = data.position
+  } else if (data) {
     detail.value.title = data.title
     detail.value.content = data.content
     cloneData.value = cloneDeep(detail.value)
-    problemId.value = data.id
+    paragraphId.value = data.id
     document_id.value = data.document_id
     dataset_id.value = data.dataset_id || id
+    if (str === 'edit') {
+      isEdit.value = true
+    } else {
+      isEdit.value = false
+    }
   } else {
     isEdit.value = true
   }
@@ -116,14 +135,14 @@ const open = (data: any) => {
 const submitHandle = async () => {
   if (await paragraphFormRef.value?.validate()) {
     loading.value = true
-    if (problemId.value) {
-      paragraph
-        .asyncPutParagraph(
+    if (paragraphId.value) {
+      loadSharedApi({ type: 'paragraph', systemType: props.apiType })
+        .putParagraph(
           dataset_id.value,
           documentId || document_id.value,
-          problemId.value,
+          paragraphId.value,
           paragraphFormRef.value?.form,
-          loading
+          loading,
         )
         .then((res: any) => {
           isEdit.value = false
@@ -133,14 +152,20 @@ const submitHandle = async () => {
       const obj =
         ProblemRef.value.problemList.length > 0
           ? {
+              position: String(position.value) ? position.value : null,
               problem_list: ProblemRef.value.problemList,
-              ...paragraphFormRef.value?.form
+              ...paragraphFormRef.value?.form,
             }
-          : paragraphFormRef.value?.form
-      paragraphApi.postParagraph(id, documentId, obj, loading).then((res) => {
-        dialogVisible.value = false
-        emit('refresh')
-      })
+          : {
+              position: String(position.value) ? position.value : null,
+              ...paragraphFormRef.value?.form,
+            }
+      loadSharedApi({ type: 'paragraph', systemType: props.apiType })
+        .postParagraph(id, documentId, obj, loading)
+        .then(() => {
+          dialogVisible.value = false
+          emit('refresh')
+        })
     }
   }
 }
@@ -148,6 +173,6 @@ const handleDebounceClick = debounce(() => {
   submitHandle()
 }, 200)
 
-defineExpose({ open })
+defineExpose({ open, dialogVisible })
 </script>
 <style lang="scss" scoped></style>

@@ -24,7 +24,7 @@
         <el-dropdown-item class="border-t p-8" @click="openResetPassword">
           {{ $t('views.login.resetPassword') }}
         </el-dropdown-item>
-        <div v-hasPermission="new ComplexPermission([], ['x-pack'], 'OR')">
+        <div v-hasPermission="new ComplexPermission([], ['x-pack'], [],'OR')">
           <el-dropdown-item class="border-t p-8" @click="openAPIKeyDialog">
             {{ $t('layout.apiKey') }}
           </el-dropdown-item>

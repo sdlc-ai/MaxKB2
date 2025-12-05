@@ -70,7 +70,7 @@
               </el-card>
             </el-col>
           </el-row>
-          <el-row :gutter="20" v-hasPermission="new ComplexPermission([], ['x-pack'], 'OR')">
+          <el-row :gutter="20" v-hasPermission="new ComplexPermission([], ['x-pack'], [],'OR')">
             <el-col :span="12">
               <el-card
                 shadow="never"

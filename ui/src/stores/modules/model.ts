@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { type Ref } from 'vue'
 import ProviderApi from '@/api/model/provider'
 import ModelApi from '@/api/model/model'
+import modelApi from '@/api/model'
 import type { ListModelRequest } from '@/api/type/model'
 
 const useModelStore = defineStore('model', {
@@ -22,6 +23,18 @@ const useModelStore = defineStore('model', {
     async asyncGetProvider(loading?: Ref<boolean>) {
       return new Promise((resolve, reject) => {
         ProviderApi.getProvider(loading)
+          .then((res) => {
+            resolve(res)
+          })
+          .catch((error) => {
+            reject(error)
+          })
+      })
+    },
+    async asyncGetModel(data?: ListModelRequest) {
+      return new Promise((resolve, reject) => {
+        modelApi
+          .getModel(data)
           .then((res) => {
             resolve(res)
           })

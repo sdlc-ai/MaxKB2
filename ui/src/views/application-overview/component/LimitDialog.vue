@@ -33,7 +33,7 @@
       <!--     身份验证 -->
       <el-form-item
         :label="$t('views.applicationOverview.appInfo.LimitDialog.authentication')"
-        v-hasPermission="new ComplexPermission([], ['x-pack'], 'OR')"
+        v-hasPermission="new ComplexPermission([], ['x-pack'], [],'OR')"
       >
         <el-switch size="small" v-model="form.authentication" @change="firstGeneration"></el-switch>
       </el-form-item>
@@ -41,7 +41,7 @@
         prop="authentication_value"
         v-if="form.authentication"
         :label="$t('views.applicationOverview.appInfo.LimitDialog.authenticationValue')"
-        v-hasPermission="new ComplexPermission([], ['x-pack'], 'OR')"
+        v-hasPermission="new ComplexPermission([], ['x-pack'], [],'OR')"
       >
         <el-input
           class="authentication-append-input"
