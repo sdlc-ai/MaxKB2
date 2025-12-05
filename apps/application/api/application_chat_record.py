@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: MaxKB
-    @Author：虎虎
-    @file： application_chat_record.py
-    @date：2025/6/10 15:19
-    @desc:
-"""
+
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import OpenApiParameter

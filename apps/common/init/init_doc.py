@@ -1,17 +1,11 @@
 # coding=utf-8
-"""
-    @project: maxkb
-    @Author：虎
-    @file： init_doc.py
-    @date：2024/5/24 14:11
-    @desc:
-"""
+
 import hashlib
 
 from django.urls import path, URLPattern
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
-from maxkb.const import CONFIG
+from porsche.const import CONFIG
 
 chat_api_prefix = CONFIG.get_chat_path()[1:] + '/api/'
 

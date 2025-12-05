@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""
-@Project ：MaxKB 
-@File    ：gemini_model_provider.py
-@Author  ：Brian Yang
-@Date    ：5/13/24 7:47 AM 
-"""
+
 import os
 
 from common.utils.common import get_file_content
@@ -19,7 +14,7 @@ from models_provider.impl.gemini_model_provider.model.embedding import GeminiEmb
 from models_provider.impl.gemini_model_provider.model.image import GeminiImage
 from models_provider.impl.gemini_model_provider.model.llm import GeminiChatModel
 from models_provider.impl.gemini_model_provider.model.stt import GeminiSpeechToText
-from maxkb.conf import PROJECT_DIR
+from porsche.conf import PROJECT_DIR
 from django.utils.translation import gettext as _
 
 

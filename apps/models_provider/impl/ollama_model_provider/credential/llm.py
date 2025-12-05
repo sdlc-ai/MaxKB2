@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: MaxKB
-    @Author：虎
-    @file： llm.py
-    @date：2024/7/11 18:19
-    @desc:
-"""
+
 from typing import Dict
 
 from django.utils.translation import gettext_lazy as _, gettext

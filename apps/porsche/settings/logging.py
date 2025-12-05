@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-#
 import os
 
 from ..const import PROJECT_DIR, CONFIG, LOG_DIR
 
-MAX_KB_LOG_FILE = os.path.join(LOG_DIR, 'maxkb.log')
+MAX_KB_LOG_FILE = os.path.join(LOG_DIR, 'porsche.log')
 DRF_EXCEPTION_LOG_FILE = os.path.join(LOG_DIR, 'drf_exception.log')
 UNEXPECTED_EXCEPTION_LOG_FILE = os.path.join(LOG_DIR, 'unexpected_exception.log')
 LOG_LEVEL = CONFIG.get_log_level()
@@ -28,7 +26,7 @@ LOGGING = {
             'format': '%(levelname)s %(message)s'
         },
         'syslog': {
-            'format': 'maxkb: %(message)s'
+            'format': 'porsche: %(message)s'
         },
         'msg': {
             'format': '%(message)s'

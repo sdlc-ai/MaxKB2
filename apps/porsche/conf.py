@@ -1,11 +1,4 @@
 # coding=utf-8
-"""
-    @project: MaxKB
-    @Author：虎虎
-    @file： conf.py
-    @date：2025/4/11 16:58
-    @desc:
-"""
 import errno
 import logging
 import os
@@ -14,7 +7,7 @@ import yaml
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_DIR = os.path.dirname(BASE_DIR)
-logger = logging.getLogger('maxkb.conf')
+logger = logging.getLogger('porsche.conf')
 
 
 class Config(dict):
@@ -107,7 +100,7 @@ class Config(dict):
 
     def get_sandbox_python_package_paths(self):
         return self.get('SANDBOX_PYTHON_PACKAGE_PATHS',
-                        '/opt/py3/lib/python3.11/site-packages,/opt/maxkb-app/sandbox/python-packages,/opt/maxkb/python-packages')
+                        '/opt/py3/lib/python3.11/site-packages,/opt/porsche-app/sandbox/python-packages,/opt/porsche/python-packages')
 
     def get_admin_path(self):
         return self.get('ADMIN_PATH', '/admin')
@@ -196,25 +189,25 @@ class ConfigManager:
 
     def load_from_env(self):
         keys = os.environ.keys()
-        config = {key.replace('MAXKB_', ''): os.environ.get(key) for key in keys if key.startswith('MAXKB_')}
+        config = {key.replace('PORSCHEAI_', ''): os.environ.get(key) for key in keys if key.startswith('PORSCHEAI_')}
         if len(config.keys()) <= 0:
             msg = f"""
 
                              Error: No config env found.
 
                              Please set environment variables
-                                MAXKB_CONFIG_TYPE: 配置文件读取方式 FILE: 使用配置文件配置  ENV: 使用ENV配置
-                                MAXKB_DB_NAME: 数据库名称
-                                MAXKB_DB_HOST: 数据库主机
-                                MAXKB_DB_PORT: 数据库端口
-                                MAXKB_DB_USER: 数据库用户名
-                                MAXKB_DB_PASSWORD: 数据库密码
+                                PORSCHEAI_CONFIG_TYPE: 配置文件读取方式 FILE: 使用配置文件配置  ENV: 使用ENV配置
+                                PORSCHEAI_DB_NAME: 数据库名称
+                                PORSCHEAI_DB_HOST: 数据库主机
+                                PORSCHEAI_DB_PORT: 数据库端口
+                                PORSCHEAI_DB_USER: 数据库用户名
+                                PORSCHEAI_DB_PASSWORD: 数据库密码
                                 
-                                MAXKB_REDIS_HOST:缓存数据库主机
-                                MAXKB_REDIS_PORT:缓存数据库端口
-                                MAXKB_REDIS_PASSWORD:缓存数据库密码
-                                MAXKB_REDIS_DB:缓存数据库
-                                MAXKB_REDIS_MAX_CONNECTIONS:缓存数据库最大连接数
+                                PORSCHEAI_REDIS_HOST:缓存数据库主机
+                                PORSCHEAI_REDIS_PORT:缓存数据库端口
+                                PORSCHEAI_REDIS_PASSWORD:缓存数据库密码
+                                PORSCHEAI_REDIS_DB:缓存数据库
+                                PORSCHEAI_REDIS_MAX_CONNECTIONS:缓存数据库最大连接数
                              """
             raise ImportError(msg)
         self.from_mapping(config)
@@ -227,7 +220,7 @@ class ConfigManager:
         if not root_path:
             root_path = PROJECT_DIR
         manager = cls(root_path=root_path)
-        config_type = os.environ.get('MAXKB_CONFIG_TYPE')
+        config_type = os.environ.get('PORSCHEAI_CONFIG_TYPE')
         if config_type is None or config_type != 'ENV':
             manager.load_from_yml()
         else:

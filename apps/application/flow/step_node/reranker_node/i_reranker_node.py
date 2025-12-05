@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎
     @file： i_reranker_node.py
     @date：2024/9/4 10:40

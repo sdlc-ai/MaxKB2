@@ -9,7 +9,7 @@ import html2text as ht
 import requests
 from bs4 import BeautifulSoup
 
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 
 requests.packages.urllib3.disable_warnings()
 
@@ -145,7 +145,7 @@ class Fork:
                 try:
                     html_content = response.content.decode(charset, errors='replace')
                 except Exception as e:
-                    maxkb_logger.error(f'{e}: {traceback.format_exc()}')
+                    porsche_logger.error(f'{e}: {traceback.format_exc()}')
                 return BeautifulSoup(html_content, "html.parser")
         return beautiful_soup
 
@@ -169,14 +169,14 @@ class Fork:
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36'
             }
 
-            maxkb_logger.info(f'fork:{self.base_fork_url}')
+            porsche_logger.info(f'fork:{self.base_fork_url}')
             response = requests.get(self.base_fork_url, verify=False, headers=headers)
             if response.status_code != 200:
-                maxkb_logger.error(f"url: {self.base_fork_url} code:{response.status_code}")
+                porsche_logger.error(f"url: {self.base_fork_url} code:{response.status_code}")
                 return Fork.Response.error(f"url: {self.base_fork_url} code:{response.status_code}")
             bf = self.get_beautiful_soup(response)
         except Exception as e:
-            maxkb_logger.error(f'{str(e)}:{traceback.format_exc()}')
+            porsche_logger.error(f'{str(e)}:{traceback.format_exc()}')
             return Fork.Response.error(str(e))
         bf = self.reset_beautiful_soup(bf)
         link_list = self.get_child_link_list(bf)
@@ -186,6 +186,6 @@ class Fork:
 
 
 def handler(base_url, response: Fork.Response):
-    maxkb_logger.info(base_url.url, base_url.tag.text if base_url.tag else None, response.content)
+    porsche_logger.info(base_url.url, base_url.tag.text if base_url.tag else None, response.content)
 
 # ForkManage('https://bbs.fit2cloud.com/c/de/6', ['.md-content']).fork(3, set(), handler)

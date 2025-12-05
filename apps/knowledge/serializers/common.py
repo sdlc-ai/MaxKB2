@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: maxkb
-    @Author：虎
-    @file： common_serializers.py
-    @date：2023/11/17 11:00
-    @desc:
-"""
+
 import os
 import re
 import zipfile
@@ -22,10 +16,10 @@ from common.db.sql_execute import sql_execute, update_execute
 from common.exception.app_exception import AppApiException
 from common.utils.common import get_file_content
 from common.utils.fork import Fork
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 from knowledge.models import Document
 from knowledge.models import Paragraph, Problem, ProblemParagraphMapping, Knowledge, File
-from maxkb.conf import PROJECT_DIR
+from porsche.conf import PROJECT_DIR
 from models_provider.tools import get_model, get_model_default_params
 
 
@@ -256,7 +250,7 @@ def create_knowledge_index(knowledge_id=None, document_id=None):
         dims = result[0]['dims']
         sql = f"""CREATE INDEX "embedding_hnsw_idx_{k_id}" ON embedding USING hnsw ((embedding::vector({dims})) vector_cosine_ops) WHERE knowledge_id = '{k_id}'"""
         update_execute(sql, [])
-        maxkb_logger.info(f'Created index for knowledge ID: {k_id}')
+        porsche_logger.info(f'Created index for knowledge ID: {k_id}')
 
 
 def drop_knowledge_index(knowledge_id=None, document_id=None):
@@ -274,4 +268,4 @@ def drop_knowledge_index(knowledge_id=None, document_id=None):
     if index:
         sql = f'DROP INDEX "embedding_hnsw_idx_{k_id}"'
         update_execute(sql, [])
-        maxkb_logger.info(f'Dropped index for knowledge ID: {k_id}')
+        porsche_logger.info(f'Dropped index for knowledge ID: {k_id}')

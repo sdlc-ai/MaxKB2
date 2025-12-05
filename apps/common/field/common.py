@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： common.py
     @date：2024/1/11 18:44

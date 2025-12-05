@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎
     @file： embedding.py
     @date：2024/7/12 17:44
@@ -11,11 +11,11 @@ from typing import Dict
 import requests
 from langchain_community.embeddings import OpenAIEmbeddings
 
-from common.utils.logger import maxkb_logger
-from models_provider.base_model_provider import MaxKBBaseModel
+from common.utils.logger import porsche_logger
+from models_provider.base_model_provider import PorscheAIBaseModel
 
 
-class SiliconCloudEmbeddingModel(MaxKBBaseModel, OpenAIEmbeddings):
+class SiliconCloudEmbeddingModel(PorscheAIBaseModel, OpenAIEmbeddings):
     @staticmethod
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
         return SiliconCloudEmbeddingModel(

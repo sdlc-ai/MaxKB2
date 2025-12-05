@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎虎
     @file： ApiMixin.py
     @date：2025/4/14 18:03

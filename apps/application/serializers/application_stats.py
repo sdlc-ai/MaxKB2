@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎虎
     @file： application_stats.py
     @date：2025/6/9 20:34
@@ -20,7 +20,7 @@ from application.models import ApplicationChatUserStats, Application
 from common.db.search import native_search, get_dynamics_model
 from common.exception.app_exception import AppApiException
 from common.utils.common import get_file_content
-from maxkb.conf import PROJECT_DIR
+from porsche.conf import PROJECT_DIR
 
 
 class ApplicationStatsSerializer(serializers.Serializer):

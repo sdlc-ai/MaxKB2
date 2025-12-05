@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: maxkb
-    @Author：虎
-    @file： ts_vecto_util.py
-    @date：2024/4/16 15:26
-    @desc:
-"""
+
 import re
 import uuid_utils.compat as uuid
 from typing import List

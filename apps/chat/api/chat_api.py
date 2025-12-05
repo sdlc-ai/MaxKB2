@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎虎
     @file： chat_api.py
     @date：2025/6/9 15:23

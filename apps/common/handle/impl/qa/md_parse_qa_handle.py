@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： md_parse_qa_handle.py
     @date：2024/5/21 14:59
@@ -12,7 +12,7 @@ import traceback
 from charset_normalizer import detect
 
 from common.handle.base_parse_qa_handle import BaseParseQAHandle, get_title_row_index_dict, get_row_value
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 
 
 class MarkdownParseQAHandle(BaseParseQAHandle):
@@ -104,5 +104,5 @@ class MarkdownParseQAHandle(BaseParseQAHandle):
             return [{'name': file.name, 'paragraphs': paragraph_list}]
 
         except Exception as e:
-            maxkb_logger.error(f"Error processing Markdown file {file.name}: {e}, {traceback.format_exc()}")
+            porsche_logger.error(f"Error processing Markdown file {file.name}: {e}, {traceback.format_exc()}")
             return [{'name': file.name, 'paragraphs': []}]

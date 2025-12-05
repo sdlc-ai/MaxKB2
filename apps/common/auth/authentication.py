@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎虎
     @file： authentication.py
     @date：2025/4/15 20:12

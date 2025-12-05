@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎虎
     @file： web.py
     @date：2025/11/5 15:24
@@ -13,11 +13,11 @@ import requests
 from anthropic import BaseModel
 from langchain_core.embeddings import Embeddings
 
-from maxkb.const import CONFIG
-from models_provider.base_model_provider import MaxKBBaseModel
+from porsche.const import CONFIG
+from models_provider.base_model_provider import PorscheAIBaseModel
 
 
-class LocalEmbedding(MaxKBBaseModel, BaseModel, Embeddings):
+class LocalEmbedding(PorscheAIBaseModel, BaseModel, Embeddings):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.model_id = kwargs.get('model_id', None)

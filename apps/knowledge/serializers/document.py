@@ -47,7 +47,7 @@ from common.handle.impl.text.xlsx_split_handle import XlsxSplitHandle
 from common.handle.impl.text.zip_split_handle import ZipSplitHandle
 from common.utils.common import post, get_file_content, bulk_create_in_batches, parse_image
 from common.utils.fork import Fork
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 from common.utils.split_model import get_split_model, flat_map
 from knowledge.models import Knowledge, Paragraph, Problem, Document, KnowledgeType, ProblemParagraphMapping, State, \
     TaskType, File, FileSourceType, Tag, DocumentTag
@@ -60,7 +60,7 @@ from knowledge.task.embedding import embedding_by_document, delete_embedding_by_
     update_embedding_knowledge_id
 from knowledge.task.generate import generate_related_by_document_id
 from knowledge.task.sync import sync_web_document
-from maxkb.const import PROJECT_DIR
+from porsche.const import PROJECT_DIR
 from models_provider.models import Model
 from oss.serializers.file import FileSerializer
 
@@ -533,7 +533,7 @@ class DocumentSerializers(serializers.Serializer):
                 else:
                     state = State.FAILURE
             except Exception as e:
-                maxkb_logger.error(f'{str(e)}:{traceback.format_exc()}')
+                porsche_logger.error(f'{str(e)}:{traceback.format_exc()}')
                 state = State.FAILURE
             ListenerManagement.update_status(
                 QuerySet(Document).filter(id=document_id),

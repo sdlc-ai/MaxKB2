@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： pg_vector.py
     @date：2023/10/19 15:28
@@ -22,7 +22,7 @@ from common.utils.common import get_file_content
 from common.utils.ts_vecto_util import to_ts_vector, to_query
 from knowledge.models import Embedding, SearchMode, SourceType
 from knowledge.vector.base_vector import BaseVectorStore
-from maxkb.conf import PROJECT_DIR
+from porsche.conf import PROJECT_DIR
 
 
 class PGVector(BaseVectorStore):

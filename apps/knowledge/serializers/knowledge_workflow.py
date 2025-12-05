@@ -21,7 +21,7 @@ from common.utils.tool_code import ToolExecutor
 from knowledge.models import KnowledgeScope, Knowledge, KnowledgeType, KnowledgeWorkflow, KnowledgeWorkflowVersion
 from knowledge.models.knowledge_action import KnowledgeAction, State
 from knowledge.serializers.knowledge import KnowledgeModelSerializer
-from maxkb.const import CONFIG
+from porsche.const import CONFIG
 from system_manage.models import AuthTargetType
 from system_manage.serializers.user_resource_permission import UserResourcePermissionSerializer
 from tools.models import Tool

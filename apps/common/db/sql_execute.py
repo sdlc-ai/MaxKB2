@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： sql_execute.py
     @date：2023/9/25 20:05

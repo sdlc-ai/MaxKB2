@@ -20,7 +20,7 @@ class GunicornService(BaseService):
         bind = f'{HTTP_HOST}:{HTTP_PORT}'
         max_requests = 10240 if int(self.worker) > 1 else 0
         cmd = [
-            'gunicorn', 'maxkb.wsgi:application',
+            'gunicorn', 'porsche.wsgi:application',
             '-b', bind,
             '-k', 'gthread',
             '--threads', '200',

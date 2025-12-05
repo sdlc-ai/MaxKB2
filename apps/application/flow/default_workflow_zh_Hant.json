@@ -13,8 +13,8 @@
                 "stepName": "基本資訊",
                 "node_data": {
                     "desc": "",
-                    "name": "maxkbapplication",
-                    "prologue": "您好，我是MaxKB小助手，您可以向我提出MaxKB使用問題。\n- MaxKB主要功能有什麼？\n- MaxKB支持哪些大語言模型？\n- MaxKB支持哪些文檔類型？"
+                    "name": "Porsche-Ai application",
+                    "prologue": "您好，我是Porsche-Ai 小助手，您可以向我提出Porsche-Ai 使用問題。\n- Porsche-Ai 主要功能有什麼？\n- Porsche-Ai 支持哪些大語言模型？\n- Porsche-Ai 支持哪些文檔類型？"
                 },
                 "input_field_list": [
 

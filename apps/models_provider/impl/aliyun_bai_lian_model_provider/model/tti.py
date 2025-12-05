@@ -8,12 +8,12 @@ from langchain_community.chat_models import ChatTongyi
 from langchain_core.messages import HumanMessage
 import logging
 
-from common.utils.logger import maxkb_logger
-from models_provider.base_model_provider import MaxKBBaseModel
+from common.utils.logger import porsche_logger
+from models_provider.base_model_provider import PorscheAIBaseModel
 from models_provider.impl.base_tti import BaseTextToImage
 
 
-class QwenTextToImageModel(MaxKBBaseModel, BaseTextToImage):
+class QwenTextToImageModel(PorscheAIBaseModel, BaseTextToImage):
     api_key: str
     model_name: str
     params: dict
@@ -58,7 +58,7 @@ class QwenTextToImageModel(MaxKBBaseModel, BaseTextToImage):
                 for result in rsp.output.results:
                     file_urls.append(result.url)
             else:
-                maxkb_logger.error('sync_call Failed, status_code: %s, code: %s, message: %s' %
+                porsche_logger.error('sync_call Failed, status_code: %s, code: %s, message: %s' %
                                    (rsp.status_code, rsp.code, rsp.message))
             return file_urls
         elif self.model_name.startswith("qwen"):
@@ -88,6 +88,6 @@ class QwenTextToImageModel(MaxKBBaseModel, BaseTextToImage):
                 for result in rsp.output.choices:
                     file_urls.append(result.message.content[0].get('image'))
             else:
-                maxkb_logger.error('sync_call Failed, status_code: %s, code: %s, message: %s' %
+                porsche_logger.error('sync_call Failed, status_code: %s, code: %s, message: %s' %
                                    (rsp.status_code, rsp.code, rsp.message))
             return file_urls

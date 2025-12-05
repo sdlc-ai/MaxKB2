@@ -28,11 +28,11 @@ from common.exception.app_exception import AppApiException
 from common.field.common import UploadedImageField
 from common.result import result
 from common.utils.common import get_file_content
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 from common.utils.rsa_util import rsa_long_decrypt, rsa_long_encrypt
 from common.utils.tool_code import ToolExecutor
 from knowledge.models import File, FileSourceType
-from maxkb.const import CONFIG, PROJECT_DIR
+from porsche.const import CONFIG, PROJECT_DIR
 from system_manage.models import AuthTargetType, WorkspaceUserResourcePermission
 from system_manage.serializers.user_resource_permission import UserResourcePermissionSerializer
 from tools.models import Tool, ToolScope, ToolFolder, ToolType
@@ -118,7 +118,7 @@ def validate_mcp_config(servers: Dict):
     try:
         asyncio.run(validate())
     except Exception as e:
-        maxkb_logger.error(f"validate mcp config error: {e}, servers: {servers}")
+        porsche_logger.error(f"validate mcp config error: {e}, servers: {servers}")
         raise serializers.ValidationError(_('MCP configuration is invalid'))
 
 
@@ -739,7 +739,7 @@ class ToolSerializer(serializers.Serializer):
             self.is_valid(raise_exception=True)
             # 下载zip文件
             try:
-                res = requests.get('https://apps-assets.fit2cloud.com/stable/maxkb.json.zip', timeout=5)
+                res = requests.get('https://apps-assets.fit2cloud.com/stable/porsche.json.zip', timeout=5)
                 res.raise_for_status()
                 # 创建临时文件保存zip
                 with tempfile.NamedTemporaryFile(delete=False, suffix='.zip') as temp_zip:
@@ -775,7 +775,7 @@ class ToolSerializer(serializers.Serializer):
                     # 清理临时文件
                     os.unlink(temp_zip_path)
             except Exception as e:
-                maxkb_logger.error(f"fetch appstore tools error: {e}")
+                porsche_logger.error(f"fetch appstore tools error: {e}")
                 return {'apps': [], 'additionalProperties': {'tags': []}}
 
     class AddStoreTool(serializers.Serializer):
@@ -826,7 +826,7 @@ class ToolSerializer(serializers.Serializer):
             try:
                 requests.get(instance.get('download_callback_url'), timeout=5)
             except Exception as e:
-                maxkb_logger.error(f"callback appstore tool download error: {e}")
+                porsche_logger.error(f"callback appstore tool download error: {e}")
             return ToolModelSerializer(tool).data
 
     class UpdateStoreTool(serializers.Serializer):
@@ -862,7 +862,7 @@ class ToolSerializer(serializers.Serializer):
             try:
                 requests.get(self.data.get('download_callback_url'), timeout=5)
             except Exception as e:
-                maxkb_logger.error(f"callback appstore tool download error: {e}")
+                porsche_logger.error(f"callback appstore tool download error: {e}")
             return ToolModelSerializer(tool).data
 
 

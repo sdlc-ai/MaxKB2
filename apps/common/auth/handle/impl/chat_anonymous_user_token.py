@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: MaxKB
-    @Author：虎虎
-    @file： chat_anonymous_user_token.py
-    @date：2025/6/6 15:08
-    @desc:
-"""
+
 from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 
@@ -16,7 +10,7 @@ from common.constants.authentication_type import AuthenticationType
 from common.constants.permission_constants import RoleConstants, Permission, Group, Operate, ChatAuth
 from common.database_model_manage.database_model_manage import DatabaseModelManage
 from common.exception.app_exception import AppAuthenticationFailed
-from maxkb.settings import edition
+from porsche.settings import edition
 
 
 class ChatAnonymousUserToken(AuthBaseHandle):

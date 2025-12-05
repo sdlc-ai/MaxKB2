@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎
     @file： tooltip_label.py
     @date：2024/8/22 17:19

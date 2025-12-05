@@ -1,17 +1,11 @@
 # coding=utf-8
-"""
-    @project: maxkb
-    @Author：虎
-    @file： openai_model_provider.py
-    @date：2024/3/28 16:26
-    @desc:
-"""
+
 import os
 
 from django.utils.translation import gettext as _
 
 from common.utils.common import get_file_content
-from maxkb.conf import PROJECT_DIR
+from porsche.conf import PROJECT_DIR
 from models_provider.base_model_provider import ModelInfo, ModelTypeConst, ModelInfoManage, IModelProvider, \
     ModelProvideInfo
 from models_provider.impl.regolo_model_provider.credential.embedding import RegoloEmbeddingCredential

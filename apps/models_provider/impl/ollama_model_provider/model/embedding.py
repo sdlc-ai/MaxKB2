@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎
     @file： embedding.py
     @date：2024/7/12 15:02
@@ -10,10 +10,10 @@ from typing import Dict, List
 
 from langchain_community.embeddings import OllamaEmbeddings
 
-from models_provider.base_model_provider import MaxKBBaseModel
+from models_provider.base_model_provider import PorscheAIBaseModel
 
 
-class OllamaEmbedding(MaxKBBaseModel, OllamaEmbeddings):
+class OllamaEmbedding(PorscheAIBaseModel, OllamaEmbeddings):
     @staticmethod
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
         return OllamaEmbedding(

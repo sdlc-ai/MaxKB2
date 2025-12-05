@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： utils.py
     @date：2024/6/6 15:15
@@ -18,7 +18,7 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from langgraph.prebuilt import create_react_agent
 from application.flow.i_step_node import WorkFlowPostHandler
 from common.result import result
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 
 
 class Reasoning:
@@ -346,7 +346,7 @@ def mcp_response_generator(chat_model, message_list, mcp_servers, mcp_output_ena
             async for chunk in async_gen:
                 result_queue.put(('data', chunk))
         except Exception as e:
-            maxkb_logger.error(f'Exception: {e}', exc_info=True)
+            porsche_logger.error(f'Exception: {e}', exc_info=True)
             result_queue.put(('error', e))
         finally:
             result_queue.put(('done', None))

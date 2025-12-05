@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎
     @file： celery.py
     @date：2024/8/19 11:57
@@ -11,7 +11,7 @@ import subprocess
 
 from django.core.management.base import BaseCommand
 
-from maxkb.const import BASE_DIR
+from porsche.const import BASE_DIR
 
 
 class Command(BaseCommand):

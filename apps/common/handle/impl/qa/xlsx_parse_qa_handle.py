@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: maxkb
+    @project: PorscheAi
     @Author：虎
     @file： xlsx_parse_qa_handle.py
     @date：2024/5/21 14:59
@@ -13,7 +13,7 @@ import openpyxl
 
 from common.handle.base_parse_qa_handle import BaseParseQAHandle, get_title_row_index_dict, get_row_value
 from common.handle.impl.common_handle import xlsx_embed_cells_images
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 
 
 def handle_sheet(file_name, sheet, image_dict):
@@ -71,5 +71,5 @@ class XlsxParseQAHandle(BaseParseQAHandle):
                         sheet.title, sheet, image_dict) for sheet
                      in worksheets] if row is not None]
         except Exception as e:
-            maxkb_logger.error(f"Error processing XLSX file {file.name}: {e}, {traceback.format_exc()}")
+            porsche_logger.error(f"Error processing XLSX file {file.name}: {e}, {traceback.format_exc()}")
             return [{'name': file.name, 'paragraphs': []}]

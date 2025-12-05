@@ -1,12 +1,4 @@
 # coding=utf-8
-"""
-    @project: MaxKB
-    @Author：虎虎
-    @file： model.py
-    @date：2025/11/5 14:53
-    @desc:
-"""
-
 from pathlib import Path
 from ...const import CONFIG, PROJECT_DIR
 import os
@@ -33,13 +25,30 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'local_model',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
+    'users.apps.UsersConfig',
+    'tools.apps.ToolConfig',
+    'knowledge',
+    'common',
+    'system_manage',
+    'models_provider',
+    'django_celery_beat',
+    'application',
+    'chat',
+    'oss',
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'common.middleware.gzip.GZipMiddleware',
+    'common.middleware.chat_headers_middleware.ChatHeadersMiddleware',
+    'common.middleware.cross_domain_middleware.CrossDomainMiddleware',
+    'common.middleware.doc_headers_middleware.DocHeadersMiddleware',
 
 ]
 
@@ -50,7 +59,7 @@ REST_FRAMEWORK = {
 }
 STATICFILES_DIRS = [(os.path.join(PROJECT_DIR, 'ui', 'dist'))]
 STATIC_ROOT = os.path.join(BASE_DIR.parent, 'static')
-ROOT_URLCONF = 'maxkb.urls'
+ROOT_URLCONF = 'porsche.urls'
 APPS_DIR = os.path.join(PROJECT_DIR, 'apps')
 
 TEMPLATES = [
@@ -95,7 +104,7 @@ TEMPLATES = [
      },
 ]
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'MaxKB API',
+    'TITLE': 'PorscheAi API',
     'DESCRIPTION': _('Intelligent customer service platform'),
     'VERSION': 'v2',
     'SERVE_INCLUDE_SCHEMA': False,
@@ -111,7 +120,7 @@ SPECTACULAR_SETTINGS = {
         }
     }
 }
-WSGI_APPLICATION = 'maxkb.wsgi.application'
+WSGI_APPLICATION = 'porsche.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -175,5 +184,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 edition = 'CE'
 
-if os.environ.get('MAXKB_REDIS_SENTINEL_SENTINELS') is not None:
+if os.environ.get('PORSCHEAI_REDIS_SENTINEL_SENTINELS') is not None:
     DJANGO_REDIS_CONNECTION_FACTORY = "django_redis.pool.SentinelConnectionFactory"

@@ -1,11 +1,4 @@
 # coding=utf-8
-"""
-    @project: MaxKB
-    @Author：虎虎
-    @file： web.py
-    @date：2025/11/5 15:14
-    @desc:
-"""
 import builtins
 import os
 import sys
@@ -31,8 +24,8 @@ class TorchBlocker:
 # 安装导入拦截器
 builtins.__import__ = TorchBlocker()
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'maxkb.settings')
-os.environ['TIKTOKEN_CACHE_DIR'] = '/opt/maxkb-app/model/tokenizer/openai-tiktoken-cl100k-base'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'porsche.settings')
+os.environ['TIKTOKEN_CACHE_DIR'] = '/porsche.constporsche-app/model/tokenizer/openai-tiktoken-cl100k-base'
 application = get_wsgi_application()
 
 

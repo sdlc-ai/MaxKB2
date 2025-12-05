@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@Project ：MaxKB 
+@Project ：PorscheAi 
 @File    ：gemini_model_provider.py
 @Author  ：Brian Yang
 @Date    ：5/13/24 7:47 AM 
@@ -26,7 +26,7 @@ from models_provider.impl.volcanic_engine_model_provider.model.stt import Volcan
 from models_provider.impl.volcanic_engine_model_provider.model.tti import VolcanicEngineTextToImage
 from models_provider.impl.volcanic_engine_model_provider.model.tts import VolcanicEngineTextToSpeech
 
-from maxkb.conf import PROJECT_DIR
+from porsche.conf import PROJECT_DIR
 from django.utils.translation import gettext as _
 
 from models_provider.impl.volcanic_engine_model_provider.model.ttv import GenerationVideoModel

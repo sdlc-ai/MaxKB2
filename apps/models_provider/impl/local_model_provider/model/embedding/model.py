@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎虎
     @file： model.py
     @date：2025/11/5 15:26
@@ -10,10 +10,10 @@ from typing import Dict
 
 from langchain_huggingface import HuggingFaceEmbeddings
 
-from models_provider.base_model_provider import MaxKBBaseModel
+from models_provider.base_model_provider import PorscheAIBaseModel
 
 
-class LocalEmbedding(MaxKBBaseModel, HuggingFaceEmbeddings):
+class LocalEmbedding(PorscheAIBaseModel, HuggingFaceEmbeddings):
     @staticmethod
     def is_cache_model():
         return True

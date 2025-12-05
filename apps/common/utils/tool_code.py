@@ -10,10 +10,10 @@ import sys
 import tempfile
 import pwd
 import uuid_utils.compat as uuid
-from common.utils.logger import maxkb_logger
+from common.utils.logger import porsche_logger
 from django.utils.translation import gettext_lazy as _
-from maxkb.const import BASE_DIR, CONFIG
-from maxkb.const import PROJECT_DIR
+from porsche.const import BASE_DIR, CONFIG
+from porsche.const import PROJECT_DIR
 from textwrap import dedent
 
 python_directory = sys.executable
@@ -24,7 +24,7 @@ class ToolExecutor:
     def __init__(self, sandbox=False):
         self.sandbox = sandbox
         if sandbox:
-            self.sandbox_path = CONFIG.get("SANDBOX_HOME", '/opt/maxkb-app/sandbox')
+            self.sandbox_path = CONFIG.get("SANDBOX_HOME", '/opt/porsche-app/sandbox')
             self.user = 'sandbox'
         else:
             self.sandbox_path = os.path.join(PROJECT_DIR, 'data', 'sandbox')
@@ -35,7 +35,7 @@ class ToolExecutor:
             self._init_sandbox_dir()
         except Exception as e:
             # 本机忽略异常，容器内不忽略
-            maxkb_logger.error(f'Exception: {e}', exc_info=True)
+            porsche_logger.error(f'Exception: {e}', exc_info=True)
             if self.sandbox:
                 raise e
 
@@ -51,12 +51,12 @@ class ToolExecutor:
         except FileExistsError:
             # 文件已存在 → 已初始化过
             return
-        maxkb_logger.debug("init dir")
+        porsche_logger.debug("init dir")
         try:
             os.system("chmod -R g-rwx /dev/shm /dev/mqueue")
             os.system("chmod o-rwx /run/postgresql")
         except Exception as e:
-            maxkb_logger.warning(f'Exception: {e}', exc_info=True)
+            porsche_logger.warning(f'Exception: {e}', exc_info=True)
             pass
         if CONFIG.get("SANDBOX_TMP_DIR_ENABLED", '0') == "1":
             os.system("chmod g+rwx /tmp")
@@ -86,7 +86,7 @@ class ToolExecutor:
         _exec_code = f"""
 try:
     import os, sys, json, base64, builtins
-    path_to_exclude = ['/opt/py3/lib/python3.11/site-packages', '/opt/maxkb-app/apps']
+    path_to_exclude = ['/opt/py3/lib/python3.11/site-packages', '/opt/porsche-app/apps']
     sys.path = [p for p in sys.path if p not in path_to_exclude]
     sys.path += {python_paths}
     locals_v={'{}'}
@@ -103,7 +103,7 @@ try:
 except Exception as e:
     builtins.print("\\n{_id}:"+base64.b64encode(json.dumps({err}, default=str).encode()).decode(), flush=True)
 """
-        maxkb_logger.debug(f"Sandbox execute code: {_exec_code}")
+        porsche_logger.debug(f"Sandbox execute code: {_exec_code}")
         with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=True) as f:
             f.write(_exec_code)
             f.flush()
@@ -113,7 +113,7 @@ except Exception as e:
         lines = subprocess_result.stdout.splitlines()
         result_line = [line for line in lines if line.startswith(_id)]
         if not result_line:
-            maxkb_logger.error("\n".join(lines))
+            porsche_logger.error("\n".join(lines))
             raise Exception("No result found.")
         result = json.loads(base64.b64decode(result_line[-1].split(":", 1)[1]).decode())
         if result.get('code') == 200:
@@ -191,7 +191,7 @@ import os, sys, logging
 logging.basicConfig(level=logging.WARNING)
 logging.getLogger("mcp").setLevel(logging.ERROR)
 logging.getLogger("mcp.server").setLevel(logging.ERROR)
-path_to_exclude = ['/opt/py3/lib/python3.11/site-packages', '/opt/maxkb-app/apps']
+path_to_exclude = ['/opt/py3/lib/python3.11/site-packages', '/opt/porsche-app/apps']
 sys.path = [p for p in sys.path if p not in path_to_exclude]
 sys.path += {python_paths}
 os.environ.clear()
@@ -200,7 +200,7 @@ exec({dedent(code)!a})
 
     def get_tool_mcp_config(self, code, params):
         _code = self.generate_mcp_server_code(code, params)
-        maxkb_logger.debug(f"Python code of mcp tool: {_code}")
+        porsche_logger.debug(f"Python code of mcp tool: {_code}")
         compressed_and_base64_encoded_code_str = base64.b64encode(gzip.compress(_code.encode())).decode()
         if self.sandbox:
             tool_config = {
