@@ -1,9 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @file: image.py
-    @desc: AWS Bedrock Vision-Language Model Implementation
-"""
+
 from typing import Dict, List
 
 from botocore.config import Config

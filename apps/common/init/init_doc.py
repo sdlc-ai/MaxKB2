@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： init_doc.py
-    @date：2024/5/24 14:11
-    @desc:
-"""
+
 import hashlib
 
 from django.urls import path, URLPattern

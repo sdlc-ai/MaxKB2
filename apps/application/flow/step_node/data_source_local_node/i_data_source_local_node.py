@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： i_data_source_local_node.py
-    @date：2025/11/11 10:06
-    @desc:
-"""
+
 from abc import abstractmethod
 from typing import Type
 

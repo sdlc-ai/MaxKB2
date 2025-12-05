@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： chat_embed_serializers.py
-    @date：2025/5/30 14:34
-    @desc:
-"""
+
 import os
 import uuid_utils.compat as uuid
 

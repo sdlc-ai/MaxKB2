@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： listener_manage.py
-    @date：2023/10/20 14:01
-    @desc:
-"""
+
 import datetime
 import os
 import threading

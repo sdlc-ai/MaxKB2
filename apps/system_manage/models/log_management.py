@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： log_management.py
-    @date：2025/6/4 14:15
-    @desc:
-"""
+
 import uuid_utils.compat as uuid
 
 from django.db import models

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： llm.py
-    @date：2023/11/10 17:45
-    @desc:
-"""
+
 from typing import List, Dict, Optional, Any, Iterator
 
 from langchain_community.chat_models.baidu_qianfan_endpoint import _convert_dict_to_message, QianfanChatEndpoint

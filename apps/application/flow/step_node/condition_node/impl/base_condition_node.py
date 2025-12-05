@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_condition_node.py
-    @date：2024/6/7 11:29
-    @desc:
-"""
+
 from typing import List
 
 from application.flow.i_step_node import NodeResult

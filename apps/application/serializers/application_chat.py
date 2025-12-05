@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： application_chat.py
-    @date：2025/6/10 11:06
-    @desc:
-"""
+
 import datetime
 import os
 import re

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： embedding.py
-    @date：2024/10/16 17:01
-    @desc:
-"""
+
 from typing import Dict, Any
 
 from django.utils.translation import gettext as _

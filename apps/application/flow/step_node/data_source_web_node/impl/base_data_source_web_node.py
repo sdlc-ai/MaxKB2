@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：niu
-    @file： base_data_source_web_node.py
-    @date：2025/11/12 13:47
-    @desc:
-"""
+
 import traceback
 
 from django.utils.translation import gettext_lazy as _

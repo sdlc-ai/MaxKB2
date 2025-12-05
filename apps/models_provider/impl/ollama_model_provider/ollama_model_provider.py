@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： ollama_model_provider.py
-    @date：2024/3/5 17:23
-    @desc:
-"""
+
 import json
 import os
 from typing import Dict, Iterator

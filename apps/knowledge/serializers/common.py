@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： common_serializers.py
-    @date：2023/11/17 11:00
-    @desc:
-"""
+
 import os
 import re
 import zipfile

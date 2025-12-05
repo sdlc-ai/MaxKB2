@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： i_loop_break_node.py
-    @date：2025/9/15 12:14
-    @desc:
-"""
+
 from typing import Type
 
 from django.utils.translation import gettext_lazy as _

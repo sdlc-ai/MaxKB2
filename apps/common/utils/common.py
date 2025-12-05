@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： common.py
-    @date：2025/4/14 18:23
-    @desc:
-"""
+
 import hashlib
 import io
 import mimetypes
