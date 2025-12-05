@@ -269,7 +269,7 @@ const login = () => {
         loginForm.value.captcha
       )
       .then(() => {
-        locale.value = localStorage.getItem('Porsche-locale') || getBrowserLang() || 'en-US'
+        locale.value = localStorage.getItem('MaxKB-locale') || getBrowserLang() || 'en-US'
         router.push({ name: 'home' })
       })
       .finally(() => (loading.value = false))

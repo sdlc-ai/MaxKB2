@@ -39,7 +39,7 @@
         ref="editorRef"
         editorId="preview-only"
         :modelValue="form.content"
-        class="porsche-md"
+        class="maxkb-md"
       />
     </el-form-item>
   </el-form>

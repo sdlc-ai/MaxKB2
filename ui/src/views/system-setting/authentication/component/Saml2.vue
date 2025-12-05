@@ -125,8 +125,8 @@ const form = ref<any>({
     privateKey: '',
     certificate: '',
     mapping: '',
-    spEntityId: window.location.origin + window.Porsche.prefix + '/api/saml2/metadata',
-    spAcs: window.location.origin + window.Porsche.prefix + '/api/saml2/sso',
+    spEntityId: window.location.origin + window.MaxKB.prefix + '/api/saml2/metadata',
+    spAcs: window.location.origin + window.MaxKB.prefix + '/api/saml2/sso',
   },
   is_active: true,
 })
@@ -185,10 +185,10 @@ function getDetail() {
         form.value.config.mapping = JSON.stringify(JSON.parse(res.data.config.mapping))
       }
       if (!form.value.config.spEntityId) {
-        form.value.config.spEntityId = window.location.origin + window.Porsche.prefix + '/api/saml2/metadata'
+        form.value.config.spEntityId = window.location.origin + window.MaxKB.prefix + '/api/saml2/metadata'
       }
       if (!form.value.config.spAcs) {
-        form.value.config.spAcs = window.location.origin + window.Porsche.prefix + '/api/saml2/sso'
+        form.value.config.spAcs = window.location.origin + window.MaxKB.prefix + '/api/saml2/sso'
       }
     }
   })

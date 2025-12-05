@@ -53,7 +53,7 @@ const open = (element: HTMLElement | null) => {
   const images = cElement.querySelectorAll('img')
   const loadPromises = Array.from(images).map((img) => {
     if (!img.src.startsWith(window.origin) && img.src.startsWith('http')) {
-      img.src = `${window.Porsche.prefix}/api/resource_proxy?url=${encodeURIComponent(img.src)}`
+      img.src = `${window.MaxKB.prefix}/api/resource_proxy?url=${encodeURIComponent(img.src)}`
     }
     img.setAttribute('onerror', '')
     return new Promise((resolve) => {

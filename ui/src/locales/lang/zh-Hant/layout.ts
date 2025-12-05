@@ -36,6 +36,6 @@ export default {
     expiringSoon: '即將到期'
   },
   copyright: '版權所有 © 2014-2025 杭州飛致雲信息科技有限公司',
-  userManualUrl:'https://porsche.cn/docs/v2/',
-  forumUrl: 'https://github.com/1Panel-dev/Porsche/discussions'
+  userManualUrl:'https://maxkb.cn/docs/v2/',
+  forumUrl: 'https://github.com/1Panel-dev/MaxKB/discussions'
 }

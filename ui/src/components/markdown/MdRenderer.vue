@@ -34,7 +34,7 @@
         editorId="preview-only"
         :modelValue="item.content"
         :key="index"
-        class="porsche-md"
+        class="maxkb-md"
       />
     </template>
   </div>

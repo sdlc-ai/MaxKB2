@@ -168,7 +168,7 @@ function createUser() {
         confirmButtonText: t('common.professional')
       })
         .then(() => {
-          window.open('https://porsche.cn/pricing.html', '_blank')
+          window.open('https://maxkb.cn/pricing.html', '_blank')
         })
         .catch(() => {})
     }

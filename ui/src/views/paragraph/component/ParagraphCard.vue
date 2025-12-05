@@ -125,7 +125,7 @@
       ref="editorRef"
       editorId="preview-only"
       :modelValue="data.content"
-      class="porsche-md"
+      class="maxkb-md"
       style="background: none"
       @clickPreview="handleClickCard(data)"
     />

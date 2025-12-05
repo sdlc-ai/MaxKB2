@@ -15,7 +15,7 @@ import './assets/markdown-iconfont.js'
 import ZH_TW from '@vavt/cm-extension/dist/locale/zh-TW'
 
 defineOptions({ name: 'MdEditor' })
-const language = computed(() => localStorage.getItem('Porsche-locale') || getBrowserLang() || '')
+const language = computed(() => localStorage.getItem('MaxKB-locale') || getBrowserLang() || '')
 config({
   editorConfig: {
     languageUserDefined: {
