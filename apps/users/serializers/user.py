@@ -108,8 +108,7 @@ class UserProfileSerializer(serializers.Serializer):
             'is_edit_password': user.password == '5b78f31de20edcab53c526be9e01dde0' if user.source == 'LOCAL' else False,
             'language': user.language,
             'workspace_list': workspace_list,
-            'role_name': role_name,
-            'user.password ':user.password,
+            'role_name': role_name
 
         }
 
