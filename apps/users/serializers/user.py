@@ -97,7 +97,6 @@ class UserProfileSerializer(serializers.Serializer):
                 .distinct('role_id')
             )
             role_name = [relation.role.role_name for relation in user_role_relations]
-
         return {
             'id': user.id,
             'username': user.username,
@@ -106,10 +105,12 @@ class UserProfileSerializer(serializers.Serializer):
             'source': user.source,
             'role': auth.role_list,
             'permissions': auth.permission_list,
-            'is_edit_password': user.password == 'd880e722c47a34d8e9fce789fc62389d' if user.source == 'LOCAL' else False,
+            'is_edit_password': user.password == '5b78f31de20edcab53c526be9e01dde0' if user.source == 'LOCAL' else False,
             'language': user.language,
             'workspace_list': workspace_list,
-            'role_name': role_name
+            'role_name': role_name,
+            'user.password ':user.password,
+
         }
 
 
