@@ -5,7 +5,7 @@
       <LogoFull />
     </div>
 
-    <div class="flex-between w-full">
+    <div class="flex w-full">
       <div class="ml-24 flex align-center w-120">
         <!-- 企业版: 工作空间下拉框-->
         <el-divider
@@ -21,7 +21,7 @@
         />
       </div>
       <TopMenu></TopMenu>
-      <TopAbout class="mr-12"></TopAbout>
+      <!-- <TopAbout class="mr-12"></TopAbout> -->
     </div>
     <Avatar></Avatar>
   </div>
