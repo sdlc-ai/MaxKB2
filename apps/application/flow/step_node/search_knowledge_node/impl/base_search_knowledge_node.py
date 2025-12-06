@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_search_dataset_node.py
-    @date：2024/6/4 11:56
-    @desc:
-"""
+
 import os
 from typing import List, Dict
 

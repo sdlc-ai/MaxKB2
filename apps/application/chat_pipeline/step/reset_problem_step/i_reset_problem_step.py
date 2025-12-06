@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： i_reset_problem_step.py
-    @date：2024/1/9 18:12
-    @desc: 重写处理问题
-"""
+
 from abc import abstractmethod
 from typing import Type, List
 

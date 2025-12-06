@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： i_search_dataset_node.py
-    @date：2024/6/3 17:52
-    @desc:
-"""
+
 import re
 from typing import Type
 

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： __init__.py.py
-    @date：2024/04/19 15:55
-    @desc:
-"""
+
 from typing import List, Optional, Any, Iterator, Dict
 
 from langchain_community.chat_models.sparkllm import \

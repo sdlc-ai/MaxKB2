@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： embedding_config.py
-    @date：2023/10/23 16:03
-    @desc:
-"""
+
 
 import threading
 import time

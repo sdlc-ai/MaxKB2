@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： model_apply.py
-    @date：2024/8/20 20:38
-    @desc:
-"""
+
 from urllib.request import Request
 
 from rest_framework.views import APIView

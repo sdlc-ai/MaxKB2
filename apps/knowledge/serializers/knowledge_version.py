@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： KnowledgeVersionSerializer.py
-    @date：2025/11/28 18:00
-    @desc:
-"""
+
 from typing import Dict
 
 from django.db.models import QuerySet

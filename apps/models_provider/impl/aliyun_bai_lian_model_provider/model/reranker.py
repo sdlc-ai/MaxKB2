@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： reranker.py.py
-    @date：2024/9/2 16:42
-    @desc:
-"""
+
 from http import HTTPStatus
 from typing import Sequence, Optional, Any, Dict
 

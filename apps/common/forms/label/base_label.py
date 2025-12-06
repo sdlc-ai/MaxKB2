@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_label.py
-    @date：2024/8/22 17:11
-    @desc:
-"""
+
 
 
 class BaseLabel:

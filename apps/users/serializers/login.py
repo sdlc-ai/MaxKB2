@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： login.py
-    @date：2025/4/14 11:08
-    @desc:
-"""
+
 import base64
 import datetime
 import json

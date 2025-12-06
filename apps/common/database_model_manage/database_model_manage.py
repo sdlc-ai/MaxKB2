@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： database_model_manage.py
-    @date：2025/4/15 11:06
-    @desc:
-"""
+
 from importlib import import_module
 from django.conf import settings
 

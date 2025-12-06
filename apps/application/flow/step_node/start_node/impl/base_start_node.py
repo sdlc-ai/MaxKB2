@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_start_node.py
-    @date：2024/6/3 17:17
-    @desc:
-"""
+
 import time
 from datetime import datetime
 from typing import List, Type

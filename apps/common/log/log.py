@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： log.py
-    @date：2025/6/4 14:13
-    @desc:
-"""
+
 
 from system_manage.models.log_management import Log
 

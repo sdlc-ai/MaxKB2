@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： web.py
-    @date：2025/11/5 15:24
-    @desc:
-"""
+
 
 from typing import Dict, List
 

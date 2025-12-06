@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： azure_chat_model.py
-    @date：2024/4/28 11:45
-    @desc:
-"""
+
 
 from typing import List, Dict, Optional, Any
 

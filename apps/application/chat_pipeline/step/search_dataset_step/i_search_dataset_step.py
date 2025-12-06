@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： i_search_dataset_step.py
-    @date：2024/1/9 18:10
-    @desc: 检索知识库
-"""
+
 import re
 from abc import abstractmethod
 from typing import List, Type

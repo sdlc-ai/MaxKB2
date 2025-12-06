@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： reranker.py
-    @date：2024/9/9 17:51
-    @desc:
-"""
+
 from typing import Dict
 
 from django.utils.translation import gettext as _

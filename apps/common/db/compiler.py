@@ -1,11 +1,4 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： compiler.py
-    @date：2023/10/7 10:53
-    @desc:
-"""
 
 from django.core.exceptions import EmptyResultSet, FullResultSet
 from django.db import NotSupportedError

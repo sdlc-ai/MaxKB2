@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： slider_field.py
-    @date：2024/8/22 17:06
-    @desc:
-"""
+
 from typing import Dict
 
 from common.exception.app_exception import AppApiException

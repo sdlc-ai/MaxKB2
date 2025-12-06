@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： reranker.py
-    @date：2024/9/10 9:45
-    @desc:
-"""
+
 from typing import Sequence, Optional, Any, Dict
 
 from langchain_core.callbacks import Callbacks

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_to_response.py
-    @date：2024/9/6 16:04
-    @desc:
-"""
+
 from abc import ABC, abstractmethod
 
 from rest_framework import status

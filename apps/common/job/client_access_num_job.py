@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： client_access_num_job.py
-    @date：2024/3/14 11:56
-    @desc:
-"""
+
 
 from django.db.models import QuerySet
 

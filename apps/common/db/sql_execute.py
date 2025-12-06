@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： sql_execute.py
-    @date：2023/9/25 20:05
-    @desc:
-"""
+
 from typing import List
 
 from django.db import connection

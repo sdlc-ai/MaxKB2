@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： application_access_token.py
-    @date：2025/6/9 17:49
-    @desc:
-"""
+
 import hashlib
 
 import uuid_utils.compat as uuid

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： application.py
-    @date：2025/5/26 16:51
-    @desc:
-"""
+
 from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _

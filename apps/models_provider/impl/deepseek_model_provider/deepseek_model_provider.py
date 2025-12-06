@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""
-@Project ：PorscheAi 
-@File    ：deepseek_model_provider.py
-@Author  ：Brian Yang
-@Date    ：5/12/24 7:40 AM 
-"""
+
 import os
 
 from common.utils.common import get_file_content

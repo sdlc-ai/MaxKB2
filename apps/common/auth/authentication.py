@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： authentication.py
-    @date：2025/4/15 20:12
-    @desc:
-"""
+
 from typing import List
 
 from django.utils.translation import gettext_lazy as _

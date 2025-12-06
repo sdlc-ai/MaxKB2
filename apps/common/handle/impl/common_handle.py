@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： tools.py
-    @date：2024/9/11 16:41
-    @desc:
-"""
+
 import io
 import traceback
 from functools import reduce

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： i_reranker_node.py
-    @date：2024/9/4 10:40
-    @desc:
-"""
+
 from typing import Type
 
 from rest_framework import serializers

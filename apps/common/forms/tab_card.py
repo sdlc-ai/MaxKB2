@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： tab_card.py
-    @date：2023/10/31 18:03
-    @desc:
-"""
+
 from typing import Dict
 
 from common.forms.base_field import BaseExecField, TriggerType

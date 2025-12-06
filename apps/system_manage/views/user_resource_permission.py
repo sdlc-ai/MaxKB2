@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： workspace_user_resource_permission.py
-    @date：2025/4/28 16:38
-    @desc:
-"""
+
 from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema

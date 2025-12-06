@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_generate_human_message_step.py.py
-    @date：2024/1/10 17:50
-    @desc:
-"""
+
 from typing import List, Dict
 
 from langchain.schema import BaseMessage, HumanMessage

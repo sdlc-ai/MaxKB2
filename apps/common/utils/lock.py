@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: qabot
-    @Author：虎
-    @file： lock.py
-    @date：2023/9/11 11:45
-    @desc:
-"""
+
 from functools import wraps
 
 import uuid_utils.compat as uuid

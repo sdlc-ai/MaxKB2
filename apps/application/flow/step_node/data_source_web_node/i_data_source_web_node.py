@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：niu
-    @file： i_data_source_web_node.py
-    @date：2025/11/12 13:47
-    @desc:
-"""
+
 from abc import abstractmethod
 
 from application.flow.common import WorkflowMode

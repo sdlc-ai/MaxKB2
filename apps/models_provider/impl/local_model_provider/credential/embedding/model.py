@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： model.py.py
-    @date：2025/11/7 14:02
-    @desc:
-"""
+
 from typing import Dict
 
 from django.utils.translation import gettext_lazy as _, gettext

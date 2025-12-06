@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_field.py
-    @date：2023/10/31 18:07
-    @desc:
-"""
+
 from enum import Enum
 from typing import List, Dict
 

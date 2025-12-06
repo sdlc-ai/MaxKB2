@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： llm.py
-    @date：2023/11/10 17:45
-    @desc:
-"""
+
 from typing import Dict
 
 from models_provider.base_model_provider import PorscheAIBaseModel

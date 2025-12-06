@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： system_setting.py
-    @date：2024/3/19 16:29
-    @desc:
-"""
+
 import logging
 
 from django.core.mail.backends.smtp import EmailBackend

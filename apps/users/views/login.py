@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： user.py
-    @date：2025/4/14 10:22
-    @desc:
-"""
+
 from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema

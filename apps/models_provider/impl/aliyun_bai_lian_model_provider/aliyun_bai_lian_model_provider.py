@@ -1,11 +1,4 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： aliyun_bai_lian_model_provider.py
-    @date：2024/9/9 17:43
-    @desc:
-"""
 import os
 
 from common.utils.common import get_file_content

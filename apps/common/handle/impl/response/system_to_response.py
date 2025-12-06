@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： system_to_response.py
-    @date：2024/9/6 18:03
-    @desc:
-"""
+
 import json
 
 from rest_framework import status

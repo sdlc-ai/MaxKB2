@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： system.py
-    @date：2025/6/4 16:01
-    @desc:
-"""
+
 import os
 
 from django.db import models

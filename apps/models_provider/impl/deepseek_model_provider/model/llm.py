@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""
-@Project ：PorscheAi 
-@File    ：llm.py
-@Author  ：Brian Yang
-@Date    ：5/12/24 7:44 AM 
-"""
+
 from typing import Dict
 
 from models_provider.base_model_provider import PorscheAIBaseModel

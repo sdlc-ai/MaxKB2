@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： llm.py
-    @date：2024/3/6 11:48
-    @desc:
-"""
+
 from typing import List, Dict
 from urllib.parse import urlparse, ParseResult
 

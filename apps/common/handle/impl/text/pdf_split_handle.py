@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： text_split_handle.py
-    @date：2024/3/27 18:19
-    @desc:
-"""
+
 import os
 import re
 import tempfile

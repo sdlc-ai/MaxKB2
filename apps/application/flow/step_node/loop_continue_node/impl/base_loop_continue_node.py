@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： base_loop_continue_node.py
-    @date：2025/9/15 12:13
-    @desc:
-"""
+
 from typing import List
 
 from application.flow.compare import compare_handle_list

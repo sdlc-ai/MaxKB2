@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： model.py
-    @date：2025/11/7 14:23
-    @desc:
-"""
+
 from typing import Dict
 
 from langchain_core.documents import Document

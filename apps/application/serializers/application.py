@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： application.py
-    @date：2025/5/26 17:03
-    @desc:
-"""
+
 import asyncio
 import hashlib
 import json

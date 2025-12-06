@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：AI Assistant
-    @file： tag.py
-    @date：2025/10/13
-    @desc: 标签系统相关序列化器
-"""
+
 from collections import defaultdict
 from typing import Dict
 

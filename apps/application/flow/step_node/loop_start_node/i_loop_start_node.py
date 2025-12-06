@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： i_start_node.py
-    @date：2024/6/3 16:54
-    @desc:
-"""
+
 from application.flow.common import WorkflowMode
 from application.flow.i_step_node import INode, NodeResult
 

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： chat_authentication_api.py
-    @date：2025/6/6 19:59
-    @desc:
-"""
+
 
 from django.utils.translation import gettext_lazy as _
 from drf_spectacular.types import OpenApiTypes

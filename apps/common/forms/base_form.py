@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_form.py
-    @date：2023/11/1 16:04
-    @desc:
-"""
+
 from typing import Dict
 
 from common.forms import BaseField

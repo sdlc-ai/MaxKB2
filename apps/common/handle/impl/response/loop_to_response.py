@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： LoopToResponse.py
-    @date：2025/3/12 17:21
-    @desc:
-"""
+
 import json
 
 from common.handle.impl.response.system_to_response import SystemToResponse

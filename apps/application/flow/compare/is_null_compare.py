@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： is_null_compare.py
-    @date：2024/6/28 10:45
-    @desc:
-"""
+
 from typing import List
 
 from application.flow.compare import Compare

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： pg_vector.py
-    @date：2023/10/19 15:28
-    @desc:
-"""
+
 import json
 import os
 from abc import ABC, abstractmethod

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： llm.py
-    @date：2024/4/18 15:28
-    @desc:
-"""
+
 from typing import Dict
 
 from common.config.tokenizer_manage_config import TokenizerManage

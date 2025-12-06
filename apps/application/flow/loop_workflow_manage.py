@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： workflow_manage.py
-    @date：2024/1/9 17:40
-    @desc:
-"""
+
 from concurrent.futures import ThreadPoolExecutor
 from typing import List
 

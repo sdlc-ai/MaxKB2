@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： zhipu_model_provider.py
-    @date：2024/04/19 13:5
-    @desc:
-"""
+
 import os
 
 from django.utils.translation import gettext as _

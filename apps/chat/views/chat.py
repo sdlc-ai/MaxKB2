@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： chat.py
-    @date：2025/6/6 11:18
-    @desc:
-"""
+
 import requests
 from django.http import HttpResponse, StreamingHttpResponse
 from django.utils.translation import gettext_lazy as _

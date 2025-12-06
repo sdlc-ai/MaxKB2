@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： openai_to_response.py
-    @date：2024/9/6 16:08
-    @desc:
-"""
+
 import datetime
 
 from django.http import JsonResponse

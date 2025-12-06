@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： authenticate.py
-    @date：2024/3/14 03:02
-    @desc:  用户认证
-"""
+
 from functools import reduce
 from typing import List
 

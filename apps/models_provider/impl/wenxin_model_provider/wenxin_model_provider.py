@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： wenxin_model_provider.py
-    @date：2023/10/31 16:19
-    @desc:
-"""
+
 import os
 
 from common.utils.common import get_file_content

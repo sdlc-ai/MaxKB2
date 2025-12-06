@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： application.py
-    @date：2025/5/7 15:29
-    @desc:
-"""
+
 import uuid_utils.compat as uuid
 from django.db import models
 from mptt.fields import TreeForeignKey

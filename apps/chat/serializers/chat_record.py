@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： chat_record.py
-    @date：2025/6/23 11:16
-    @desc:
-"""
+
 from typing import Dict
 
 from django.db import transaction

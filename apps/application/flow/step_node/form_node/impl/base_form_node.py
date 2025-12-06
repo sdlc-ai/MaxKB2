@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_form_node.py
-    @date：2024/11/4 14:52
-    @desc:
-"""
+
 import json
 import time
 from typing import Dict, List

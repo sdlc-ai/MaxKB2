@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： siliconcloud_reranker.py
-    @date：2024/9/10 9:45
-    @desc: SiliconCloud 文档重排封装
-"""
+
 
 from typing import Sequence, Optional, Any, Dict
 import requests

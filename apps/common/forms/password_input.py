@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： password_input.py
-    @date：2023/11/1 14:48
-    @desc:
-"""
+
 from typing import Dict
 
 from common.forms import BaseField, TriggerType

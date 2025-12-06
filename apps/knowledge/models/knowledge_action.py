@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： knowledge_action.py
-    @date：2025/11/18 17:59
-    @desc:
-"""
+
 import uuid_utils.compat as uuid
 
 from django.db import models

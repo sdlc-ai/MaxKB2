@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： html_split_handle.py
-    @date：2024/5/23 10:58
-    @desc:
-"""
+
 import re
 import traceback
 from typing import List

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： celery.py
-    @date：2024/8/19 11:57
-    @desc:
-"""
+
 import os
 import subprocess
 

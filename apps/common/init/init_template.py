@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： init_jinja.py
-    @date：2025/12/1 17:16
-    @desc:
-"""
+
 from typing import Any
 
 from jinja2.sandbox import SandboxedEnvironment

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： application_chat.py
-    @date：2025/6/10 11:00
-    @desc:
-"""
+
 import uuid_utils.compat as uuid
 from django.db.models import QuerySet
 

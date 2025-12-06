@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: qabot
-    @Author：虎虎
-    @file： authenticate.py
-    @date：2023/9/4 11:16
-    @desc:  认证类
-"""
+
 from importlib import import_module
 
 from django.conf import settings

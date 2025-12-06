@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： application_chat_record.py
-    @date：2025/6/10 15:10
-    @desc:
-"""
+
 from functools import reduce
 from typing import Dict
 

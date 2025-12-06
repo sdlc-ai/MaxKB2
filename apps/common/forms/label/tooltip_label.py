@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： tooltip_label.py
-    @date：2024/8/22 17:19
-    @desc:
-"""
+
 from common.forms.label.base_label import BaseLabel
 
 

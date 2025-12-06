@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_reranker_node.py
-    @date：2024/9/4 11:41
-    @desc:
-"""
+
 from typing import List
 
 from langchain_core.documents import Document

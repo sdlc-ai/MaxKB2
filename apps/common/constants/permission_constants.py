@@ -1,10 +1,4 @@
-"""
-    @project: qabot
-    @Author：虎虎
-    @file： permission_constants.py
-    @date：2023/9/13 18:23
-    @desc: 权限,角色 常量
-"""
+
 from enum import Enum
 from functools import reduce
 from typing import List

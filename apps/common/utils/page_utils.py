@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： page_utils.py
-    @date：2024/11/21 10:32
-    @desc:
-"""
+
 from math import ceil
 
 

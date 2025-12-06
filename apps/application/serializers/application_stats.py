@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： application_stats.py
-    @date：2025/6/9 20:34
-    @desc:
-"""
+
 import datetime
 import os
 from typing import Dict, List

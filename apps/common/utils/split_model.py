@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: qabot
-    @Author：虎
-    @file： split_model.py
-    @date：2023/9/1 15:12
-    @desc:
-"""
+
 import re
 from functools import reduce
 from typing import List, Dict

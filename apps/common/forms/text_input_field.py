@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： text_input_field.py
-    @date：2023/10/31 17:58
-    @desc:
-"""
+
 from typing import Dict
 
 from common.forms import BaseLabel

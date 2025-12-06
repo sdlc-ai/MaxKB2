@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_reset_problem_step.py
-    @date：2024/1/10 14:35
-    @desc:
-"""
+
 from typing import List
 
 from django.utils.translation import gettext as _

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： local_model.py
-    @date：2024/8/21 13:28
-    @desc:
-"""
+
 import subprocess
 
 from porsche.const import CONFIG

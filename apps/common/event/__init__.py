@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： __init__.py
-    @date：2023/11/10 10:43
-    @desc:
-"""
+
 from django.core.cache import cache
 from django.db.models import QuerySet
 from django.utils.translation import gettext as _

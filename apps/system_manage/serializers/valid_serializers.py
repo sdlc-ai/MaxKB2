@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： valid_serializers.py
-    @date：2024/7/8 18:00
-    @desc:
-"""
+
 import re
 
 from django.core import validators

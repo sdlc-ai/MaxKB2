@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： application_version.py
-    @date：2025/6/3 16:25
-    @desc:
-"""
+
 from typing import Dict
 
 from django.db.models import QuerySet

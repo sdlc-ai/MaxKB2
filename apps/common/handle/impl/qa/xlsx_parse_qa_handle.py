@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： xlsx_parse_qa_handle.py
-    @date：2024/5/21 14:59
-    @desc:
-"""
+
 import io
 import traceback
 

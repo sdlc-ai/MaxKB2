@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： common.py
-    @date：2023/11/10 10:41
-    @desc:
-"""
+
 from concurrent.futures import ThreadPoolExecutor
 
 from django.core.cache.backends.locmem import LocMemCache

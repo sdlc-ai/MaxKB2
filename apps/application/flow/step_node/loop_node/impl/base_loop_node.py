@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_loop_node.py
-    @date：2025/3/11 18:24
-    @desc:
-"""
+
 import time
 from typing import Dict, List
 

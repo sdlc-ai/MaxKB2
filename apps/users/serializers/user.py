@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： user.py
-    @date：2025/4/14 19:18
-    @desc:
-"""
+
 import datetime
 import os
 import random

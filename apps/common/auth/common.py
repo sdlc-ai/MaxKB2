@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： common.py
-    @date：2025/6/6 19:55
-    @desc:
-"""
+
 import hashlib
 import json
 import threading

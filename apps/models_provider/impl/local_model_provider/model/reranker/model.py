@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： model.py
-    @date：2025/11/5 15:30
-    @desc:
-"""
+
 
 from typing import Sequence, Optional, Dict, Any
 

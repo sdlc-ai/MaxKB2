@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： embedding.py
-    @date：2024/7/12 15:02
-    @desc:
-"""
+
 from typing import Dict, List
 
 from langchain_community.embeddings import OllamaEmbeddings

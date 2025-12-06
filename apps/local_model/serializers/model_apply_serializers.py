@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： model_apply_serializers.py
-    @date：2024/8/20 20:39
-    @desc:
-"""
+
 import json
 import threading
 import time

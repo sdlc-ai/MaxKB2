@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： ChatAuthentication.py
-    @date：2025/6/6 13:48
-    @desc:
-"""
+
 import uuid_utils.compat as uuid
 from django.core import signing
 from django.core.cache import cache

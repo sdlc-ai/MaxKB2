@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： __init__.py
-    @date：2024/7/23 17:03
-    @desc:
-"""
+
 from common.chunk.impl.mark_chunk_handle import MarkChunkHandle
 
 handles = [MarkChunkHandle()]

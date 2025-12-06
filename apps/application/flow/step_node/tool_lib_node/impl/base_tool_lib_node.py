@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_function_lib_node.py
-    @date：2024/8/8 17:49
-    @desc:
-"""
+
 import json
 import time
 from typing import Dict

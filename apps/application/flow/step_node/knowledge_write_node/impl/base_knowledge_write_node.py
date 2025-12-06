@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：niu
-    @file： base_knowledge_write_node.py
-    @date：2025/11/13 11:19
-    @desc:
-"""
+
 from functools import reduce
 from typing import Dict, List
 import uuid_utils.compat as uuid

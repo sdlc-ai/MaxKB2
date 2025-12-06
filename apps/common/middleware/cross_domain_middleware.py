@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： cross_domain_middleware.py
-    @date：2024/5/8 13:36
-    @desc:
-"""
+
 from django.http import HttpResponse
 from django.utils.deprecation import MiddlewareMixin
 

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： chat.py
-    @date：2025/6/9 11:23
-    @desc:
-"""
+
 import json
 import os
 from gettext import gettext

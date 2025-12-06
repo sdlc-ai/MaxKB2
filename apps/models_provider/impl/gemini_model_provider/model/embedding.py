@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： embedding.py
-    @date：2024/7/12 17:44
-    @desc:
-"""
+
 from typing import Dict
 
 from langchain_google_genai import GoogleGenerativeAIEmbeddings

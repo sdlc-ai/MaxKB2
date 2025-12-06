@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： system_setting.py
-    @date：2025/6/4 16:34
-    @desc:
-"""
+
 from common.mixins.api_mixin import APIMixin
 from common.result import ResultSerializer
 from system_manage.serializers.system import SystemProfileResponseSerializer

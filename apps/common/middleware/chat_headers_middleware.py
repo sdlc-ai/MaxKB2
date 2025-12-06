@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： static_headers_middleware.py
-    @date：2024/3/13 18:26
-    @desc:
-"""
+
 from django.utils.deprecation import MiddlewareMixin
 
 from common.cache_data.application_access_token_cache import get_application_access_token

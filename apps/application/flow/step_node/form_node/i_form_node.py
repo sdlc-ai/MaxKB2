@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： i_form_node.py
-    @date：2024/11/4 14:48
-    @desc:
-"""
+
 from typing import Type
 
 from rest_framework import serializers

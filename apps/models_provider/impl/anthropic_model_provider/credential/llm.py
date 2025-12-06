@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： llm.py
-    @date：2024/7/11 18:32
-    @desc:
-"""
+
 from typing import Dict
 
 from langchain_core.messages import HumanMessage

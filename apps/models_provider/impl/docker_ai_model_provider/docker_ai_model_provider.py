@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： docker_ai_model_provider.py
-    @date：2024/3/28 16:26
-    @desc:
-"""
+
 import os
 
 from common.utils.common import get_file_content

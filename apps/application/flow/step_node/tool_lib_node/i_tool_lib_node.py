@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： i_function_lib_node.py
-    @date：2024/8/8 16:21
-    @desc:
-"""
+
 from typing import Type
 
 from django.db import connection

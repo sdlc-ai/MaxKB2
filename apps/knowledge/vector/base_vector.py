@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： base_vector.py
-    @date：2023/10/18 19:16
-    @desc:
-"""
+
 import threading
 from abc import ABC, abstractmethod
 from functools import reduce

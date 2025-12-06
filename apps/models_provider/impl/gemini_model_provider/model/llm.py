@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-"""
-@Project ：PorscheAi 
-@File    ：llm.py
-@Author  ：Brian Yang
-@Date    ：5/13/24 7:40 AM 
-"""
+
 from typing import List, Dict, Optional, Sequence, Union, Any, Iterator, cast
 
 from google.ai.generativelanguage_v1 import GenerateContentResponse

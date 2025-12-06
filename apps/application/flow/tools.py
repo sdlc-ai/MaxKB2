@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： utils.py
-    @date：2024/6/6 15:15
-    @desc:
-"""
+
 import asyncio
 import json
 import queue

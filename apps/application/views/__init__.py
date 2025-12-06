@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： __init__.py
-    @date：2025/5/9 18:51
-    @desc:
-"""
+
 from .application_api_key import *
 from .application import *
 from .application_version import *

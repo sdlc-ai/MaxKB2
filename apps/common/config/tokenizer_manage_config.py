@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： tokenizer_manage_config.py
-    @date：2024/4/28 10:17
-    @desc:
-"""
+
 
 import os
 

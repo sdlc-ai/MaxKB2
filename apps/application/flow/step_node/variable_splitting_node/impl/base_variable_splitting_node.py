@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： base_variable_splitting_node.py
-    @date：2025/10/13 15:02
-    @desc:
-"""
+
 from jsonpath_ng import parse
 
 from application.flow.i_step_node import NodeResult

@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： sync.py
-    @date：2024/8/20 21:37
-    @desc:
-"""
+
 
 import traceback
 from typing import List

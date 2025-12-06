@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： radio_field.py
-    @date：2023/10/31 17:59
-    @desc:
-"""
+
 from typing import List, Dict
 
 from common.forms.base_field import BaseExecField, TriggerType

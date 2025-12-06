@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： application_stats.py
-    @date：2025/6/9 20:30
-    @desc:
-"""
+
 from drf_spectacular.utils import extend_schema
 from rest_framework.request import Request
 from rest_framework.views import APIView

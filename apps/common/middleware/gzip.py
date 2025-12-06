@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： gzip.py
-    @date：2025/2/27 10:03
-    @desc:
-"""
+
 from django.utils.cache import patch_vary_headers
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.regex_helper import _lazy_re_compile

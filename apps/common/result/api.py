@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： api.py
-    @date：2025/4/14 15:20
-    @desc:
-"""
+
 from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 

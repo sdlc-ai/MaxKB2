@@ -1,11 +1,4 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎虎
-    @file： workspace_permission.py
-    @date：2025/4/16 18:25
-    @desc:
-"""
 
 import uuid_utils.compat as uuid
 from django.contrib.postgres.fields import ArrayField

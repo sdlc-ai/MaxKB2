@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： xf_model_provider.py
-    @date：2024/04/19 14:47
-    @desc:
-"""
+
 import os
 import ssl
 

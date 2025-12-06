@@ -1,11 +1,5 @@
 # coding=utf-8
-"""
-    @project: PorscheAi
-    @Author：虎
-    @file： compare.py
-    @date：2024/6/7 14:37
-    @desc:
-"""
+
 from abc import abstractmethod
 from typing import List
 
