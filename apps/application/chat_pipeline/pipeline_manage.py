@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： pipeline_manage.py
     @date：2024/1/9 17:40

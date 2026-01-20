@@ -1,5 +1,11 @@
 # coding=utf-8
-
+"""
+    @project: MaxKB
+    @Author：虎虎
+    @file： application_chat.py
+    @date：2025/6/10 11:06
+    @desc:
+"""
 import datetime
 import os
 import re
@@ -21,8 +27,8 @@ from application.models import Chat, Application, ChatRecord
 from common.db.search import get_dynamics_model, native_search, native_page_search, native_page_handler
 from common.exception.app_exception import AppApiException
 from common.utils.common import get_file_content
-from porsche.conf import PROJECT_DIR
-from porsche.settings import TIME_ZONE, edition
+from maxkb.conf import PROJECT_DIR
+from maxkb.settings import TIME_ZONE, edition
 
 
 class ApplicationChatResponseSerializers(serializers.Serializer):

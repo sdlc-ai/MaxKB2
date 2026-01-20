@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： radio_field.py
     @date：2023/10/31 17:59

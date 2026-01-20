@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： IsTrue.py
     @date：2025/4/7 13:38

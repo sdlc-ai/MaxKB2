@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎虎
     @file： login.py
     @date：2025/4/14 11:08
@@ -24,7 +24,7 @@ from common.database_model_manage.database_model_manage import DatabaseModelMana
 from common.exception.app_exception import AppApiException
 from common.utils.common import password_encrypt, get_random_chars
 from common.utils.rsa_util import encrypt, decrypt
-from porsche.const import CONFIG
+from maxkb.const import CONFIG
 from users.models import User
 
 

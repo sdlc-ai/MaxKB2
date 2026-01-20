@@ -12,7 +12,7 @@ from typing import List
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from porsche import settings
+from maxkb import settings
 
 
 class Group(Enum):

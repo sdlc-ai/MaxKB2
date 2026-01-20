@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎虎
     @file： cache_version.py
     @date：2025/4/14 19:09

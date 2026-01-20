@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： slider_field.py
     @date：2024/8/22 17:06

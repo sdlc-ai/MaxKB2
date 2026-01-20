@@ -4,10 +4,10 @@ import cohere
 from langchain_core.callbacks import Callbacks
 from langchain_core.documents import BaseDocumentCompressor, Document
 
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 
 
-class VllmBgeReranker(PorscheAIBaseModel, BaseDocumentCompressor):
+class VllmBgeReranker(MaxKBBaseModel, BaseDocumentCompressor):
     api_key: str
     api_url: str
     model: str

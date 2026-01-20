@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： base_parse_qa_handle.py
     @date：2024/5/21 14:56

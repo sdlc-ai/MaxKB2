@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： tools.py
     @date：2024/7/22 11:18

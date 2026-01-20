@@ -2,10 +2,10 @@ import logging
 import os
 import sys
 
-from porsche.const import CONFIG, PROJECT_DIR, LOG_DIR
+from maxkb.const import CONFIG, PROJECT_DIR, LOG_DIR
 
 try:
-    from apps.porsche import const
+    from apps.maxkb import const
 
     __version__ = const.VERSION
 except ImportError as e:

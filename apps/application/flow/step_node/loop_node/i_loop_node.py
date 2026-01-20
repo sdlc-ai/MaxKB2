@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： i_loop_node.py
     @date：2025/3/11 18:19

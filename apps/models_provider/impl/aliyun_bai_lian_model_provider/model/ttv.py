@@ -7,12 +7,12 @@ from langchain_core.messages import HumanMessage
 from django.utils.translation import gettext
 
 from langchain_community.chat_models import ChatTongyi
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 from models_provider.base_ttv import BaseGenerationVideo
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 
 
-class GenerationVideoModel(PorscheAIBaseModel, BaseGenerationVideo):
+class GenerationVideoModel(MaxKBBaseModel, BaseGenerationVideo):
     api_key: str
     model_name: str
     params: dict
@@ -56,7 +56,7 @@ class GenerationVideoModel(PorscheAIBaseModel, BaseGenerationVideo):
             except (requests.exceptions.ProxyError,
                     requests.exceptions.ConnectionError,
                     requests.exceptions.Timeout) as e:
-                porsche_logger.error(f"⚠️ 网络错误: {e}，正在重试 {attempt + 1}/{self.max_retries}...")
+                maxkb_logger.error(f"⚠️ 网络错误: {e}，正在重试 {attempt + 1}/{self.max_retries}...")
                 time.sleep(self.retry_delay)
         raise RuntimeError("多次重试后仍无法连接到 DashScope API，请检查代理或网络配置")
 
@@ -85,17 +85,17 @@ class GenerationVideoModel(PorscheAIBaseModel, BaseGenerationVideo):
         # --- 异步提交任务 ---
         rsp = self._safe_call(VideoSynthesis.async_call, **params)
         if rsp.status_code != HTTPStatus.OK:
-            porsche_logger.info(f'提交任务失败，status_code: {rsp.status_code}, code: {rsp.code}, message: {rsp.message}')
+            maxkb_logger.info(f'提交任务失败，status_code: {rsp.status_code}, code: {rsp.code}, message: {rsp.message}')
             raise RuntimeError(f'提交任务失败，status_code: {rsp.status_code}, code: {rsp.code}, message: {rsp.message}')
 
-        porsche_logger.info("task_id:", rsp.output.task_id)
+        maxkb_logger.info("task_id:", rsp.output.task_id)
 
         # --- 查询任务状态 ---
         status = self._safe_call(VideoSynthesis.fetch, task=rsp, api_key=self.api_key)
         if status.status_code == HTTPStatus.OK:
-            porsche_logger.info("当前任务状态:", status.output.task_status)
+            maxkb_logger.info("当前任务状态:", status.output.task_status)
         else:
-            porsche_logger.error(
+            maxkb_logger.error(
                 f'获取任务状态失败，status_code: {status.status_code}, code: {status.code}, message: {status.message}')
             raise RuntimeError(
                 f'获取任务状态失败，status_code: {status.status_code}, code: {status.code}, message: {status.message}')
@@ -103,13 +103,13 @@ class GenerationVideoModel(PorscheAIBaseModel, BaseGenerationVideo):
         # --- 等待任务完成 ---
         rsp = self._safe_call(VideoSynthesis.wait, task=rsp, api_key=self.api_key)
         if rsp.status_code == HTTPStatus.OK:
-            porsche_logger.info("视频生成完成！视频 URL:", rsp.output.video_url)
+            maxkb_logger.info("视频生成完成！视频 URL:", rsp.output.video_url)
             if rsp.output.task_status == "SUCCEEDED":
-                porsche_logger.info("视频生成完成！视频 URL:", rsp.output.video_url)
+                maxkb_logger.info("视频生成完成！视频 URL:", rsp.output.video_url)
                 return rsp.output.video_url
             else:
-                porsche_logger.error("视频生成失败！")
+                maxkb_logger.error("视频生成失败！")
                 raise RuntimeError(f'生成失败, message: {rsp.output.message}')
         else:
-            porsche_logger.error(f'生成失败，status_code: {rsp.status_code}, code: {rsp.code}, message: {rsp.message}')
+            maxkb_logger.error(f'生成失败，status_code: {rsp.status_code}, code: {rsp.code}, message: {rsp.message}')
             raise RuntimeError(f'生成失败，status_code: {rsp.status_code}, code: {rsp.code}, message: {rsp.message}')

@@ -20,7 +20,7 @@ from common.db.search import native_search
 from common.exception.app_exception import AppApiException
 from common.utils.common import get_file_content
 from common.utils.rsa_util import rsa_long_encrypt, rsa_long_decrypt
-from porsche.conf import PROJECT_DIR
+from maxkb.conf import PROJECT_DIR
 from models_provider.base_model_provider import ValidCode, DownModelChunkStatus
 from models_provider.constants.model_provider_constants import ModelProvideConstants
 from models_provider.models import Model, Status

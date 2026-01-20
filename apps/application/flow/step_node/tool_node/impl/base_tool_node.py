@@ -1,5 +1,11 @@
 # coding=utf-8
-
+"""
+    @project: MaxKB
+    @Author：虎
+    @file： base_function_lib_node.py
+    @date：2024/8/8 17:49
+    @desc:
+"""
 import json
 import time
 from typing import Dict
@@ -9,7 +15,7 @@ from django.utils.translation import gettext as _
 from application.flow.i_step_node import NodeResult
 from application.flow.step_node.tool_node.i_tool_node import IToolNode
 from common.utils.tool_code import ToolExecutor
-from porsche.const import CONFIG
+from maxkb.const import CONFIG
 
 function_executor = ToolExecutor(CONFIG.get('SANDBOX'))
 

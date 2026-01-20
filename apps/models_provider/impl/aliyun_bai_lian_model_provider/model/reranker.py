@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： reranker.py.py
     @date：2024/9/2 16:42
@@ -14,10 +14,10 @@ from langchain_core.callbacks import Callbacks
 from langchain_core.documents import BaseDocumentCompressor, Document
 from langchain_core.documents import BaseDocumentCompressor
 
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 
 
-class AliyunBaiLianReranker(PorscheAIBaseModel, BaseDocumentCompressor):
+class AliyunBaiLianReranker(MaxKBBaseModel, BaseDocumentCompressor):
     model: Optional[str]
     api_key: Optional[str]
 

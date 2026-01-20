@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： xlsx_parse_qa_handle.py
     @date：2024/5/21 14:59
@@ -14,7 +14,7 @@ import openpyxl
 
 from common.handle.base_split_handle import BaseSplitHandle
 from common.handle.impl.common_handle import xlsx_embed_cells_images
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 
 
 def post_cell(image_dict, cell_value):
@@ -84,7 +84,7 @@ class XlsxSplitHandle(BaseSplitHandle):
                         sheet.title, sheet, image_dict, limit) for sheet
                      in worksheets] if row is not None]
         except Exception as e:
-            porsche_logger.error(f"Error processing XLSX file {file.name}: {e}, {traceback.format_exc()}")
+            maxkb_logger.error(f"Error processing XLSX file {file.name}: {e}, {traceback.format_exc()}")
             return [{'name': file.name, 'content': []}]
 
     def get_content(self, file, save_image):

@@ -11,13 +11,13 @@ from tencentcloud.common.profile.client_profile import ClientProfile
 from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.hunyuan.v20230901 import hunyuan_client, models
 
-from common.utils.logger import porsche_logger
-from models_provider.base_model_provider import PorscheAIBaseModel
+from common.utils.logger import maxkb_logger
+from models_provider.base_model_provider import MaxKBBaseModel
 from models_provider.impl.base_tti import BaseTextToImage
 from models_provider.impl.tencent_model_provider.model.hunyuan import ChatHunyuan
 
 
-class TencentTextToImageModel(PorscheAIBaseModel, BaseTextToImage):
+class TencentTextToImageModel(MaxKBBaseModel, BaseTextToImage):
     hunyuan_secret_id: str
     hunyuan_secret_key: str
     model: str
@@ -89,4 +89,4 @@ class TencentTextToImageModel(PorscheAIBaseModel, BaseTextToImage):
             file_urls.append(resp.ResultImage)
             return file_urls
         except TencentCloudSDKException as err:
-            porsche_logger.error(f"Tencent Text to Image API call failed: {err}")
+            maxkb_logger.error(f"Tencent Text to Image API call failed: {err}")

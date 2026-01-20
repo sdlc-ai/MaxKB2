@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： text_split_handle.py
     @date：2024/3/27 18:19
@@ -13,7 +13,7 @@ from typing import List
 from charset_normalizer import detect
 
 from common.handle.base_split_handle import BaseSplitHandle
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 from common.utils.split_model import SplitModel
 
 default_pattern_list = [
@@ -52,7 +52,7 @@ class TextSplitHandle(BaseSplitHandle):
         try:
             content = buffer.decode(detect(buffer)['encoding'])
         except BaseException as e:
-            porsche_logger.error(f"Error processing TEXT file {file.name}: {e}, {traceback.format_exc()}")
+            maxkb_logger.error(f"Error processing TEXT file {file.name}: {e}, {traceback.format_exc()}")
             return {'name': file.name, 'content': []}
         return {'name': file.name, 'content': split_model.parse(content)}
 

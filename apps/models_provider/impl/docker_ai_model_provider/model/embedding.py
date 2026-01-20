@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： embedding.py
     @date：2024/7/12 17:44
@@ -10,10 +10,10 @@ from typing import Dict, List
 
 import openai
 
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 
 
-class DockerAIEmbeddingModel(PorscheAIBaseModel):
+class DockerAIEmbeddingModel(MaxKBBaseModel):
     model_name: str
     optional_params: dict
 
@@ -27,7 +27,7 @@ class DockerAIEmbeddingModel(PorscheAIBaseModel):
 
     @staticmethod
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
-        optional_params = PorscheAIBaseModel.filter_optional_params(model_kwargs)
+        optional_params = MaxKBBaseModel.filter_optional_params(model_kwargs)
         return DockerAIEmbeddingModel(
             api_key=model_credential.get('api_key'),
             model_name=model_name,

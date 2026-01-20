@@ -13,8 +13,8 @@ import os
 
 from future.backports.urllib.parse import urlparse
 
-from common.utils.logger import porsche_logger
-from models_provider.base_model_provider import PorscheAIBaseModel
+from common.utils.logger import maxkb_logger
+from models_provider.base_model_provider import MaxKBBaseModel
 from models_provider.impl.base_stt import BaseSpeechToText
 
 ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
@@ -35,7 +35,7 @@ def deep_merge_dict(target_dict, source_dict):
     return result
 
 
-class XFZhEnSparkSpeechToText(PorscheAIBaseModel, BaseSpeechToText):
+class XFZhEnSparkSpeechToText(MaxKBBaseModel, BaseSpeechToText):
     spark_app_id: str
     spark_api_key: str
     spark_api_secret: str
@@ -115,7 +115,7 @@ class XFZhEnSparkSpeechToText(PorscheAIBaseModel, BaseSpeechToText):
         try:
             return asyncio.run(handle())
         except Exception as err:
-            porsche_logger.error(f"语音识别错误: {str(err)}: {traceback.format_exc()}")
+            maxkb_logger.error(f"语音识别错误: {str(err)}: {traceback.format_exc()}")
             return ""
 
     def merge_params_to_frame(self, frame,params):

@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： aliyun_bai_lian_model_provider.py
     @date：2024/9/9 17:43
@@ -33,7 +33,7 @@ from models_provider.impl.aliyun_bai_lian_model_provider.model.reranker import A
 from models_provider.impl.aliyun_bai_lian_model_provider.model.stt import AliyunBaiLianSpeechToText
 from models_provider.impl.aliyun_bai_lian_model_provider.model.tti import QwenTextToImageModel
 from models_provider.impl.aliyun_bai_lian_model_provider.model.tts import AliyunBaiLianTextToSpeech
-from porsche.conf import PROJECT_DIR
+from maxkb.conf import PROJECT_DIR
 from django.utils.translation import gettext as _, gettext
 
 from models_provider.impl.aliyun_bai_lian_model_provider.model.ttv import GenerationVideoModel

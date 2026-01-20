@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： zhipu_model_provider.py
     @date：2024/04/19 13:5
@@ -17,7 +17,7 @@ from models_provider.impl.zhipu_model_provider.credential.tti import ZhiPuTextTo
 from models_provider.impl.zhipu_model_provider.model.image import ZhiPuImage
 from models_provider.impl.zhipu_model_provider.model.llm import ZhipuChatModel
 from models_provider.impl.zhipu_model_provider.model.tti import ZhiPuTextToImage
-from porsche.conf import PROJECT_DIR
+from maxkb.conf import PROJECT_DIR
 from django.utils.translation import gettext as _
 
 zhipu_model_credential = ZhiPuLLMModelCredential()

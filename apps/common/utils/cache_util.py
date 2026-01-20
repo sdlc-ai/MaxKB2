@@ -1,5 +1,11 @@
 # coding=utf-8
-
+"""
+    @project: MaxKB
+    @Author：虎
+    @file： cache_util.py
+    @date：2024/7/24 19:23
+    @desc:
+"""
 from django.core.cache import cache
 
 

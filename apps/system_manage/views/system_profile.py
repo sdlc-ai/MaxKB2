@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎虎
     @file： system_profile.py
     @date：2025/6/4 15:59
@@ -19,8 +19,8 @@ from system_manage.serializers.system import SystemProfileSerializer
 class SystemProfile(APIView):
     @extend_schema(
         methods=['GET'],
-        description=_('Get PorscheAi related information'),
-        operation_id=_('Get PorscheAi related information'),  # type: ignore
+        description=_('Get MaxKB related information'),
+        operation_id=_('Get MaxKB related information'),  # type: ignore
         responses=SystemProfileAPI.get_response(),
         tags=[_('System parameters')]  # type: ignore
     )

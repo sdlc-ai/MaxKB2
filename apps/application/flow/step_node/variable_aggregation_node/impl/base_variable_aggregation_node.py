@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎²
     @file： base_variable_aggregation_node.py
     @date：2025/10/23 17:42

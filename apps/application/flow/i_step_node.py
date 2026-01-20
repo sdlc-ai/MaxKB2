@@ -1,5 +1,11 @@
 # coding=utf-8
-
+"""
+    @project: maxkb
+    @Author：虎
+    @file： i_step_node.py
+    @date：2024/6/3 14:57
+    @desc:
+"""
 import time
 import uuid
 from abc import abstractmethod

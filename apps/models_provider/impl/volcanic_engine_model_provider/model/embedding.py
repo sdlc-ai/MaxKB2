@@ -2,10 +2,10 @@ from typing import Dict
 
 from langchain_openai import OpenAIEmbeddings
 
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 
 
-class VolcanicEngineEmbeddingModel(PorscheAIBaseModel, OpenAIEmbeddings):
+class VolcanicEngineEmbeddingModel(MaxKBBaseModel, OpenAIEmbeddings):
     @staticmethod
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
         return VolcanicEngineEmbeddingModel(

@@ -7,7 +7,7 @@ from openpyxl import load_workbook
 
 from common.handle.base_parse_table_handle import BaseParseTableHandle
 from common.handle.impl.common_handle import xlsx_embed_cells_images
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 
 
 class XlsxParseTableHandle(BaseParseTableHandle):
@@ -74,7 +74,7 @@ class XlsxParseTableHandle(BaseParseTableHandle):
                 result.append({'name': sheetname, 'paragraphs': paragraphs})
 
         except BaseException as e:
-            porsche_logger.error(f"Error processing XLSX file {file.name}: {e}, {traceback.format_exc()}")
+            maxkb_logger.error(f"Error processing XLSX file {file.name}: {e}, {traceback.format_exc()}")
             return [{'name': file.name, 'paragraphs': []}]
         return result
 
@@ -87,7 +87,7 @@ class XlsxParseTableHandle(BaseParseTableHandle):
                 if len(image_dict) > 0:
                     save_image(image_dict.values())
             except Exception as e:
-                porsche_logger.error(f'Exception: {e}')
+                maxkb_logger.error(f'Exception: {e}')
                 image_dict = {}
             md_tables = ''
             # 如果未指定 sheet_name，则使用第一个工作表
@@ -112,5 +112,5 @@ class XlsxParseTableHandle(BaseParseTableHandle):
 
             return md_tables
         except Exception as e:
-            porsche_logger.error(f'excel split handle error: {e}')
+            maxkb_logger.error(f'excel split handle error: {e}')
             return f'error: {e}'

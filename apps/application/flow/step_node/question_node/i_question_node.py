@@ -1,5 +1,11 @@
 # coding=utf-8
-
+"""
+    @project: maxkb
+    @Author：虎
+    @file： i_chat_node.py
+    @date：2024/6/4 13:58
+    @desc:
+"""
 from typing import Type
 
 from django.utils.translation import gettext_lazy as _

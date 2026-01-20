@@ -5,7 +5,7 @@ import traceback
 import xlrd
 
 from common.handle.base_parse_table_handle import BaseParseTableHandle
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 
 
 class XlsParseTableHandle(BaseParseTableHandle):
@@ -56,7 +56,7 @@ class XlsParseTableHandle(BaseParseTableHandle):
                 result.append({'name': sheet.name, 'paragraphs': paragraphs})
 
         except BaseException as e:
-            porsche_logger.error(f"Error processing XLS file {file.name}: {e}, {traceback.format_exc()}")
+            maxkb_logger.error(f"Error processing XLS file {file.name}: {e}, {traceback.format_exc()}")
             return [{'name': file.name, 'paragraphs': []}]
         return result
 
@@ -89,5 +89,5 @@ class XlsParseTableHandle(BaseParseTableHandle):
 
             return md_tables
         except Exception as e:
-            porsche_logger.error(f'excel split handle error: {e}')
+            maxkb_logger.error(f'excel split handle error: {e}')
             return f'error: {e}'

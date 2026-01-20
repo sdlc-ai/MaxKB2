@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： openai_model_provider.py
     @date：2024/3/28 16:26
@@ -25,7 +25,7 @@ from models_provider.impl.siliconCloud_model_provider.model.reranker import Sili
 from models_provider.impl.siliconCloud_model_provider.model.stt import SiliconCloudSpeechToText
 from models_provider.impl.siliconCloud_model_provider.model.tti import SiliconCloudTextToImage
 from models_provider.impl.siliconCloud_model_provider.model.tts import SiliconCloudTextToSpeech
-from porsche.conf import PROJECT_DIR
+from maxkb.conf import PROJECT_DIR
 from django.utils.translation import gettext as _
 
 openai_llm_model_credential = SiliconCloudLLMModelCredential()

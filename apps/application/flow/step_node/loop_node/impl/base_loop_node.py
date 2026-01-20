@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： base_loop_node.py
     @date：2025/3/11 18:24
@@ -17,7 +17,7 @@ from application.flow.step_node.loop_node.i_loop_node import ILoopNode
 from application.flow.tools import Reasoning
 from application.models import ChatRecord
 from common.handle.impl.response.loop_to_response import LoopToResponse
-from porsche.const import CONFIG
+from maxkb.const import CONFIG
 
 max_loop_count = int(CONFIG.get("WORKFLOW_LOOP_NODE_MAX_LOOP_COUNT", 500))
 

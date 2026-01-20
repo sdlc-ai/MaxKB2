@@ -6,7 +6,7 @@ from common.exception.app_exception import AppApiException
 from common.forms import BaseForm, PasswordInputField, TooltipLabel
 from models_provider.base_model_provider import BaseModelCredential, ValidCode
 from django.utils.translation import gettext as _
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 
 class AliyunBaiLianOmiSTTModelParams(BaseForm):
     CueWord = forms.TextInputField(
@@ -49,7 +49,7 @@ class AliyunBaiLianOmiSTTModelCredential(BaseForm, BaseModelCredential):
         try:
             model = provider.get_model(model_type, model_name, model_credential)
         except Exception as e:
-            porsche_logger.error(f'Exception: {e}', exc_info=True)
+            maxkb_logger.error(f'Exception: {e}', exc_info=True)
             if isinstance(e, AppApiException):
                 raise e
             if raise_exception:

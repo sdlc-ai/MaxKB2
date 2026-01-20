@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： xls_parse_qa_handle.py
     @date：2024/5/21 14:59
@@ -12,7 +12,7 @@ from typing import List
 import xlrd
 
 from common.handle.base_split_handle import BaseSplitHandle
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 
 
 def post_cell(cell_value):
@@ -71,7 +71,7 @@ class XlsSplitHandle(BaseSplitHandle):
                         sheet.name, sheet, limit) for sheet
                      in worksheets] if row is not None]
         except Exception as e:
-            porsche_logger.error(f"Error processing XLS file {file.name}: {e}, {traceback.format_exc()}")
+            maxkb_logger.error(f"Error processing XLS file {file.name}: {e}, {traceback.format_exc()}")
             return [{'name': file.name, 'content': []}]
 
     def get_content(self, file, save_image):

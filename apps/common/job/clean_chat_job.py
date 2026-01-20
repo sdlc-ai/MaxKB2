@@ -9,7 +9,7 @@ from django.utils import timezone
 from application.models import Application, Chat, ChatRecord
 from common.job.scheduler import scheduler
 from common.utils.lock import lock, RedisLock
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 from knowledge.models import File
 
 
@@ -20,7 +20,7 @@ def clean_chat_log_job():
 @lock(lock_key='clean_chat_log_job_execute', timeout=30)
 def clean_chat_log_job_lock():
     from django.utils.translation import gettext_lazy as _
-    porsche_logger.info(_('start clean chat log'))
+    maxkb_logger.info(_('start clean chat log'))
     now = timezone.now()
 
     applications = Application.objects.all().values('id', 'clean_time')
@@ -66,14 +66,14 @@ def clean_chat_log_job_lock():
             if deleted_count < batch_size:
                 break
 
-    porsche_logger.info(_('end clean chat log'))
+    maxkb_logger.info(_('end clean chat log'))
 
 
 def run():
     rlock = RedisLock()
     if rlock.try_lock('clean_chat_log_job', 30 * 30):
         try:
-            porsche_logger.debug('get lock clean_chat_log_job')
+            maxkb_logger.debug('get lock clean_chat_log_job')
 
             existing_job = scheduler.get_job(job_id='clean_chat_log')
             if existing_job is not None:

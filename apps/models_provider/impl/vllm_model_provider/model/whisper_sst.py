@@ -5,13 +5,13 @@ from typing import Dict
 
 from openai import OpenAI
 
-from common.utils.logger import porsche_logger
-from models_provider.base_model_provider import PorscheAIBaseModel
+from common.utils.logger import maxkb_logger
+from models_provider.base_model_provider import MaxKBBaseModel
 from models_provider.impl.base_stt import BaseSpeechToText
 
 
 
-class VllmWhisperSpeechToText(PorscheAIBaseModel, BaseSpeechToText):
+class VllmWhisperSpeechToText(MaxKBBaseModel, BaseSpeechToText):
     api_key: str
     api_url: str
     model: str
@@ -66,4 +66,4 @@ class VllmWhisperSpeechToText(PorscheAIBaseModel, BaseSpeechToText):
             return result.text
 
         except Exception as err:
-            porsche_logger.error(f":Error: {str(err)}: {traceback.format_exc()}")
+            maxkb_logger.error(f":Error: {str(err)}: {traceback.format_exc()}")

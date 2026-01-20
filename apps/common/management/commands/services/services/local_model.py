@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： local_model.py
     @date：2024/8/21 13:28
@@ -8,7 +8,7 @@
 """
 import subprocess
 
-from porsche.const import CONFIG
+from maxkb.const import CONFIG
 from .base import BaseService
 from ..hands import *
 
@@ -29,7 +29,7 @@ class GunicornLocalModelService(BaseService):
         worker = CONFIG.get("LOCAL_MODEL_HOST_WORKER", 1)
         max_requests = 10240 if int(worker) > 1 else 0
         cmd = [
-            'gunicorn', 'porsche.wsgi:application',
+            'gunicorn', 'maxkb.wsgi:application',
             '-b', bind,
             '-k', 'gthread',
             '--threads', '200',

@@ -1,5 +1,11 @@
 # coding=utf-8
-
+"""
+    @project: MaxKB
+    @Author：虎虎
+    @file： application_key.py
+    @date：2025/7/10 03:02
+    @desc:  应用api key认证
+"""
 from django.db.models import QuerySet
 from django.utils.translation import gettext_lazy as _
 

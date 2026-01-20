@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎虎
     @file： model.py.py
     @date：2025/11/7 14:02
@@ -15,7 +15,7 @@ from common.exception.app_exception import AppApiException
 from common.forms import BaseForm
 from models_provider.base_model_provider import BaseModelCredential, ValidCode
 from models_provider.impl.local_model_provider.model.embedding import LocalEmbedding
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 
 class LocalEmbeddingCredential(BaseForm, BaseModelCredential):
 
@@ -34,7 +34,7 @@ class LocalEmbeddingCredential(BaseForm, BaseModelCredential):
             model: LocalEmbedding = provider.get_model(model_type, model_name, model_credential)
             model.embed_query(gettext('Hello'))
         except Exception as e:
-            porsche_logger.error(f'Exception: {e}', exc_info=True)
+            maxkb_logger.error(f'Exception: {e}', exc_info=True)
             if isinstance(e, AppApiException):
                 raise e
             if raise_exception:

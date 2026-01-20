@@ -1,5 +1,11 @@
 # coding=utf-8
-
+"""
+    @project: maxkb
+    @Author：虎
+    @file： lt_compare.py
+    @date：2024/6/11 9:52
+    @desc: 小于比较器
+"""
 from typing import List
 
 from application.flow.compare import Compare

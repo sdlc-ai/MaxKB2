@@ -1,5 +1,11 @@
 # coding=utf-8
-
+"""
+    @project: maxkb
+    @Author：虎
+    @file： listener_manage.py
+    @date：2023/10/20 14:01
+    @desc:
+"""
 import datetime
 import os
 import threading
@@ -17,12 +23,12 @@ from common.config.embedding_config import VectorStore
 from common.db.search import native_search, get_dynamics_model, native_update
 from common.utils.common import get_file_content
 from common.utils.lock import RedisLock
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 from common.utils.page_utils import page_desc
 from knowledge.models import Paragraph, Status, Document, ProblemParagraphMapping, TaskType, State, SourceType, \
     SearchMode
 from knowledge.serializers.common import create_knowledge_index
-from porsche.conf import (PROJECT_DIR)
+from maxkb.conf import (PROJECT_DIR)
 
 lock = threading.Lock()
 
@@ -82,12 +88,12 @@ class ListenerManagement:
             ListenerManagement.embedding_by_paragraph_data_list(data_list, paragraph_id_list=paragraph_id_list,
                                                                 embedding_model=embedding_model)
         except Exception as e:
-            porsche_logger.error(_('Query vector data: {paragraph_id_list} error {error} {traceback}').format(
+            maxkb_logger.error(_('Query vector data: {paragraph_id_list} error {error} {traceback}').format(
                 paragraph_id_list=paragraph_id_list, error=str(e), traceback=traceback.format_exc()))
 
     @staticmethod
     def embedding_by_paragraph_data_list(data_list, paragraph_id_list, embedding_model: Embeddings):
-        porsche_logger.info(_('Start--->Embedding paragraph: {paragraph_id_list}').format(
+        maxkb_logger.info(_('Start--->Embedding paragraph: {paragraph_id_list}').format(
             paragraph_id_list=paragraph_id_list)
         )
         try:
@@ -103,14 +109,14 @@ class ListenerManagement:
                 QuerySet(Paragraph).filter(id__in=paragraph_id_list), TaskType.EMBEDDING, State.SUCCESS
             )
         except Exception as e:
-            porsche_logger.error(_('Vectorized paragraph: {paragraph_id_list} error {error} {traceback}').format(
+            maxkb_logger.error(_('Vectorized paragraph: {paragraph_id_list} error {error} {traceback}').format(
                 paragraph_id_list=paragraph_id_list, error=str(e), traceback=traceback.format_exc())
             )
             ListenerManagement.update_status(
                 QuerySet(Paragraph).filter(id__in=paragraph_id_list), TaskType.EMBEDDING, State.FAILURE
             )
         finally:
-            porsche_logger.info(_('End--->Embedding paragraph: {paragraph_id_list}').format(
+            maxkb_logger.info(_('End--->Embedding paragraph: {paragraph_id_list}').format(
                 paragraph_id_list=paragraph_id_list)
             )
 
@@ -121,7 +127,7 @@ class ListenerManagement:
         @param paragraph_id:    段落id
         @param embedding_model:  向量模型
         """
-        porsche_logger.info(_('Start--->Embedding paragraph: {paragraph_id}').format(paragraph_id=paragraph_id))
+        maxkb_logger.info(_('Start--->Embedding paragraph: {paragraph_id}').format(paragraph_id=paragraph_id))
         # 更新到开始状态
         ListenerManagement.update_status(QuerySet(Paragraph).filter(id=paragraph_id), TaskType.EMBEDDING, State.STARTED)
         try:
@@ -146,12 +152,12 @@ class ListenerManagement:
             ListenerManagement.update_status(QuerySet(Paragraph).filter(id=paragraph_id), TaskType.EMBEDDING,
                                              State.SUCCESS)
         except Exception as e:
-            porsche_logger.error(_('Vectorized paragraph: {paragraph_id} error {error} {traceback}').format(
+            maxkb_logger.error(_('Vectorized paragraph: {paragraph_id} error {error} {traceback}').format(
                 paragraph_id=paragraph_id, error=str(e), traceback=traceback.format_exc()))
             ListenerManagement.update_status(QuerySet(Paragraph).filter(id=paragraph_id), TaskType.EMBEDDING,
                                              State.FAILURE)
         finally:
-            porsche_logger.info(_('End--->Embedding paragraph: {paragraph_id}').format(paragraph_id=paragraph_id))
+            maxkb_logger.info(_('End--->Embedding paragraph: {paragraph_id}').format(paragraph_id=paragraph_id))
 
     @staticmethod
     def embedding_by_data_list(data_list: List, embedding_model: Embeddings):
@@ -268,7 +274,7 @@ class ListenerManagement:
 
             if is_the_task_interrupted():
                 return
-            porsche_logger.info(_('Start--->Embedding document: {document_id}').format(document_id=document_id)
+            maxkb_logger.info(_('Start--->Embedding document: {document_id}').format(document_id=document_id)
                               )
             # 批量修改状态为PADDING
             ListenerManagement.update_status(QuerySet(Document).filter(id=document_id), TaskType.EMBEDDING,
@@ -289,12 +295,12 @@ class ListenerManagement:
             # 检查是否存在索引
             create_knowledge_index(document_id=document_id)
         except Exception as e:
-            porsche_logger.error(_('Vectorized document: {document_id} error {error} {traceback}').format(
+            maxkb_logger.error(_('Vectorized document: {document_id} error {error} {traceback}').format(
                 document_id=document_id, error=str(e), traceback=traceback.format_exc()))
         finally:
             ListenerManagement.post_update_document_status(document_id, TaskType.EMBEDDING)
             ListenerManagement.get_aggregation_document_status(document_id)()
-            porsche_logger.info(_('End--->Embedding document: {document_id}').format(document_id=document_id))
+            maxkb_logger.info(_('End--->Embedding document: {document_id}').format(document_id=document_id))
             rlock.un_lock('embedding:' + str(document_id))
 
     @staticmethod
@@ -305,18 +311,18 @@ class ListenerManagement:
         @param embedding_model 向量模型
         :return: None
         """
-        porsche_logger.info(_('Start--->Embedding knowledge: {knowledge_id}').format(knowledge_id=knowledge_id))
+        maxkb_logger.info(_('Start--->Embedding knowledge: {knowledge_id}').format(knowledge_id=knowledge_id))
         try:
             ListenerManagement.delete_embedding_by_knowledge(knowledge_id)
             document_list = QuerySet(Document).filter(knowledge_id=knowledge_id)
-            porsche_logger.info(_('Start--->Embedding document: {document_list}').format(document_list=document_list))
+            maxkb_logger.info(_('Start--->Embedding document: {document_list}').format(document_list=document_list))
             for document in document_list:
                 ListenerManagement.embedding_by_document(document.id, embedding_model=embedding_model)
         except Exception as e:
-            porsche_logger.error(_('Vectorized knowledge: {knowledge_id} error {error} {traceback}').format(
+            maxkb_logger.error(_('Vectorized knowledge: {knowledge_id} error {error} {traceback}').format(
                 knowledge_id=knowledge_id, error=str(e), traceback=traceback.format_exc()))
         finally:
-            porsche_logger.info(_('End--->Embedding knowledge: {knowledge_id}').format(knowledge_id=knowledge_id))
+            maxkb_logger.info(_('End--->Embedding knowledge: {knowledge_id}').format(knowledge_id=knowledge_id))
 
     @staticmethod
     def delete_embedding_by_document(document_id):

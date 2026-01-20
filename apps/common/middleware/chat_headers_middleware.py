@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： static_headers_middleware.py
     @date：2024/3/13 18:26
@@ -9,7 +9,7 @@
 from django.utils.deprecation import MiddlewareMixin
 
 from common.cache_data.application_access_token_cache import get_application_access_token
-from porsche.const import CONFIG
+from maxkb.const import CONFIG
 
 
 class ChatHeadersMiddleware(MiddlewareMixin):
@@ -33,6 +33,6 @@ class ChatHeadersMiddleware(MiddlewareMixin):
                 response.content = (response.content.decode('utf-8').replace(
                     '<link rel="icon" href="./favicon.ico"/>',
                     f'<link rel="icon" href="{application_icon}" />')
-                .replace('<title>PorscheAi</title>', f'<title>{application_name}</title>').encode(
+                .replace('<title>MaxKB</title>', f'<title>{application_name}</title>').encode(
                     "utf-8"))
         return response

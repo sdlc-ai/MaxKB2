@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： embedding.py
     @date：2024/10/16 16:34
@@ -10,10 +10,10 @@ from typing import Dict, List
 
 from openai import OpenAI
 
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 
 
-class AliyunBaiLianEmbedding(PorscheAIBaseModel):
+class AliyunBaiLianEmbedding(MaxKBBaseModel):
     model_name: str
     optional_params: dict
 
@@ -27,7 +27,7 @@ class AliyunBaiLianEmbedding(PorscheAIBaseModel):
 
     @staticmethod
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
-        optional_params = PorscheAIBaseModel.filter_optional_params(model_kwargs)
+        optional_params = MaxKBBaseModel.filter_optional_params(model_kwargs)
         return AliyunBaiLianEmbedding(
             api_key=model_credential.get('dashscope_api_key'),
             model_name=model_name,

@@ -1,5 +1,11 @@
 # coding=utf-8
-
+"""
+    @project: MaxKB
+    @Author：虎虎
+    @file： result.py
+    @date：2025/4/14 15:18
+    @desc:
+"""
 from typing import List
 
 from django.http import JsonResponse

@@ -4,10 +4,10 @@ from typing import Dict, Optional, List, Any
 
 from langchain_core.embeddings import Embeddings
 
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 
 
-class XinferenceEmbedding(PorscheAIBaseModel, Embeddings):
+class XinferenceEmbedding(MaxKBBaseModel, Embeddings):
     client: Any
     server_url: Optional[str]
     """URL of the xinference server"""

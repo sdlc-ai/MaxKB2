@@ -7,7 +7,7 @@ from common import forms
 from common.exception.app_exception import AppApiException
 from common.forms import BaseForm, TooltipLabel
 from models_provider.base_model_provider import ValidCode, BaseModelCredential
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 
 
 class BedrockImageModelParams(BaseForm):
@@ -54,7 +54,7 @@ class BedrockVLModelCredential(BaseForm, BaseModelCredential):
         except AppApiException:
             raise
         except Exception as e:
-            porsche_logger.error(f'Exception: {e}', exc_info=True)
+            maxkb_logger.error(f'Exception: {e}', exc_info=True)
             if raise_exception:
                 raise AppApiException(ValidCode.valid_error.value,
                                       gettext(

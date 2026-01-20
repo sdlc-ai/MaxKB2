@@ -1,18 +1,18 @@
 #!/bin/bash
 
-if [ ! -d /opt/porsche/data/redis ]; then
-    mkdir -p /opt/porsche/data/redis
-    chmod 700 /opt/porsche/data/redis
+if [ ! -d /opt/maxkb/data/redis ]; then
+    mkdir -p /opt/maxkb/data/redis
+    chmod 700 /opt/maxkb/data/redis
 fi
-if [ ! -d /opt/porsche/logs ]; then
-    mkdir -p /opt/porsche/logs
-    chmod 700 /opt/porsche/logs
+if [ ! -d /opt/maxkb/logs ]; then
+    mkdir -p /opt/maxkb/logs
+    chmod 700 /opt/maxkb/logs
 fi
-if [ ! -f /opt/porsche/conf/redis.conf ]; then
-  mkdir -p /opt/porsche/conf
-  touch /opt/porsche/conf/redis.conf
-  chmod 700 /opt/porsche/conf/redis.conf
-  cat <<EOF > /opt/porsche/conf/redis.conf
+if [ ! -f /opt/maxkb/conf/redis.conf ]; then
+  mkdir -p /opt/maxkb/conf
+  touch /opt/maxkb/conf/redis.conf
+  chmod 700 /opt/maxkb/conf/redis.conf
+  cat <<EOF > /opt/maxkb/conf/redis.conf
 bind 0.0.0.0
 port 6379
 databases 16
@@ -30,10 +30,10 @@ auto-aof-rewrite-percentage 100
 auto-aof-rewrite-min-size 64mb
 maxmemory-policy allkeys-lru
 loglevel warning
-logfile /opt/porsche/logs/redis.log
-dir /opt/porsche/data/redis
+logfile /opt/maxkb/logs/redis.log
+dir /opt/maxkb/data/redis
 requirepass ${REDIS_PASSWORD}
 EOF
 fi
 
-redis-server /opt/porsche/conf/redis.conf
+redis-server /opt/maxkb/conf/redis.conf

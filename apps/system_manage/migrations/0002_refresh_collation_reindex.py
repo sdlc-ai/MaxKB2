@@ -3,7 +3,7 @@ import logging
 import psycopg
 from django.db import migrations
 
-from porsche.const import CONFIG
+from maxkb.const import CONFIG
 
 
 def get_connect(db_name):

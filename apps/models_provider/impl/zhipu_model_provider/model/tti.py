@@ -6,7 +6,7 @@ from langchain_core.messages import HumanMessage
 from zhipuai import ZhipuAI
 
 from common.config.tokenizer_manage_config import TokenizerManage
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 from models_provider.impl.base_tti import BaseTextToImage
 
 
@@ -15,7 +15,7 @@ def custom_get_token_ids(text: str):
     return tokenizer.encode(text)
 
 
-class ZhiPuTextToImage(PorscheAIBaseModel, BaseTextToImage):
+class ZhiPuTextToImage(MaxKBBaseModel, BaseTextToImage):
     api_key: str
     model: str
     params: dict

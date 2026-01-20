@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： embedding.py
     @date：2024/10/17 16:48
@@ -9,10 +9,10 @@
 from typing import Dict, List
 from langchain_community.embeddings import QianfanEmbeddingsEndpoint
 import openai
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 
 
-class QianfanV1Embeddings(PorscheAIBaseModel, QianfanEmbeddingsEndpoint):
+class QianfanV1Embeddings(MaxKBBaseModel, QianfanEmbeddingsEndpoint):
     @staticmethod
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
         return QianfanV1Embeddings(
@@ -22,7 +22,7 @@ class QianfanV1Embeddings(PorscheAIBaseModel, QianfanEmbeddingsEndpoint):
         )
 
 
-class QianfanV2EmbeddingModel(PorscheAIBaseModel):
+class QianfanV2EmbeddingModel(MaxKBBaseModel):
     model_name: str
 
     @staticmethod
@@ -52,7 +52,7 @@ class QianfanV2EmbeddingModel(PorscheAIBaseModel):
         return [e.embedding for e in res.data]
 
 
-class QianfanEmbeddings(PorscheAIBaseModel):
+class QianfanEmbeddings(MaxKBBaseModel):
 
 
     @staticmethod

@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： embedding.py
     @date：2024/7/12 17:44
@@ -10,10 +10,10 @@ from typing import Dict
 
 from langchain_community.embeddings import OpenAIEmbeddings
 
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 
 
-class RegoloEmbeddingModel(PorscheAIBaseModel, OpenAIEmbeddings):
+class RegoloEmbeddingModel(MaxKBBaseModel, OpenAIEmbeddings):
     @staticmethod
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
         return RegoloEmbeddingModel(

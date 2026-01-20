@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： siliconcloud_reranker.py
     @date：2024/9/10 9:45
@@ -13,11 +13,11 @@ import requests
 from langchain_core.callbacks import Callbacks
 from langchain_core.documents import BaseDocumentCompressor, Document
 
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 from django.utils.translation import gettext as _
 
 
-class SiliconCloudReranker(PorscheAIBaseModel, BaseDocumentCompressor):
+class SiliconCloudReranker(MaxKBBaseModel, BaseDocumentCompressor):
     api_base: Optional[str]
     """SiliconCloud API URL"""
     model: Optional[str]

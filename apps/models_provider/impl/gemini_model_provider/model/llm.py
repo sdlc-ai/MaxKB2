@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@Project ：PorscheAi 
+@Project ：MaxKB 
 @File    ：llm.py
 @Author  ：Brian Yang
 @Date    ：5/13/24 7:40 AM 
@@ -24,10 +24,10 @@ from langchain_google_genai._common import (
 )
 
 from common.config.tokenizer_manage_config import TokenizerManage
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 
 
-class GeminiChatModel(PorscheAIBaseModel, ChatGoogleGenerativeAI):
+class GeminiChatModel(MaxKBBaseModel, ChatGoogleGenerativeAI):
 
     @staticmethod
     def is_cache_model():
@@ -35,7 +35,7 @@ class GeminiChatModel(PorscheAIBaseModel, ChatGoogleGenerativeAI):
 
     @staticmethod
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
-        optional_params = PorscheAIBaseModel.filter_optional_params(model_kwargs)
+        optional_params = MaxKBBaseModel.filter_optional_params(model_kwargs)
 
         gemini_chat = GeminiChatModel(
             model=model_name,

@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： base_search_dataset_node.py
     @date：2024/6/4 11:56
@@ -20,7 +20,7 @@ from common.database_model_manage.database_model_manage import DatabaseModelMana
 from common.db.search import native_search
 from common.utils.common import get_file_content
 from knowledge.models import Document, Paragraph, Knowledge, SearchMode
-from porsche.conf import PROJECT_DIR
+from maxkb.conf import PROJECT_DIR
 from models_provider.tools import get_model_instance_by_model_workspace_id
 
 

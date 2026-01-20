@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎虎
     @file： user.py
     @date：2025/4/14 19:18
@@ -26,7 +26,7 @@ from common.database_model_manage.database_model_manage import DatabaseModelMana
 from common.db.search import page_search
 from common.exception.app_exception import AppApiException
 from common.utils.common import valid_license, password_encrypt
-from porsche.conf import PROJECT_DIR
+from maxkb.conf import PROJECT_DIR
 from system_manage.models import SystemSetting, SettingType
 from users.models import User
 from django.utils.translation import gettext_lazy as _, to_locale

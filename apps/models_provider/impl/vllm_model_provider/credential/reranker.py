@@ -9,7 +9,7 @@ from models_provider.base_model_provider import BaseModelCredential, ValidCode
 from django.utils.translation import gettext_lazy as _
 
 from models_provider.impl.vllm_model_provider.model.reranker import VllmBgeReranker
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 
 class VllmRerankerCredential(BaseForm, BaseModelCredential):
     api_url = forms.TextInputField('API URL', required=True)
@@ -33,7 +33,7 @@ class VllmRerankerCredential(BaseForm, BaseModelCredential):
             test_text = str(_('Hello'))
             model.compress_documents([Document(page_content=test_text)], test_text)
         except Exception as e:
-            porsche_logger.error(f'Exception: {e}', exc_info=True)
+            maxkb_logger.error(f'Exception: {e}', exc_info=True)
             if isinstance(e, AppApiException):
                 raise e
             if raise_exception:

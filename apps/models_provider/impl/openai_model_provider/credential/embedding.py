@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎
     @file： embedding.py
     @date：2024/7/12 16:45
@@ -14,7 +14,7 @@ from common import forms
 from common.exception.app_exception import AppApiException
 from common.forms import BaseForm, TooltipLabel
 from models_provider.base_model_provider import BaseModelCredential, ValidCode
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 
 class OpenAIEmbeddingModelParams(BaseForm):
     dimensions = forms.SingleSelect(
@@ -53,7 +53,7 @@ class OpenAIEmbeddingCredential(BaseForm, BaseModelCredential):
             model = provider.get_model(model_type, model_name, model_credential)
             model.embed_query(_('Hello'))
         except Exception as e:
-            porsche_logger.error(f'Exception: {e}', exc_info=True)
+            maxkb_logger.error(f'Exception: {e}', exc_info=True)
             if isinstance(e, AppApiException):
                 raise e
             if raise_exception:

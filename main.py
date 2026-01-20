@@ -12,7 +12,7 @@ APP_DIR = os.path.join(BASE_DIR, 'apps')
 
 os.chdir(BASE_DIR)
 sys.path.insert(0, APP_DIR)
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "porsche.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "maxkb.settings")
 
 
 def collect_static():
@@ -52,7 +52,7 @@ def start_services():
     if args.worker:
         start_args.extend(['--worker', str(args.worker)])
     else:
-        worker = os.environ.get('PORSCHEAI_CORE_WORKER')
+        worker = os.environ.get('MAXKB_CORE_WORKER')
         if isinstance(worker, str) and worker.isdigit():
             start_args.extend(['--worker', worker])
 
@@ -73,14 +73,14 @@ def dev():
     elif services.__contains__('celery'):
         management.call_command('celery', 'celery')
     elif services.__contains__('local_model'):
-        from porsche.const import CONFIG
+        from maxkb.const import CONFIG
         bind = f'{CONFIG.get("LOCAL_MODEL_HOST")}:{CONFIG.get("LOCAL_MODEL_PORT")}'
         management.call_command('runserver', bind)
 
 
 if __name__ == '__main__':
-    os.environ['HF_HOME'] = '/opt/porsche-app/model/base'
-    os.environ['TMPDIR'] = '/opt/porsche-app/tmp'
+    os.environ['HF_HOME'] = '/opt/maxkb-app/model/base'
+    os.environ['TMPDIR'] = '/opt/maxkb-app/tmp'
     parser = argparse.ArgumentParser(
         description="""
            qabot service control tools;

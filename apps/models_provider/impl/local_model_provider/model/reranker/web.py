@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎虎
     @file： web.py
     @date：2025/11/5 15:30
@@ -13,11 +13,11 @@ from anthropic import BaseModel
 from langchain_core.callbacks import Callbacks
 from langchain_core.documents import Document, BaseDocumentCompressor
 
-from porsche.const import CONFIG
-from models_provider.base_model_provider import PorscheAIBaseModel
+from maxkb.const import CONFIG
+from models_provider.base_model_provider import MaxKBBaseModel
 
 
-class LocalReranker(PorscheAIBaseModel, BaseModel, BaseDocumentCompressor):
+class LocalReranker(MaxKBBaseModel, BaseModel, BaseDocumentCompressor):
 
     @staticmethod
     def is_cache_model():

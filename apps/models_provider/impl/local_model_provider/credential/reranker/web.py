@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎虎
     @file： web.py
     @date：2025/11/7 14:23
@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 from common import forms
 from common.forms import BaseForm
-from porsche.const import CONFIG
+from maxkb.const import CONFIG
 from models_provider.base_model_provider import BaseModelCredential
 
 

@@ -1,12 +1,12 @@
 from langchain_community.embeddings import BedrockEmbeddings
 
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 from typing import Dict, List
 
 from models_provider.impl.aws_bedrock_model_provider.model.llm import _update_aws_credentials
 
 
-class BedrockEmbeddingModel(PorscheAIBaseModel, BedrockEmbeddings):
+class BedrockEmbeddingModel(MaxKBBaseModel, BedrockEmbeddings):
     def __init__(self, model_id: str, region_name: str, credentials_profile_name: str,
                  **kwargs):
         super().__init__(model_id=model_id, region_name=region_name,

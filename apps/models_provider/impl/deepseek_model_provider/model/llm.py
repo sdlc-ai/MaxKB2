@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 """
-@Project ：PorscheAi 
+@Project ：MaxKB 
 @File    ：llm.py
 @Author  ：Brian Yang
 @Date    ：5/12/24 7:44 AM 
 """
 from typing import Dict
 
-from models_provider.base_model_provider import PorscheAIBaseModel
+from models_provider.base_model_provider import MaxKBBaseModel
 from models_provider.impl.base_chat_open_ai import BaseChatOpenAI
 
 
-class DeepSeekChatModel(PorscheAIBaseModel, BaseChatOpenAI):
+class DeepSeekChatModel(MaxKBBaseModel, BaseChatOpenAI):
 
     @staticmethod
     def is_cache_model():
@@ -20,7 +20,7 @@ class DeepSeekChatModel(PorscheAIBaseModel, BaseChatOpenAI):
 
     @staticmethod
     def new_instance(model_type, model_name, model_credential: Dict[str, object], **model_kwargs):
-        optional_params = PorscheAIBaseModel.filter_optional_params(model_kwargs)
+        optional_params = MaxKBBaseModel.filter_optional_params(model_kwargs)
 
         deepseek_chat_open_ai = DeepSeekChatModel(
             model=model_name,

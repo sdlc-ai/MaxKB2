@@ -1,5 +1,11 @@
 # coding=utf-8
-
+"""
+    @project: maxkb
+    @Author：虎
+    @file： ollama_model_provider.py
+    @date：2024/3/5 17:23
+    @desc:
+"""
 import json
 import os
 from typing import Dict, Iterator
@@ -17,7 +23,7 @@ from models_provider.impl.ollama_model_provider.model.embedding import OllamaEmb
 from models_provider.impl.ollama_model_provider.model.image import OllamaImage
 from models_provider.impl.ollama_model_provider.model.llm import OllamaChatModel
 from models_provider.impl.ollama_model_provider.model.reranker import OllamaReranker
-from porsche.conf import PROJECT_DIR
+from maxkb.conf import PROJECT_DIR
 from django.utils.translation import gettext as _
 
 ""

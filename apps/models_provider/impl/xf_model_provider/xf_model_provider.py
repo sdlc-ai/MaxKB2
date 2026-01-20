@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： xf_model_provider.py
     @date：2024/04/19 14:47
@@ -23,7 +23,7 @@ from models_provider.impl.xf_model_provider.model.image import XFSparkImage
 from models_provider.impl.xf_model_provider.model.llm import XFChatSparkLLM
 from models_provider.impl.xf_model_provider.model.stt import XFSparkSpeechToText
 from models_provider.impl.xf_model_provider.model.tts import XFSparkTextToSpeech
-from porsche.conf import PROJECT_DIR
+from maxkb.conf import PROJECT_DIR
 from django.utils.translation import gettext as _
 
 from models_provider.impl.xf_model_provider.model.zh_en_stt import XFZhEnSparkSpeechToText

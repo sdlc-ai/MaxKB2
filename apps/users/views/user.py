@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎虎
     @file： user.py
     @date：2025/4/14 19:25
@@ -20,7 +20,7 @@ from common.constants.permission_constants import PermissionConstants, Permissio
 from common.log.log import log
 from common.result import result
 from common.utils.common import query_params_to_single_dict
-from porsche.const import CONFIG
+from maxkb.const import CONFIG
 from models_provider.api.model import DefaultModelResponse
 from tools.serializers.tool import encryption
 from users.api.user import UserProfileAPI, TestWorkspacePermissionUserApi, DeleteUserApi, EditUserApi, \
@@ -30,7 +30,7 @@ from users.models import User
 from users.serializers.user import UserProfileSerializer, UserManageSerializer, CheckCodeSerializer, \
     SendEmailSerializer, RePasswordSerializer, SwitchLanguageSerializer, ResetCurrentUserPassword
 
-default_password = CONFIG.get('DEFAULT_PASSWORD', 'PorscheAi@123..')
+default_password = CONFIG.get('DEFAULT_PASSWORD', 'MaxKB@123..')
 
 
 def get_user_operation_object(user_id):

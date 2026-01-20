@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: maxkb
     @Author：虎
     @file： base_question_node.py
     @date：2024/6/4 14:30
@@ -22,7 +22,7 @@ from application.flow.step_node.ai_chat_step_node.i_chat_node import IChatNode
 from application.flow.tools import Reasoning, mcp_response_generator
 from common.utils.rsa_util import rsa_long_decrypt
 from common.utils.tool_code import ToolExecutor
-from porsche.const import CONFIG
+from maxkb.const import CONFIG
 from models_provider.models import Model
 from models_provider.tools import get_model_credential, get_model_instance_by_model_workspace_id
 from tools.models import Tool

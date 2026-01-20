@@ -16,7 +16,7 @@ from langchain_openai import ChatOpenAI
 from langchain_openai.chat_models.base import _create_usage_metadata
 
 from common.config.tokenizer_manage_config import TokenizerManage
-from common.utils.logger import porsche_logger
+from common.utils.logger import maxkb_logger
 
 def custom_get_token_ids(text: str):
     tokenizer = TokenizerManage.get_tokenizer()
@@ -103,13 +103,13 @@ class BaseChatOpenAI(ChatOpenAI):
                 future = executor.submit(super().get_num_tokens_from_messages, messages, tools)
                 try:
                     response = future.result()
-                    porsche_logger.info("请求成功（未超时）")
+                    maxkb_logger.info("请求成功（未超时）")
                     return response
                 except Exception as e:
                     if isinstance(e, ReadTimeout):
                         raise  # 继续抛出
                     else:
-                        porsche_logger.error("except:", e)
+                        maxkb_logger.error("except:", e)
                         tokenizer = TokenizerManage.get_tokenizer()
                         return sum([len(tokenizer.encode(get_buffer_string([m]))) for m in messages])
 

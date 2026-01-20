@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: PorscheAi
+    @project: MaxKB
     @Author：虎虎
     @file： application.py
     @date：2025/5/26 17:03
@@ -39,7 +39,7 @@ from common.field.common import UploadedFileField
 from common.utils.common import get_file_content, restricted_loads, generate_uuid, _remove_empty_lines
 from knowledge.models import Knowledge, KnowledgeScope
 from knowledge.serializers.knowledge import KnowledgeSerializer, KnowledgeModelSerializer
-from porsche.conf import PROJECT_DIR
+from maxkb.conf import PROJECT_DIR
 from models_provider.models import Model
 from models_provider.tools import get_model_instance_by_model_workspace_id
 from system_manage.models import WorkspaceUserResourcePermission, AuthTargetType
