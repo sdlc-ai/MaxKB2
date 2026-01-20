@@ -1,7 +1,7 @@
 # coding=utf-8
 """
-    @project: MaxKB
-    @Author：虎
+    @project: porsche
+    @Author： 
     @file： lib.py
     @date：2024/8/16 17:12
     @desc:
@@ -10,7 +10,7 @@ import os
 
 from redis.sentinel import Sentinel
 
-from maxkb.const import CONFIG, PROJECT_DIR, LOG_DIR
+from porsche.const import CONFIG, PROJECT_DIR, LOG_DIR
 
 # celery相关配置
 celery_data_dir = os.path.join(PROJECT_DIR, 'data', 'celery_task')

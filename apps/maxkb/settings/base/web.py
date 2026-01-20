@@ -1,7 +1,7 @@
 # coding=utf-8
 """
-    @project: MaxKB
-    @Author：虎虎
+    @project: porsche
+    @Author：
     @file： web.py
     @date：2025/11/5 14:53
     @desc:
@@ -66,7 +66,7 @@ REST_FRAMEWORK = {
 }
 STATICFILES_DIRS = [(os.path.join(PROJECT_DIR, 'ui', 'dist'))]
 STATIC_ROOT = os.path.join(BASE_DIR.parent, 'static')
-ROOT_URLCONF = 'maxkb.urls'
+ROOT_URLCONF = 'porsche.urls'
 APPS_DIR = os.path.join(PROJECT_DIR, 'apps')
 
 TEMPLATES = [
@@ -111,7 +111,7 @@ TEMPLATES = [
      },
 ]
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'MaxKB API',
+    'TITLE': 'PorscheAi API',
     'DESCRIPTION': _('Intelligent customer service platform'),
     'VERSION': 'v2',
     'SERVE_INCLUDE_SCHEMA': False,
@@ -127,7 +127,7 @@ SPECTACULAR_SETTINGS = {
         }
     }
 }
-WSGI_APPLICATION = 'maxkb.wsgi.application'
+WSGI_APPLICATION = 'porsche.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -191,5 +191,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 edition = 'CE'
 
-if os.environ.get('MAXKB_REDIS_SENTINEL_SENTINELS') is not None:
+if os.environ.get('PORSCHEAI_REDIS_SENTINEL_SENTINELS') is not None:
     DJANGO_REDIS_CONNECTION_FACTORY = "django_redis.pool.SentinelConnectionFactory"
