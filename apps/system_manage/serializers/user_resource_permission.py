@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-    @project: MaxKB
+    @project: PorscheAi
     @Author：虎虎
     @file： workspace_user_resource_permission.py
     @date：2025/4/28 17:17
@@ -27,8 +27,8 @@ from common.db.sql_execute import select_list
 from common.exception.app_exception import AppApiException
 from common.utils.common import get_file_content
 from knowledge.models import Knowledge
-from maxkb.conf import PROJECT_DIR
-from maxkb.settings import edition
+from porsche.conf import PROJECT_DIR
+from porsche.settings import edition
 from models_provider.models import Model
 from system_manage.models import WorkspaceUserResourcePermission
 from tools.models import Tool
