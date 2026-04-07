@@ -568,7 +568,10 @@ const uploadFile = async (file: any, fileList: any) => {
   }
   filePromisionDict.value[file.uid] = false
   const inner = reactive(file)
-  fileAllList.value.push(inner)
+  const exists = fileAllList.value.some(item => item.uid === file.uid);
+  if (!exists) {
+    fileAllList.value.push(inner)
+  }
   if (!chatId_context.value) {
     chatId_context.value = await props.openChatId()
   }
