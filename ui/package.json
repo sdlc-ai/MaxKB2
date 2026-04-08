@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "chat": "vite --mode chat",
-    "build": "vite build",
+    "build": "npm run build-only",
     "build-chat": "run-p type-check \"build-only-chat {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
