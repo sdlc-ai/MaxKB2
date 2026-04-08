@@ -102,7 +102,7 @@ export default defineConfig((conf: any) => {
     build: {
       outDir: `dist${ENV.VITE_BASE_PATH}`,
       target: 'es2022',
-      minify: 'esbuild',
+      minify: 'esbuild' as const, 
       cssMinify: 'esbuild' as const,
       rollupOptions: {
         input: ENV.VITE_ENTRY,
