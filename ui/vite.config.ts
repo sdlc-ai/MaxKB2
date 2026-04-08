@@ -101,6 +101,9 @@ export default defineConfig((conf: any) => {
     },
     build: {
       outDir: `dist${ENV.VITE_BASE_PATH}`,
+      target: 'es2022',
+      minify: 'esbuild',
+      cssMinify: 'esbuild',
       rollupOptions: {
         input: ENV.VITE_ENTRY,
         // === 添加以下 external 配置 ===
@@ -110,6 +113,12 @@ export default defineConfig((conf: any) => {
       commonjsOptions: {
         include: [/node_modules/], // 确保 node_modules 中的 commonjs 模块被正确处理
       },
+    },
+    esbuild: {
+      target: 'es2022', // 关键
+      supported: {
+        'top-level-await': true // 关键：明确告诉 esbuild 这个语法是支持的
+      }
     },
     resolve: {
       alias: {
