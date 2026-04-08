@@ -103,23 +103,17 @@ export default defineConfig((conf: any) => {
       outDir: `dist${ENV.VITE_BASE_PATH}`,
       rollupOptions: {
         input: ENV.VITE_ENTRY,
-      },
-    },
-    resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url)),
-      },
-    },
-    build: {
-      outDir: `dist${ENV.VITE_BASE_PATH}`,
-      rollupOptions: {
-        input: ENV.VITE_ENTRY,
         // === 添加以下 external 配置 ===
         external: ['moment'], // 告诉 Rollup 不要打包 moment
       },
       // === 添加以下 commonjsOptions 配置 ===
       commonjsOptions: {
         include: [/node_modules/], // 确保 node_modules 中的 commonjs 模块被正确处理
+      },
+    },
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
   }
