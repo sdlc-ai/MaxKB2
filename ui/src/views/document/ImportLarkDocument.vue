@@ -141,7 +141,6 @@ import { ref, reactive, computed, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { MsgConfirm, MsgSuccess, MsgWarning } from '@/utils/message'
 import { t } from '@/locales'
-import type Node from 'element-plus/es/components/tree/src/model/node'
 import { loadSharedApi } from '@/utils/dynamics-api/shared-api'
 
 const router = useRouter()
@@ -191,8 +190,8 @@ const props = {
   disabled: (data: any) => data.is_exist,
 }
 
-const loadNode = (node: Node, resolve: (nodeData: Tree[]) => void) => {
-  const token = node.level === 0 ? folder_token : node.data.token // 根节点使用 folder_token，其他节点使用 node.data.token
+const loadNode = (node: any, resolve: (nodeData: Tree[]) => void) => {
+  const token = node.level === 0 ? folder_token : node.data.token // 根节点使用 folder_token,其他节点使用 node.data.token
   loadSharedApi({ type: 'document', systemType: apiType.value })
     .getLarkDocumentList(id, token, {}, loading)
     .then((res: any) => {

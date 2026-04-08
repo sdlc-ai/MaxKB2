@@ -98,7 +98,6 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs, nextTick, inject } from 'vue'
 import type { FormField } from '@/components/dynamics-form/type'
-import type Node from 'element-plus/es/components/tree/src/model/node'
 import { get, post, put, del } from '@/request/index'
 import { cloneDeep } from 'lodash'
 import { formItemContextKey } from 'element-plus'
@@ -167,7 +166,7 @@ function renderTemplate(template: string, data: any) {
   })
 }
 
-const loadNode = (node: Node, resolve: (nodeData: Tree[]) => void) => {
+const loadNode = (node: any, resolve: (nodeData: Tree[]) => void) => {
   request_call(request, {
     url: renderTemplate(attrs.url, props.otherParams),
     body: { current_node: node.level == 0 ? undefined : node.data },
