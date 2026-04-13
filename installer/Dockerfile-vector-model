@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bookworm AS tmp-stage1
+FROM python:3.11-slim-trixie AS tmp-stage1
 COPY installer/install_model_bert_base_cased.py install_model_bert_base_cased.py
 RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 RUN pip3 install --upgrade pip setuptools && \

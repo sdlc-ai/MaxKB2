@@ -3,7 +3,7 @@ RUN python3 -m venv /opt/py3
 
 FROM sdlc-vector-model:v1.0.1 AS vector-model
 
-FROM postgres:17.6-trixie
+FROM postgres:17.9-trixie
 COPY --from=python-stage /usr/local /usr/local
 COPY --from=python-stage /opt/py3 /opt/py3
 COPY installer/*.sh /usr/bin/

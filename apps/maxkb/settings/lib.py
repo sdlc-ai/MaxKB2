@@ -10,7 +10,7 @@ import os
 
 from redis.sentinel import Sentinel
 
-from porsche.const import CONFIG, PROJECT_DIR, LOG_DIR
+from maxkb.const import CONFIG, PROJECT_DIR, LOG_DIR
 
 # celery相关配置
 celery_data_dir = os.path.join(PROJECT_DIR, 'data', 'celery_task')
