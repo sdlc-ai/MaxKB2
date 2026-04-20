@@ -278,7 +278,6 @@
                               :show-file-list="false"
                               :accept="getAcceptList()"
                               :on-change="(file: any, fileList: any) => uploadFile(file, fileList)"
-                              v-model:file-list="fileAllList"
                               ref="upload"
                             >
                               <el-tooltip
@@ -393,7 +392,6 @@
             :show-file-list="false"
             :accept="getAcceptList()"
             :on-change="(file: any, fileList: any) => uploadFile(file, fileList)"
-            v-model:file-list="fileAllList"
             ref="upload"
             class="import-button"
           >
@@ -536,36 +534,33 @@ const checkMaxFilesLimit = () => {
 const filePromisionDict: any = ref<any>({})
 const uploadFile = async (file: any, fileList: any) => {
   const {maxFiles, fileLimit} = props.applicationDetails.file_upload_setting
-  // 单次上传文件数量限制
-  const file_limit_once =
-    uploadImageList.value.length +
-    uploadDocumentList.value.length +
-    uploadAudioList.value.length +
-    uploadVideoList.value.length +
-    uploadOtherList.value.length
-  if (file_limit_once >= maxFiles) {
-    MsgWarning(t('chat.uploadFile.limitMessage1') + maxFiles + t('chat.uploadFile.limitMessage2'))
-    fileList.splice(0, fileList.length, ...fileList.slice(0, maxFiles))
-    return
-  }
-  if (fileList.filter((f: any) => f.size == 0).length > 0) {
-    // MB
+  
+  // 检查当前文件是否为空文件
+  if (file.size === 0) {
     MsgWarning(t('chat.uploadFile.sizeLimit2'))
-    // 空文件上传过滤
-    fileList.splice(0, fileList.length, ...fileList.filter((f: any) => f.size > 0))
     return
   }
-  if (fileList.filter((f: any) => f.size > fileLimit * 1024 * 1024).length > 0) {
-    // MB
+  
+  // 检查当前文件是否超出大小限制
+  if (file.size > fileLimit * 1024 * 1024) {
     MsgWarning(t('chat.uploadFile.sizeLimit') + fileLimit + 'MB')
-    // 只保留未超出大小限制的文件
-    fileList.splice(
-      0,
-      fileList.length,
-      ...fileList.filter((f: any) => f.size <= fileLimit * 1024 * 1024),
-    )
     return
   }
+  
+  // 计算当前已上传的文件数量（不包括本次新增的文件）
+  const currentFileCount = fileAllList.value.length
+  
+  // 计算本次 fileList 中新增的文件数量（不在 fileAllList 中的文件）
+  const newFilesCount = fileList.filter((f: any) => {
+    return !fileAllList.value.some((existing: any) => existing.uid === f.uid)
+  }).length
+  
+  // 检查是否会超出文件数量限制
+  if (currentFileCount + newFilesCount > maxFiles) {
+    MsgWarning(t('chat.uploadFile.limitMessage1') + maxFiles + t('chat.uploadFile.limitMessage2'))
+    return
+  }
+  
   filePromisionDict.value[file.uid] = false
   const inner = reactive(file)
   const exists = fileAllList.value.some(item => item.uid === file.uid);
