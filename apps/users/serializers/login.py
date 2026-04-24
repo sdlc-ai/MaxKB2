@@ -70,6 +70,16 @@ class LoginSerializer(serializers.Serializer):
                     auth_setting = json.loads(setting_obj.param_value) or {}
                 except Exception:
                     auth_setting = {}
+        else:
+            # 开源版：从 SystemSetting 读取
+            try:
+                from system_manage.models import SystemSetting, SettingType
+                from django.db.models import QuerySet
+                system_setting = QuerySet(SystemSetting).filter(type=SettingType.AUTH.value).first()
+                if system_setting and system_setting.meta:
+                    auth_setting = system_setting.meta
+            except Exception:
+                auth_setting = {}
         return auth_setting
 
     @staticmethod
@@ -224,6 +234,26 @@ class CaptchaSerializer(serializers.Serializer):
     def _generate_captcha_if_needed(username: str, type: str, need_captcha: bool):
         """
         提取的公共验证码生成方法
+        """
+        if need_captcha:
+            chars = get_random_chars()
+            image = ImageCaptcha()
+            data = image.generate(chars)
+            captcha = base64.b64encode(data.getbuffer())
+            cache.set(Cache_Version.CAPTCHA.get_key(captcha=f'{type}_{username}'), chars.lower(),
+                      timeout=300, version=Cache_Version.CAPTCHA.get_version())
+            return {'captcha': 'data:image/png;base64,' + captcha.decode()}
+        return {'captcha': ''}
+        """
+        if need_captcha:
+            chars = get_random_chars()
+            image = ImageCaptcha()
+            data = image.generate(chars)
+            captcha = base64.b64encode(data.getbuffer())
+            cache.set(Cache_Version.CAPTCHA.get_key(captcha=f'{type}_{username}'), chars.lower(),
+                      timeout=300, version=Cache_Version.CAPTCHA.get_version())
+            return {'captcha': 'data:image/png;base64,' + captcha.decode()}
+        return {'captcha': ''}
         """
         if need_captcha:
             chars = get_random_chars()
