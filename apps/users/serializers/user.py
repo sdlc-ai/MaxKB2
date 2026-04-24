@@ -774,6 +774,15 @@ def send_email_code(email: str, code_type: str, state_label: str = '', timeout: 
     :param timeout: 验证码缓存超时时间（秒），默认30分钟
     :return: 生成的验证码
     """
+    code_cache_key = email + ":" + code_type
+    code_cache_key_lock = code_cache_key + "_lock"
+
+    # 检查发送锁，防止频繁发送
+    ttl = cache.ttl(get_key(code_cache_key_lock), version=version)
+    if ttl is not None and ttl > 0:
+        raise AppApiException(500, _("Do not send emails again within {seconds} seconds").format(
+            seconds=int(ttl.total_seconds())))
+
     # 生成随机验证码
     code = "".join(list(map(lambda i: random.choice([
         '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
@@ -787,9 +796,6 @@ def send_email_code(email: str, code_type: str, state_label: str = '', timeout: 
     )
     with open(template_path, "r", encoding='utf-8') as file:
         content = file.read()
-
-    code_cache_key = email + ":" + code_type
-    code_cache_key_lock = code_cache_key + "_lock"
 
     # 设置发送锁（60秒）
     cache.set(get_key(code_cache_key_lock), code, timeout=60, version=version)
