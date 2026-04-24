@@ -23,7 +23,7 @@
               </el-select>
             </el-form-item>
             <el-form-item
-              v-if="form.provider === 'smtp'"
+              v-show="form.provider === 'smtp'"
               :label="$t('views.system.email.smtpHost')"
               prop="email_host"
             >
@@ -33,7 +33,7 @@
               />
             </el-form-item>
             <el-form-item
-              v-if="form.provider === 'smtp'"
+              v-show="form.provider === 'smtp'"
               :label="$t('views.system.email.smtpPort')"
               prop="email_port"
             >
@@ -61,12 +61,12 @@
                 show-password
               />
             </el-form-item>
-            <el-form-item v-if="form.provider === 'smtp'">
+            <el-form-item v-show="form.provider === 'smtp'">
               <el-checkbox v-model="form.email_use_ssl"
                 >{{ $t('views.system.email.enableSSL') }}
               </el-checkbox>
             </el-form-item>
-            <el-form-item v-if="form.provider === 'smtp'">
+            <el-form-item v-show="form.provider === 'smtp'">
               <el-checkbox v-model="form.email_use_tls"
                 >{{ $t('views.system.email.enableTLS') }}
               </el-checkbox>
@@ -134,10 +134,10 @@ const loading = ref(false)
 
 const rules = reactive<FormRules<any>>({
   email_host: [
-    { required: form.value.provider === 'smtp', message: t('views.system.email.smtpHostPlaceholder'), trigger: 'blur' },
+    { required: true, message: t('views.system.email.smtpHostPlaceholder'), trigger: 'blur' },
   ],
   email_port: [
-    { required: form.value.provider === 'smtp', message: t('views.system.email.smtpPortPlaceholder'), trigger: 'blur' },
+    { required: true, message: t('views.system.email.smtpPortPlaceholder'), trigger: 'blur' },
   ],
   email_host_user: [
     { required: true, message: t('views.system.email.smtpUserPlaceholder'), trigger: 'blur' },
