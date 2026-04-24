@@ -70,16 +70,6 @@ class LoginSerializer(serializers.Serializer):
                     auth_setting = json.loads(setting_obj.param_value) or {}
                 except Exception:
                     auth_setting = {}
-        else:
-            # 开源版：从 SystemSetting 读取
-            try:
-                from system_manage.models import SystemSetting, SettingType
-                from django.db.models import QuerySet
-                system_setting = QuerySet(SystemSetting).filter(type=SettingType.AUTH.value).first()
-                if system_setting and system_setting.meta:
-                    auth_setting = system_setting.meta
-            except Exception:
-                auth_setting = {}
         return auth_setting
 
     @staticmethod
@@ -149,15 +139,10 @@ class LoginSerializer(serializers.Serializer):
 
         # 判断是否需要邮箱验证码
         if LoginSerializer._need_email_verification(user, auth_setting):
-            version, get_key = Cache_Version.SYSTEM.value
             if not email_code:
-                # 阶段一：未提供邮箱验证码
+                # 阶段一：未提供邮箱验证码，发送验证码
                 if not user.email:
                     raise AppApiException(500, _("The user has not bound an email address. Please contact the administrator."))
-                # 检查是否已有发送锁,避免重复发送
-                lock_exists = cache.get(get_key(f"{user.email}:login_email_lock"), version=version)
-                if lock_exists is not None:
-                    raise AppApiException(1009, _("Verification code has been sent. Please check your email."))
                 try:
                     from users.serializers.user import send_email_code
                     send_email_code(user.email, 'login_email', _('Login verification'), timeout=60 * 5)
@@ -165,9 +150,10 @@ class LoginSerializer(serializers.Serializer):
                     raise
                 except Exception as e:
                     raise AppApiException(500, str(e))
-                raise AppApiException(1009, _("Verification code has been sent to your email. Please enter the code to complete login."))
+                raise AppApiException(1009, _("Email verification code is required. Please check your email."))
             else:
                 # 阶段二：校验邮箱验证码
+                version, get_key = Cache_Version.SYSTEM.value
                 cache_code = cache.get(get_key(f"{user.email}:login_email"), version=version)
                 if cache_code is None or cache_code != email_code:
                     record_login_fail(username)
@@ -234,26 +220,6 @@ class CaptchaSerializer(serializers.Serializer):
     def _generate_captcha_if_needed(username: str, type: str, need_captcha: bool):
         """
         提取的公共验证码生成方法
-        """
-        if need_captcha:
-            chars = get_random_chars()
-            image = ImageCaptcha()
-            data = image.generate(chars)
-            captcha = base64.b64encode(data.getbuffer())
-            cache.set(Cache_Version.CAPTCHA.get_key(captcha=f'{type}_{username}'), chars.lower(),
-                      timeout=300, version=Cache_Version.CAPTCHA.get_version())
-            return {'captcha': 'data:image/png;base64,' + captcha.decode()}
-        return {'captcha': ''}
-        """
-        if need_captcha:
-            chars = get_random_chars()
-            image = ImageCaptcha()
-            data = image.generate(chars)
-            captcha = base64.b64encode(data.getbuffer())
-            cache.set(Cache_Version.CAPTCHA.get_key(captcha=f'{type}_{username}'), chars.lower(),
-                      timeout=300, version=Cache_Version.CAPTCHA.get_version())
-            return {'captcha': 'data:image/png;base64,' + captcha.decode()}
-        return {'captcha': ''}
         """
         if need_captcha:
             chars = get_random_chars()
