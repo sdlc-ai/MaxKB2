@@ -58,6 +58,24 @@
       ({{ $t('views.system.display_codeTip') }})
     </span>
           </el-form-item>
+
+          <el-form-item
+            :label="$t('views.system.loginEmailVerification')"
+            prop="login_email_verification_enabled"
+          >
+            <el-switch v-model="form.login_email_verification_enabled" />
+          </el-form-item>
+
+          <el-form-item
+            v-if="form.login_email_verification_enabled"
+            :label="$t('views.system.loginEmailVerificationScope')"
+            prop="login_email_verification_scope"
+          >
+            <el-radio-group v-model="form.login_email_verification_scope">
+              <el-radio label="ALL">{{ $t('views.system.scopeAll') }}</el-radio>
+              <el-radio label="ADMIN">{{ $t('views.system.scopeAdmin') }}</el-radio>
+            </el-radio-group>
+          </el-form-item>
         </el-form>
         <div style="margin-top:16px;">
             <span
@@ -93,6 +111,8 @@ const authFormRef = ref<FormInstance>();
 const form = ref<any>({
   default_value: 'LOCAL',
   max_attempts: 1,
+  login_email_verification_enabled: false,
+  login_email_verification_scope: 'ALL',
 })
 
 const submit = async (formEl: FormInstance | undefined) => {
@@ -102,6 +122,8 @@ const submit = async (formEl: FormInstance | undefined) => {
       const params = {
         default_value: form.value.default_value,
         max_attempts: form.value.max_attempts,
+        login_email_verification_enabled: form.value.login_email_verification_enabled,
+        login_email_verification_scope: form.value.login_email_verification_scope,
       };
       authApi.putLoginSetting(params, loading).then((res) => {
         MsgSuccess(t('common.saveSuccess'))
