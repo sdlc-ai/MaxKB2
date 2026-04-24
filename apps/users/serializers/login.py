@@ -139,10 +139,15 @@ class LoginSerializer(serializers.Serializer):
 
         # 判断是否需要邮箱验证码
         if LoginSerializer._need_email_verification(user, auth_setting):
+            version, get_key = Cache_Version.SYSTEM.value
             if not email_code:
-                # 阶段一：未提供邮箱验证码，发送验证码
+                # 阶段一：未提供邮箱验证码
                 if not user.email:
                     raise AppApiException(500, _("The user has not bound an email address. Please contact the administrator."))
+                # 检查是否已有发送锁，避免重复发送
+                lock_exists = cache.get(get_key(f"{user.email}:login_email_lock"), version=version)
+                if lock_exists is not None:
+                    raise AppApiException(1009, _("Email verification code is required. Please check your email."))
                 try:
                     from users.serializers.user import send_email_code
                     send_email_code(user.email, 'login_email', _('Login verification'), timeout=60 * 5)
@@ -153,7 +158,6 @@ class LoginSerializer(serializers.Serializer):
                 raise AppApiException(1009, _("Email verification code is required. Please check your email."))
             else:
                 # 阶段二：校验邮箱验证码
-                version, get_key = Cache_Version.SYSTEM.value
                 cache_code = cache.get(get_key(f"{user.email}:login_email"), version=version)
                 if cache_code is None or cache_code != email_code:
                     record_login_fail(username)
