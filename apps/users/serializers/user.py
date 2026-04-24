@@ -774,15 +774,6 @@ def send_email_code(email: str, code_type: str, state_label: str = '', timeout: 
     :param timeout: 验证码缓存超时时间（秒），默认30分钟
     :return: 生成的验证码
     """
-    code_cache_key = email + ":" + code_type
-    code_cache_key_lock = code_cache_key + "_lock"
-
-    # 检查发送锁，防止频繁发送
-    ttl = cache.ttl(get_key(code_cache_key_lock), version=version)
-    if ttl is not None and ttl > 0:
-        raise AppApiException(500, _("Do not send emails again within {seconds} seconds").format(
-            seconds=int(ttl.total_seconds())))
-
     # 生成随机验证码
     code = "".join(list(map(lambda i: random.choice([
         '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
@@ -797,6 +788,9 @@ def send_email_code(email: str, code_type: str, state_label: str = '', timeout: 
     with open(template_path, "r", encoding='utf-8') as file:
         content = file.read()
 
+    code_cache_key = email + ":" + code_type
+    code_cache_key_lock = code_cache_key + "_lock"
+
     # 设置发送锁（60秒）
     cache.set(get_key(code_cache_key_lock), code, timeout=60, version=version)
 
@@ -806,84 +800,29 @@ def send_email_code(email: str, code_type: str, state_label: str = '', timeout: 
         raise AppApiException(1004,
             _("The email service has not been set up. Please contact the administrator to set up the email service in [Email Settings]."))
 
-    action_label = state_label or (_('User registration') if code_type == 'register' else _('Change password'))
-
     try:
-        # 使用原生 smtplib 发送邮件（支持阿里云 SMTP）
-        import smtplib
-        from email.utils import make_msgid, formatdate
-        from email.mime.text import MIMEText
-        from email.mime.multipart import MIMEMultipart
-        from email.header import Header
-        from email.utils import formataddr
-        import ssl
-        
-        # 创建邮件
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = Header(_('【Intelligent knowledge base question and answer system-{action}】').format(action=action_label), 'utf-8')
-        msg['From'] = formataddr([system_setting.meta.get('from_email'), system_setting.meta.get('from_email')])
-        msg['To'] = email
-        msg['Message-id'] = make_msgid()  # 唯一标识邮件
-        msg['Date'] = formatdate()  # 邮件日期
-        
-        # HTML 内容
-        html_content = content.replace("${code}", code)
-        msg.attach(MIMEText(html_content, 'html', 'utf-8'))
-        
-        # 根据配置选择连接方式
-        email_host = system_setting.meta.get("email_host")
-        email_port = int(system_setting.meta.get('email_port', 25))  # 确保端口是整数
-        email_user = system_setting.meta.get('email_host_user')
-        email_password = system_setting.meta.get('email_host_password')
-        use_ssl = system_setting.meta.get('email_use_ssl', False)
-        use_tls = system_setting.meta.get('email_use_tls', False)
-        
-        # 连接 SMTP 服务器
-        if use_ssl:
-            # Python 3.10+ 兼容：使用默认 SSL 上下文
-            try:
-                context = ssl.create_default_context()
-                client = smtplib.SMTP_SSL(email_host, email_port, context=context)
-            except Exception:
-                # 如果默认上下文失败，使用兼容模式
-                context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-                context.check_hostname = False
-                context.verify_mode = ssl.CERT_NONE
-                client = smtplib.SMTP_SSL(email_host, email_port, context=context)
-        else:
-            client = smtplib.SMTP(email_host, email_port)
-        
-        # 开启调试模式（生产环境设为 0）
-        client.set_debuglevel(0)
-        
-        # 如果启用 TLS，在连接后启动
-        if use_tls and not use_ssl:
-            client.starttls()
-        
-        # 登录认证
-        client.login(email_user, email_password)
-        
-        # 发送邮件
-        client.sendmail(email_user, [email], msg.as_string())
-        client.quit()
-    except smtplib.SMTPConnectError as e:
-        cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending failed, connection failed: {error}").format(error=str(e)))
-    except smtplib.SMTPAuthenticationError as e:
-        cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending failed, authentication error: {error}").format(error=str(e)))
-    except smtplib.SMTPSenderRefused as e:
-        cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending failed, sender refused: {error}").format(error=str(e)))
-    except smtplib.SMTPRecipientsRefused as e:
-        cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending failed, recipient refused: {error}").format(error=str(e)))
-    except smtplib.SMTPException as e:
-        cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending failed: {error}").format(error=str(e)))
+        connection = EmailBackend(
+            system_setting.meta.get("email_host"),
+            system_setting.meta.get('email_port'),
+            system_setting.meta.get('email_host_user'),
+            system_setting.meta.get('email_host_password'),
+            system_setting.meta.get('email_use_tls'),
+            False,
+            system_setting.meta.get('email_use_ssl')
+        )
+        action_label = state_label or (_('User registration') if code_type == 'register' else _('Change password'))
+        send_mail(
+            _('【Intelligent knowledge base question and answer system-{action}】').format(action=action_label),
+            '',
+            html_message=f'{content.replace("${code}", code)}',
+            from_email=system_setting.meta.get('from_email'),
+            recipient_list=[email],
+            fail_silently=False,
+            connection=connection
+        )
     except Exception as e:
         cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending exception: {error}").format(error=str(e)))
+        raise AppApiException(500, f"{str(e)}" + _("Email sending failed"))
 
     # 设置验证码缓存
     cache.set(get_key(code_cache_key), code, timeout=timeout, version=version)
