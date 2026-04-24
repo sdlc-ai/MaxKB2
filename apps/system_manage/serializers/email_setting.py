@@ -19,9 +19,18 @@ class EmailSettingSerializer(serializers.Serializer):
         system_setting = QuerySet(SystemSetting).filter(type=SettingType.EMAIL.value).first()
         if system_setting is None:
             return {}
-        return system_setting.meta
+        meta = system_setting.meta or {}
+        if not meta.get('provider'):
+            meta['provider'] = 'smtp'
+        return meta
 
     class Create(serializers.Serializer):
+        provider = serializers.ChoiceField(
+            required=False,
+            choices=['smtp', 'aliyun'],
+            default='smtp',
+            label=_('Email Provider')
+        )
         email_host = serializers.CharField(required=True, label=_('SMTP host'))
         email_port = serializers.IntegerField(required=True, label=_('SMTP port'))
         email_host_user = serializers.CharField(required=True, label=_('Sender\'s email'))
@@ -55,7 +64,8 @@ class EmailSettingSerializer(serializers.Serializer):
             return system_setting.meta
 
         def to_email_meta(self):
-            return {'email_host': self.data.get('email_host'),
+            return {'provider': self.data.get('provider', 'smtp'),
+                    'email_host': self.data.get('email_host'),
                     'email_port': self.data.get('email_port'),
                     'email_host_user': self.data.get('email_host_user'),
                     'email_host_password': self.data.get('email_host_password'),
