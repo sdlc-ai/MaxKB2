@@ -56,6 +56,21 @@
               </div>
             </el-form-item>
           </div>
+          <div class="mb-24" v-if="needEmailCode">
+            <el-form-item prop="email_code">
+              <div class="flex-between w-full">
+                <el-input
+                  size="large"
+                  class="input-item"
+                  v-model="loginForm.email_code"
+                  :placeholder="$t('views.login.loginForm.emailCode.placeholder')"
+                />
+                <span class="ml-8 color-secondary" style="font-size: 12px; white-space: nowrap;">
+                  {{ $t('views.login.loginForm.emailCode.sentTip') }}
+                </span>
+              </div>
+            </el-form-item>
+          </div>
         </el-form>
 
         <el-button
@@ -152,10 +167,13 @@ const identifyCode = ref<string>('')
 const loginFormRef = ref<FormInstance>()
 const authSetting = ref<any>(null)
 const defaultQrTab = ref<string>('')
+const needEmailCode = ref(false)
+
 const loginForm = ref<LoginRequest>({
   username: '',
   password: '',
   captcha: '',
+  email_code: '',
 })
 
 const rules = ref<FormRules<LoginRequest>>({
@@ -211,12 +229,17 @@ const loginHandle = () => {
           .then(() => {
             locale.value = localStorage.getItem('Porsche-locale') || getBrowserLang() || 'en-US'
             localStorage.setItem('workspace_id', 'default')
+            needEmailCode.value = false
             router.push({name: 'home'})
           })
-          .catch(() => {
+          .catch((err: any) => {
             const username = loginForm.value.username
             loading.value = false
             makeCode(username)
+            // 处理 1009 需要邮箱验证码
+            if (err?.code === 1009) {
+              needEmailCode.value = true
+            }
           })
       }
     }
@@ -357,6 +380,7 @@ function redirectAuth(authType: string, needMessage: boolean = true) {
 
 function changeMode(val: string, needMessage: boolean = true) {
   loginMode.value = val === 'LDAP' ? val : ''
+  needEmailCode.value = false
   if (val === 'QR_CODE') {
     loginMode.value = val
     showQrCodeTab.value = true
@@ -367,6 +391,7 @@ function changeMode(val: string, needMessage: boolean = true) {
     username: '',
     password: '',
     captcha: '',
+    email_code: '',
   }
   redirectAuth(val, needMessage)
   loginFormRef.value?.clearValidate()
