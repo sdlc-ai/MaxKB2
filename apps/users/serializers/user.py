@@ -765,6 +765,70 @@ class ResetCurrentUserPassword(serializers.Serializer):
             return True
 
 
+def send_email_code(email: str, code_type: str, state_label: str = '', timeout: int = 60 * 30) -> str:
+    """
+    通用邮箱验证码发送工具
+    :param email: 接收邮箱
+    :param code_type: 验证码类型，如 'login_email', 'register', 'reset_password'
+    :param state_label: 邮件标题中的动作描述
+    :param timeout: 验证码缓存超时时间（秒），默认30分钟
+    :return: 生成的验证码
+    """
+    # 生成随机验证码
+    code = "".join(list(map(lambda i: random.choice([
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
+    ]), range(6))))
+
+    # 获取邮件模板
+    language = get_language()
+    template_path = os.path.join(
+        PROJECT_DIR, "apps", "common", 'template',
+        f'email_template_{to_locale(language)}.html'
+    )
+    with open(template_path, "r", encoding='utf-8') as file:
+        content = file.read()
+
+    code_cache_key = email + ":" + code_type
+    code_cache_key_lock = code_cache_key + "_lock"
+
+    # 设置发送锁（60秒）
+    cache.set(get_key(code_cache_key_lock), code, timeout=60, version=version)
+
+    system_setting = QuerySet(SystemSetting).filter(type=SettingType.EMAIL.value).first()
+    if system_setting is None:
+        cache.delete(get_key(code_cache_key_lock), version=version)
+        raise AppApiException(1004,
+            _("The email service has not been set up. Please contact the administrator to set up the email service in [Email Settings]."))
+
+    try:
+        connection = EmailBackend(
+            system_setting.meta.get("email_host"),
+            system_setting.meta.get('email_port'),
+            system_setting.meta.get('email_host_user'),
+            system_setting.meta.get('email_host_password'),
+            system_setting.meta.get('email_use_tls'),
+            False,
+            system_setting.meta.get('email_use_ssl')
+        )
+        action_label = state_label or (_('User registration') if code_type == 'register' else _('Change password'))
+        send_mail(
+            _('【Intelligent knowledge base question and answer system-{action}】').format(action=action_label),
+            '',
+            html_message=f'{content.replace("${code}", code)}',
+            from_email=system_setting.meta.get('from_email'),
+            recipient_list=[email],
+            fail_silently=False,
+            connection=connection
+        )
+    except Exception as e:
+        cache.delete(get_key(code_cache_key_lock), version=version)
+        raise AppApiException(500, f"{str(e)}" + _("Email sending failed"))
+
+    # 设置验证码缓存
+    cache.set(get_key(code_cache_key), code, timeout=timeout, version=version)
+    return code
+
+
 class SendEmailSerializer(serializers.Serializer):
     email = serializers.EmailField(
         required=True
@@ -804,45 +868,8 @@ class SendEmailSerializer(serializers.Serializer):
         """
         email = self.data.get("email")
         state = self.data.get("type")
-        # 生成随机验证码
-        code = "".join(list(map(lambda i: random.choice(['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'
-                                                         ]), range(6))))
-        # 获取邮件模板
-        language = get_language()
-        file = open(
-            os.path.join(PROJECT_DIR, "apps", "common", 'template', f'email_template_{to_locale(language)}.html'), "r",
-            encoding='utf-8')
-        content = file.read()
-        file.close()
-        code_cache_key = email + ":" + state
-        code_cache_key_lock = code_cache_key + "_lock"
-        # 设置缓存
-        cache.set(get_key(code_cache_key_lock), code, timeout=60, version=version)
-        system_setting = QuerySet(SystemSetting).filter(type=SettingType.EMAIL.value).first()
-        if system_setting is None:
-            cache.delete(get_key(code_cache_key_lock), version=version)
-            raise AppApiException(1004,
-                                  _("The email service has not been set up. Please contact the administrator to set up the email service in [Email Settings]."))
-        try:
-            connection = EmailBackend(system_setting.meta.get("email_host"),
-                                      system_setting.meta.get('email_port'),
-                                      system_setting.meta.get('email_host_user'),
-                                      system_setting.meta.get('email_host_password'),
-                                      system_setting.meta.get('email_use_tls'),
-                                      False,
-                                      system_setting.meta.get('email_use_ssl')
-                                      )
-            # 发送邮件
-            send_mail(_('【Intelligent knowledge base question and answer system-{action}】').format(
-                action=_('User registration') if state == 'register' else _('Change password')),
-                '',
-                html_message=f'{content.replace("${code}", code)}',
-                from_email=system_setting.meta.get('from_email'),
-                recipient_list=[email], fail_silently=False, connection=connection)
-        except Exception as e:
-            cache.delete(get_key(code_cache_key_lock))
-            raise AppApiException(500, f"{str(e)}" + _("Email sending failed"))
-        cache.set(get_key(code_cache_key), code, timeout=60 * 30, version=version)
+        state_label = _('User registration') if state == 'register' else _('Change password')
+        send_email_code(email, state, state_label)
         return True
 
 
