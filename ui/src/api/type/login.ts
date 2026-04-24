@@ -15,5 +15,9 @@ interface LoginRequest {
    * 加密数据
    */
   encryptedData?: string
+  /**
+   * 邮箱验证码
+   */
+  email_code?: string
 }
 export type { LoginRequest }
