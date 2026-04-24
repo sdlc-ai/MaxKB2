@@ -14,6 +14,8 @@ class SettingType(models.IntegerChoices):
 
     LOG = 2, "日志清理时间"
 
+    AUTH = 3, "认证设置"
+
 
 class SystemSetting(AppModelMixin):
     """

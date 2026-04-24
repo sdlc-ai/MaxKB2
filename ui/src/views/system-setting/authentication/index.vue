@@ -18,12 +18,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import LDAP from './component/LDAP.vue'
-import CAS from './component/CAS.vue'
-import OIDC from './component/OIDC.vue'
-import SCAN from './component/SCAN.vue'
-import OAuth2 from './component/OAuth2.vue'
-import Saml2 from "./component/Saml2.vue";
 import Setting from './component/Setting.vue'
 import { t } from '@/locales'
 import useStore from '@/stores'
@@ -37,36 +31,6 @@ const tabList = [
     label: t('views.system.setting'),
     name: "SETTING",
     component: Setting,
-  },
-  {
-    label: t('views.system.authentication.ldap.title'),
-    name: 'LDAP',
-    component: LDAP,
-  },
-  {
-    label: t('views.system.authentication.cas.title'),
-    name: 'CAS',
-    component: CAS,
-  },
-  {
-    label: t('views.system.authentication.oidc.title'),
-    name: 'OIDC',
-    component: OIDC,
-  },
-  {
-    label: t('views.system.authentication.oauth2.title'),
-    name: 'OAuth2',
-    component: OAuth2,
-  },
-  {
-    label: t('views.system.authentication.saml2.title'),
-    name: 'SAML2',
-    component: Saml2,
-  },
-  {
-    label: t('views.system.authentication.scanTheQRCode.title'),
-    name: 'SCAN',
-    component: SCAN,
   },
 ]
 

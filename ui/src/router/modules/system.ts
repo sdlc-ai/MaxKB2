@@ -592,7 +592,7 @@ const systemRouter = {
               new ComplexPermission(
                 [RoleConst.ADMIN],
                 [PermissionConst.LOGIN_AUTH_READ],
-                [EditionConst.IS_EE, EditionConst.IS_PE],
+                [],
                 'OR',
               ),
             ],
