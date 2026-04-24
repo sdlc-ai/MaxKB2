@@ -16,13 +16,27 @@
             label-position="top"
             require-asterisk-position="right"
           >
-            <el-form-item :label="$t('views.system.email.smtpHost')" prop="email_host">
+            <el-form-item :label="$t('views.system.email.provider')" prop="provider">
+              <el-select v-model="form.provider" style="width: 100%">
+                <el-option :label="$t('views.system.email.providerSmtp')" value="smtp" />
+                <el-option :label="$t('views.system.email.providerAliyun')" value="aliyun" />
+              </el-select>
+            </el-form-item>
+            <el-form-item
+              v-show="form.provider === 'smtp'"
+              :label="$t('views.system.email.smtpHost')"
+              prop="email_host"
+            >
               <el-input
                 v-model="form.email_host"
                 :placeholder="$t('views.system.email.smtpHostPlaceholder')"
               />
             </el-form-item>
-            <el-form-item :label="$t('views.system.email.smtpPort')" prop="email_port">
+            <el-form-item
+              v-show="form.provider === 'smtp'"
+              :label="$t('views.system.email.smtpPort')"
+              prop="email_port"
+            >
               <el-input
                 v-model="form.email_port"
                 :placeholder="$t('views.system.email.smtpPortPlaceholder')"
@@ -47,12 +61,12 @@
                 show-password
               />
             </el-form-item>
-            <el-form-item>
+            <el-form-item v-show="form.provider === 'smtp'">
               <el-checkbox v-model="form.email_use_ssl"
                 >{{ $t('views.system.email.enableSSL') }}
               </el-checkbox>
             </el-form-item>
-            <el-form-item>
+            <el-form-item v-show="form.provider === 'smtp'">
               <el-checkbox v-model="form.email_use_tls"
                 >{{ $t('views.system.email.enableTLS') }}
               </el-checkbox>
@@ -94,6 +108,7 @@ import { PermissionConst, RoleConst } from '@/utils/permission/data'
 import { ComplexPermission } from '@/utils/permission/type'
 
 const form = ref<any>({
+  provider: 'smtp',
   email_host: '',
   email_port: '',
   email_host_user: '',
@@ -101,6 +116,16 @@ const form = ref<any>({
   email_use_tls: false,
   email_use_ssl: false,
   from_email: '',
+})
+
+// 监听 provider 变化，自动填充阿里云参数
+watch(() => form.value.provider, (newProvider) => {
+  if (newProvider === 'aliyun') {
+    form.value.email_host = 'smtpdm.aliyun.com'
+    form.value.email_port = '465'
+    form.value.email_use_ssl = true
+    form.value.email_use_tls = false
+  }
 })
 
 const emailFormRef = ref()
@@ -145,7 +170,10 @@ const submit = async (formEl: FormInstance | undefined, test?: string) => {
 function getDetail() {
   emailApi.getEmailSetting(loading).then((res: any) => {
     if (res.data && JSON.stringify(res.data) !== '{}') {
-      form.value = res.data
+      form.value = {
+        provider: 'smtp',
+        ...res.data
+      }
     }
   })
 }
