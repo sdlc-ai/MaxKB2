@@ -14,6 +14,7 @@ from rest_framework import serializers
 from application.models import ApplicationAccessToken
 from common.constants.authentication_type import AuthenticationType
 from common.constants.cache_version import Cache_Version
+from common.constants.permission_constants import RoleConstants
 from common.database_model_manage.database_model_manage import DatabaseModelManage
 from common.exception.app_exception import AppApiException
 from common.utils.common import password_encrypt, get_random_chars
@@ -29,6 +30,8 @@ class LoginRequest(serializers.Serializer):
                                     allow_blank=True)
     encryptedData = serializers.CharField(required=False, label=_('encryptedData'), allow_null=True,
                                           allow_blank=True)
+    email_code = serializers.CharField(required=False, max_length=6, label=_('Email verification code'),
+                                       allow_null=True, allow_blank=True)
 
 
 system_version, system_get_key = Cache_Version.SYSTEM.value
@@ -70,6 +73,25 @@ class LoginSerializer(serializers.Serializer):
         return auth_setting
 
     @staticmethod
+    def _is_builtin_admin(user):
+        """判断是否为内置系统管理员（逃生舱）"""
+        return str(user.id) == 'f0dd8f71-e4ee-11ee-8c84-a8a1595801ab'
+
+    @staticmethod
+    def _need_email_verification(user, auth_setting):
+        """判断该用户是否需要邮箱验证码"""
+        if not auth_setting.get('login_email_verification_enabled', False):
+            return False
+        if LoginSerializer._is_builtin_admin(user):
+            return False
+        scope = auth_setting.get('login_email_verification_scope', 'ALL')
+        if scope == 'ALL':
+            return True
+        if scope == 'ADMIN' and user.role == RoleConstants.ADMIN.name:
+            return True
+        return False
+
+    @staticmethod
     def login(instance):
         username = instance.get("username", "")
         encryptedData = instance.get("encryptedData", "")
@@ -86,6 +108,7 @@ class LoginSerializer(serializers.Serializer):
         max_attempts = auth_setting.get("max_attempts", 1)
         password = instance.get("password")
         captcha = instance.get("captcha", "")
+        email_code = instance.get("email_code", "")
 
         # 判断是否需要验证码
         need_captcha = False
@@ -113,6 +136,31 @@ class LoginSerializer(serializers.Serializer):
         if not user.is_active:
             record_login_fail(username)
             raise AppApiException(1005, _("The user has been disabled, please contact the administrator!"))
+
+        # 判断是否需要邮箱验证码
+        if LoginSerializer._need_email_verification(user, auth_setting):
+            if not email_code:
+                # 阶段一：未提供邮箱验证码，发送验证码
+                if not user.email:
+                    raise AppApiException(500, _("The user has not bound an email address. Please contact the administrator."))
+                try:
+                    from users.serializers.user import send_email_code
+                    send_email_code(user.email, 'login_email', _('Login verification'), timeout=60 * 5)
+                except AppApiException:
+                    raise
+                except Exception as e:
+                    raise AppApiException(500, str(e))
+                raise AppApiException(1009, _("Email verification code is required. Please check your email."))
+            else:
+                # 阶段二：校验邮箱验证码
+                version, get_key = Cache_Version.SYSTEM.value
+                cache_code = cache.get(get_key(f"{user.email}:login_email"), version=version)
+                if cache_code is None or cache_code != email_code:
+                    record_login_fail(username)
+                    raise AppApiException(1005, _("Email verification code error or expiration"))
+                # 校验通过，清除验证码缓存
+                cache.delete(get_key(f"{user.email}:login_email"), version=version)
+
         cache.delete(system_get_key(f'system_{username}'), version=system_version)
         token = signing.dumps({'username': user.username,
                                'id': str(user.id),

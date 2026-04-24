@@ -36,3 +36,4 @@ class ExceptionCodeConstants(Enum):
     PASSWORD_NOT_EQ_RE_PASSWORD = ExceptionCodeConstantsValue(1007,
                                                               _('Password and confirmation password are inconsistent'))
     NICKNAME_IS_EXIST = ExceptionCodeConstantsValue(1008, _('The nickname is already registered'))
+    NEED_EMAIL_VERIFICATION = ExceptionCodeConstantsValue(1009, _('Email verification code is required'))
