@@ -116,6 +116,9 @@ export default {
   },
   email: {
     title: '邮箱设置',
+    provider: '邮件服务商',
+    providerSmtp: '通用 SMTP',
+    providerAliyun: '阿里云 SMTP',
     smtpHost: 'SMTP Host',
     smtpHostPlaceholder: '请输入 SMTP Host',
     smtpPort: 'SMTP Port',
@@ -129,6 +132,10 @@ export default {
     enableSSL: '启用 SSL（如果 SMTP 端口是 465，通常需要启用 SSL）',
     enableTLS: '启用 TLS（如果 SMTP 端口是 587，通常需要启用 TLS）',
   },
+  loginEmailVerification: '登录邮箱验证码',
+  loginEmailVerificationScope: '启用范围',
+  scopeAll: '全部用户',
+  scopeAdmin: '仅管理员',
   resourceAuthorization: {
     title: '资源授权',
     member: '成员',

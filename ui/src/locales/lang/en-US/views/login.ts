@@ -19,6 +19,10 @@ export default {
       requiredMessage: 'Please enter verification code',
       validatorMessage: 'Verification code is incorrect',
     },
+    emailCode: {
+      placeholder: 'Enter email verification code',
+      sentTip: 'Code sent to email',
+    },
     new_password: {
       label: 'New Password',
       placeholder: 'Please enter new password',

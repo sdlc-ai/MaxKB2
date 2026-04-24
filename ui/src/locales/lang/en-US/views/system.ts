@@ -114,6 +114,9 @@ export default {
   },
   email: {
     title: 'Email Settings',
+    provider: 'Email Provider',
+    providerSmtp: 'Generic SMTP',
+    providerAliyun: 'Aliyun SMTP',
     smtpHost: 'SMTP Host',
     smtpHostPlaceholder: 'Please enter SMTP host',
     smtpPort: 'SMTP Port',
@@ -127,6 +130,10 @@ export default {
     enableSSL: 'Enable SSL (if the SMTP port is 465, you usually need to enable SSL)',
     enableTLS: 'Enable TLS (if the SMTP port is 587, you usually need to enable TLS)',
   },
+  loginEmailVerification: 'Login Email Verification',
+  loginEmailVerificationScope: 'Scope',
+  scopeAll: 'All Users',
+  scopeAdmin: 'Admin Only',
 
   resourceAuthorization: {
     title: 'Resource Authorization',

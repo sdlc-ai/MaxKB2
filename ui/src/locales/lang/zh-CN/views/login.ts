@@ -19,6 +19,10 @@ export default {
       requiredMessage: '请输入验证码',
       validatorMessage: '验证码不正确',
     },
+    emailCode: {
+      placeholder: '请输入邮箱验证码',
+      sentTip: '验证码已发送至邮箱',
+    },
     new_password: {
       label: '新密码',
       placeholder: '请输入新密码',
