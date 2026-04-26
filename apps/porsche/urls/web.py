@@ -50,6 +50,28 @@ urlpatterns = [
 init_doc(urlpatterns, chat_urlpatterns)
 
 
+def serve_with_cors(request, path, document_root):
+    """Serve static files with CORS headers"""
+    from django.http import HttpResponse
+    import os
+    
+    full_path = os.path.join(document_root, path)
+    if not os.path.exists(full_path):
+        return HttpResponse("Not Found", status=404)
+    
+    import mimetypes
+    content_type, _ = mimetypes.guess_type(full_path)
+    if content_type is None:
+        content_type = 'application/octet-stream'
+    
+    with open(full_path, 'rb') as f:
+        content = f.read()
+    
+    response = HttpResponse(content, content_type=content_type)
+    response['Access-Control-Allow-Origin'] = '*'
+    response['Cache-Control'] = 'public, max-age=31536000'
+    return response
+
 def pro():
     urlpatterns.append(
         re_path(rf'^{CONFIG.get_admin_path()[1:]}/api-doc/(?P<path>.*)$', static.serve,
@@ -61,6 +83,11 @@ def pro():
                 {'document_root': os.path.join(settings.STATIC_ROOT, "drf_spectacular_sidecar")}, name='doc_chat'),
     )
     # 暴露ui静态资源
+    urlpatterns.append(
+        re_path(rf"^{CONFIG.get_admin_path()[1:]}/assets/(?P<path>.*)$", serve_with_cors,
+                {'document_root': os.path.join(settings.STATIC_ROOT, "admin", "assets")},
+                name='admin_assets'),
+    )
     urlpatterns.append(
         re_path(rf"^{CONFIG.get_admin_path()[1:]}/(?P<path>.*)$", static.serve,
                 {'document_root': os.path.join(settings.STATIC_ROOT, "admin")},

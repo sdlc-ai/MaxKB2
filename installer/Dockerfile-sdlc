@@ -8,19 +8,21 @@ RUN cd ui && ls -la && if [ -d "dist" ]; then exit 0; fi && \
 
 FROM porsche-base:python3.11-pg17.6 AS stage-build
 COPY --chmod=700 . /opt/porsche-app
-RUN apt-get update && \
+RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list 2>/dev/null || true; \
+    sed -i 's/security.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list 2>/dev/null || true; \
+    apt-get update && \
     apt-get install -y --no-install-recommends gcc g++ gettext libexpat1-dev libffi-dev && \
     apt-get clean all  && \
     rm -rf /var/lib/apt/lists/*
 WORKDIR /opt/porsche-app
 RUN gcc -shared -fPIC -o ${PORSCHEAI_SANDBOX_HOME}/lib/sandbox.so /opt/porsche-app/installer/sandbox.c -ldl && \
     rm -rf /opt/porsche-app/ui && \
-    pip install uv --break-system-packages && \
-    python -m uv pip install -r pyproject.toml && \
+    pip install --timeout 300 --index-url https://mirrors.aliyun.com/pypi/simple/ uv --break-system-packages && \
+    python -m uv pip install --index-url https://mirrors.aliyun.com/pypi/simple/ -r pyproject.toml && \
     find /opt/porsche-app  -depth \( -name ".git*" -o -name ".docker*" -o -name ".idea*" -o -name ".editorconfig*" -o -name ".prettierrc*" -o -name "README.md" -o -name "poetry.lock" -o -name "pyproject.toml"  \) -exec rm -rf {} + && \
     python /opt/porsche-app/apps/manage.py compilemessages && \
     export PIP_TARGET=/opt/porsche-app/sandbox/python-packages && \
-    python -m uv pip install --target=$PIP_TARGET requests pymysql psycopg2-binary && \
+    python -m uv pip install --index-url https://mirrors.aliyun.com/pypi/simple/ --target=$PIP_TARGET requests pymysql psycopg2-binary && \
     rm -rf /opt/porsche-app/installer
 COPY --from=web-build --chmod=700 ui /opt/porsche-app/ui
 
