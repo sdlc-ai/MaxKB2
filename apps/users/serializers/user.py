@@ -839,20 +839,20 @@ def send_email_code(email: str, code_type: str, state_label: str = '', timeout: 
         use_ssl = system_setting.meta.get('email_use_ssl', False)
         use_tls = system_setting.meta.get('email_use_tls', False)
         
-        # 连接 SMTP 服务器
+        # 连接 SMTP 服务器（设置10秒超时，避免长时间卡住）
         if use_ssl:
             # Python 3.10+ 兼容：使用默认 SSL 上下文
             try:
                 context = ssl.create_default_context()
-                client = smtplib.SMTP_SSL(email_host, email_port, context=context)
+                client = smtplib.SMTP_SSL(email_host, email_port, context=context, timeout=10)
             except Exception:
                 # 如果默认上下文失败，使用兼容模式
                 context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
                 context.check_hostname = False
                 context.verify_mode = ssl.CERT_NONE
-                client = smtplib.SMTP_SSL(email_host, email_port, context=context)
+                client = smtplib.SMTP_SSL(email_host, email_port, context=context, timeout=10)
         else:
-            client = smtplib.SMTP(email_host, email_port)
+            client = smtplib.SMTP(email_host, email_port, timeout=10)
         
         # 开启调试模式（生产环境设为 0）
         client.set_debuglevel(0)

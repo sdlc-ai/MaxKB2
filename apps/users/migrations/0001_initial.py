@@ -12,7 +12,7 @@ default_password = CONFIG.get('DEFAULT_PASSWORD', 'PorscheAi@123..')
 
 def insert_default_data(apps, schema_editor):
     UserModel = apps.get_model('users', 'User')
-    UserModel.objects.create(id='f0dd8f71-e4ee-11ee-8c84-a8a1595801ab', email='', username='superAdministrator',
+    UserModel.objects.create(id='f0dd8f71-e4ee-11ee-8c84-a8a1595801ab', email='', username='admin',
                              nick_name="系统管理员",
                              password=password_encrypt(default_password),
                              role=RoleConstants.ADMIN.name,
