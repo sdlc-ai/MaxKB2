@@ -83,16 +83,9 @@ class LoginSerializer(serializers.Serializer):
         return auth_setting
 
     @staticmethod
-    def _is_builtin_admin(user):
-        """判断是否为内置系统管理员（逃生舱）"""
-        return str(user.id) == 'f0dd8f71-e4ee-11ee-8c84-a8a1595801ab'
-
-    @staticmethod
     def _need_email_verification(user, auth_setting):
         """判断该用户是否需要邮箱验证码"""
         if not auth_setting.get('login_email_verification_enabled', False):
-            return False
-        if LoginSerializer._is_builtin_admin(user):
             return False
         scope = auth_setting.get('login_email_verification_scope', 'ALL')
         if scope == 'ALL':

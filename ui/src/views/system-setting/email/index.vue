@@ -54,6 +54,12 @@
                 :placeholder="$t('views.system.email.sendEmailPlaceholder')"
               />
             </el-form-item>
+            <el-form-item :label="$t('views.system.email.senderName')" prop="from_email_name">
+              <el-input
+                v-model="form.from_email_name"
+                :placeholder="$t('views.system.email.senderNamePlaceholder')"
+              />
+            </el-form-item>
             <el-form-item :label="$t('views.system.password')" prop="email_host_password">
               <el-input
                 v-model="form.email_host_password"
@@ -116,6 +122,7 @@ const form = ref<any>({
   email_use_tls: false,
   email_use_ssl: false,
   from_email: '',
+  from_email_name: '',
 })
 
 // 监听 provider 变化，自动填充阿里云参数

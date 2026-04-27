@@ -38,6 +38,7 @@ class EmailSettingSerializer(serializers.Serializer):
         email_use_tls = serializers.BooleanField(required=True, label=_('Whether to enable TLS'))
         email_use_ssl = serializers.BooleanField(required=True, label=_('Whether to enable SSL'))
         from_email = serializers.EmailField(required=True, label=_('Sender\'s email'))
+        from_email_name = serializers.CharField(required=False, allow_blank=True, label=_('Sender\'s name'))
 
         def is_valid(self, *, raise_exception=False):
             super().is_valid(raise_exception=True)
@@ -71,5 +72,6 @@ class EmailSettingSerializer(serializers.Serializer):
                     'email_host_password': self.data.get('email_host_password'),
                     'email_use_tls': self.data.get('email_use_tls'),
                     'email_use_ssl': self.data.get('email_use_ssl'),
-                    'from_email': self.data.get('from_email')
+                    'from_email': self.data.get('from_email'),
+                    'from_email_name': self.data.get('from_email_name')
                     }

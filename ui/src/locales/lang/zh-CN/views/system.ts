@@ -127,6 +127,8 @@ export default {
     smtpUserPlaceholder: '请输入 SMTP 账户',
     sendEmail: '发件人邮箱',
     sendEmailPlaceholder: '请输入发件人邮箱',
+    senderName: '发件人姓名',
+    senderNamePlaceholder: '请输入发件人姓名（可选）',
     smtpPassword: '发件人密码',
     smtpPasswordPlaceholder: '请输入发件人密码',
     enableSSL: '启用 SSL（如果 SMTP 端口是 465，通常需要启用 SSL）',

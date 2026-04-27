@@ -125,6 +125,8 @@ export default {
     smtpUserPlaceholder: 'Please enter SMTP user',
     sendEmail: "Sender's Email",
     sendEmailPlaceholder: "Please enter the sender's email",
+    senderName: "Sender's Name",
+    senderNamePlaceholder: "Please enter the sender's name (optional)",
     smtpPassword: 'SMTP Password',
     smtpPasswordPlaceholder: 'Please enter SMTP password',
     enableSSL: 'Enable SSL (if the SMTP port is 465, you usually need to enable SSL)',

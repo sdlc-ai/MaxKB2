@@ -821,7 +821,8 @@ def send_email_code(email: str, code_type: str, state_label: str = '', timeout: 
         # 创建邮件
         msg = MIMEMultipart('alternative')
         msg['Subject'] = Header(_('【Intelligent knowledge base question and answer system-{action}】').format(action=action_label), 'utf-8')
-        msg['From'] = formataddr([system_setting.meta.get('from_email'), system_setting.meta.get('from_email')])
+        from_email_name = system_setting.meta.get('from_email_name') or system_setting.meta.get('from_email')
+        msg['From'] = formataddr([from_email_name, system_setting.meta.get('from_email')])
         msg['To'] = email
         msg['Message-id'] = make_msgid()  # 唯一标识邮件
         msg['Date'] = formatdate()  # 邮件日期

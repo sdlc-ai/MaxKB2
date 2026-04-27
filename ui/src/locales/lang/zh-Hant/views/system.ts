@@ -124,6 +124,8 @@ export default {
     smtpUserPlaceholder: '請輸入 SMTP 帳戶',
     sendEmail: '發件人信箱',
     sendEmailPlaceholder: '請輸入發件人信箱',
+    senderName: '發件人姓名',
+    senderNamePlaceholder: '請輸入發件人姓名（可選）',
     smtpPassword: '發件人密碼',
     smtpPasswordPlaceholder: '請輸入發件人密碼',
     enableSSL: '啟用 SSL（如果 SMTP 端口是 465，通常需要啟用 SSL）',
