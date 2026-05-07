@@ -9,9 +9,10 @@ class AppApiException(Exception):
     """
     status_code = status.HTTP_200_OK
 
-    def __init__(self, code, message):
+    def __init__(self, code, message, extra_data=None):
         self.code = code
         self.message = message
+        self.extra_data = extra_data or {}
 
 
 class NotFound404(AppApiException):
@@ -20,9 +21,10 @@ class NotFound404(AppApiException):
        """
     status_code = status.HTTP_404_NOT_FOUND
 
-    def __init__(self, code, message):
+    def __init__(self, code, message, extra_data=None):
         self.code = code
         self.message = message
+        self.extra_data = extra_data or {}
 
 
 class AppAuthenticationFailed(AppApiException):
@@ -31,9 +33,10 @@ class AppAuthenticationFailed(AppApiException):
     """
     status_code = status.HTTP_401_UNAUTHORIZED
 
-    def __init__(self, code, message):
+    def __init__(self, code, message, extra_data=None):
         self.code = code
         self.message = message
+        self.extra_data = extra_data or {}
 
 
 class AppUnauthorizedFailed(AppApiException):
@@ -42,9 +45,10 @@ class AppUnauthorizedFailed(AppApiException):
     """
     status_code = status.HTTP_403_FORBIDDEN
 
-    def __init__(self, code, message):
+    def __init__(self, code, message, extra_data=None):
         self.code = code
         self.message = message
+        self.extra_data = extra_data or {}
 
 
 class AppEmbedIdentityFailed(AppApiException):
@@ -53,9 +57,10 @@ class AppEmbedIdentityFailed(AppApiException):
     """
     status_code = 460
 
-    def __init__(self, code, message):
+    def __init__(self, code, message, extra_data=None):
         self.code = code
         self.message = message
+        self.extra_data = extra_data or {}
 
 
 class AppChatNumOutOfBoundsFailed(AppApiException):
@@ -64,14 +69,16 @@ class AppChatNumOutOfBoundsFailed(AppApiException):
     """
     status_code = 461
 
-    def __init__(self, code, message):
+    def __init__(self, code, message, extra_data=None):
         self.code = code
         self.message = message
+        self.extra_data = extra_data or {}
 
 
 class ChatException(AppApiException):
     status_code = 500
 
-    def __init__(self, code, message):
+    def __init__(self, code, message, extra_data=None):
         self.code = code
         self.message = message
+        self.extra_data = extra_data or {}

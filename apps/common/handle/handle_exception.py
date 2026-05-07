@@ -80,7 +80,8 @@ def handle_exception(exc, context):
     if issubclass(exception_class, ValidationError):
         return validation_error_to_result(exc)
     if issubclass(exception_class, AppApiException):
-        return result.Result(exc.code, exc.message, response_status=exc.status_code)
+        data = exc.extra_data if exc.extra_data else None
+        return result.Result(exc.code, exc.message, data=data, response_status=exc.status_code)
     if issubclass(exception_class, APIException):
         return result.error(exc.detail)
     if response is None:
