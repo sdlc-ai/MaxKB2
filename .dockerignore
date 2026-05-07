@@ -1,4 +1,49 @@
+# Version control
 .git*
+.svn
+
+# IDE
 .idea*
+.vscode
+*.swp
+*.swo
+
+# Documentation
 *.md
+LICENSE
+
+# Python
 .venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.docker
+docker-compose*.yml
+*.tar
+*.tar.gz
+*.zip
+
+# Data
+data/
+*.log
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Env
+.env
+.env.*
