@@ -1,11 +1,13 @@
 from django.urls import path
 
 from . import views
+from .views import login_resend
 
 app_name = "user"
 # @formatter:off
 urlpatterns = [
     path('user/login', views.LoginView.as_view(), name='login'),
+    path('user/login/resend_email_code', login_resend.resend_email_code, name='resend_email_code'),
     path('user/profile', views.UserProfileView.as_view(), name="user_profile"),
     path('user/captcha', views.CaptchaView.as_view(), name='captcha'),
     path('user/test', views.TestPermissionsUserView.as_view(), name="test"),
