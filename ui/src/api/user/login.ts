@@ -104,6 +104,19 @@ const samlLogin: (loading?: Ref<boolean>) => Promise<Result<any>> = (
 ) => {
   return get('/saml2', '', loading)
 }
+/**
+ * 重发登录邮箱验证码
+ * @param data { username: string }
+ * @param loading 接口加载器
+ * @returns { masked_email: string, cooldown_seconds: number }
+ */
+const resendEmailCode: (data: { username: string }, loading?: Ref<boolean>) => Promise<Result<any>> = (
+  data,
+  loading,
+) => {
+  return post('/user/login/resend_email_code', data, undefined, loading)
+}
+
 export default {
   login,
   logout,
@@ -117,5 +130,6 @@ export default {
   getLarkCallback,
   getQrSource,
   ldapLogin,
-  samlLogin
+  samlLogin,
+  resendEmailCode
 }
