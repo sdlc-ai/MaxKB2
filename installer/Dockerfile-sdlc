@@ -9,25 +9,23 @@ RUN cd ui && ls -la && if [ -d "dist" ]; then exit 0; fi && \
 FROM porsche-base:python3.11-pg17.6 AS stage-build
 WORKDIR /opt/porsche-app
 # 先复制依赖文件,利用 Docker 缓存
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock requirements.txt ./
 RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list 2>/dev/null || true; \
     sed -i 's/security.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list 2>/dev/null || true; \
     apt-get update && \
     apt-get install -y --no-install-recommends gcc g++ gettext libexpat1-dev libffi-dev && \
     apt-get clean all  && \
     rm -rf /var/lib/apt/lists/*
-# 安装依赖(这层会被缓存,除非 pyproject.toml 或 uv.lock 改变)
-# 尝试使用基础镜像中可能已有的 uv,或使用系统 pip 安装
-RUN which uv || pip install --timeout 600 --trusted-host mirrors.aliyun.com --index-url http://mirrors.aliyun.com/pypi/simple/ uv --break-system-packages && \
-    UV_HTTP_TIMEOUT=600 python -m uv pip install --trusted-host mirrors.aliyun.com --index-url http://mirrors.aliyun.com/pypi/simple/ -r pyproject.toml
+# 使用 pip 安装依赖（从 requirements.txt）
+RUN pip install --timeout 600 --trusted-host mirrors.aliyun.com --index-url http://mirrors.aliyun.com/pypi/simple/ --break-system-packages -r requirements.txt
 # 再复制源代码
 COPY --chmod=700 . /opt/porsche-app
 RUN gcc -shared -fPIC -o ${PORSCHEAI_SANDBOX_HOME}/lib/sandbox.so /opt/porsche-app/installer/sandbox.c -ldl && \
     rm -rf /opt/porsche-app/ui && \
-    find /opt/porsche-app  -depth \( -name ".git*" -o -name ".docker*" -o -name ".idea*" -o -name ".editorconfig*" -o -name ".prettierrc*" -o -name "README.md" -o -name "poetry.lock" -o -name "pyproject.toml"  \) -exec rm -rf {} + && \
+    find /opt/porsche-app  -depth \( -name ".git*" -o -name ".docker*" -o -name ".idea*" -o -name ".editorconfig*" -o -name ".prettierrc*" -o -name "README.md" -o -name "poetry.lock" -o -name "pyproject.toml" -o -name "requirements.txt" -o -name "uv.lock"  \) -exec rm -rf {} + && \
     python /opt/porsche-app/apps/manage.py compilemessages && \
     export PIP_TARGET=/opt/porsche-app/sandbox/python-packages && \
-    python -m uv pip install --index-url https://mirrors.aliyun.com/pypi/simple/ --target=$PIP_TARGET requests pymysql psycopg2-binary && \
+    pip install --trusted-host mirrors.aliyun.com --index-url http://mirrors.aliyun.com/pypi/simple/ --target=$PIP_TARGET requests pymysql psycopg2-binary && \
     rm -rf /opt/porsche-app/installer
 COPY --from=web-build --chmod=700 ui /opt/porsche-app/ui
 
