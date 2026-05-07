@@ -146,19 +146,29 @@ class LoginSerializer(serializers.Serializer):
             if not email_code:
                 # 阶段一：未提供邮箱验证码
                 if not user.email:
-                    raise AppApiException(500, _("The user has not bound an email address. Please contact the administrator."))
-                # 检查是否已有发送锁,避免重复发送
+                    raise AppApiException(1011, _("The user has not bound an email address. Please contact the administrator."))
+                
+                # 检查是否已有发送锁，避免重复发送
                 lock_exists = cache.get(get_key(f"{user.email}:login_email_lock"), version=version)
                 if lock_exists is not None:
-                    raise AppApiException(1009, _("Verification code has been sent. Please check your email."))
+                    raise AppApiException(1010, _("Verification code sending too frequent, please try again later."))
+                
                 try:
                     from users.serializers.user import send_email_code
+                    from common.utils.email import mask_email
                     send_email_code(user.email, 'login_email', _('Login verification'), timeout=60 * 5)
                 except AppApiException:
                     raise
                 except Exception as e:
                     raise AppApiException(500, str(e))
-                raise AppApiException(1009, _("Verification code has been sent to your email. Please enter the code to complete login."))
+                
+                # 返回脱敏邮箱地址
+                masked_email = mask_email(user.email)
+                raise AppApiException(
+                    1009, 
+                    _("Verification code has been sent to your email. Please enter the code to complete login."),
+                    extra_data={"masked_email": masked_email}
+                )
             else:
                 # 阶段二：校验邮箱验证码
                 cache_code = cache.get(get_key(f"{user.email}:login_email"), version=version)
