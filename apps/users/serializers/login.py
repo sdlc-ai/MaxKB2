@@ -19,6 +19,7 @@ from common.database_model_manage.database_model_manage import DatabaseModelMana
 from common.exception.app_exception import AppApiException
 from common.utils.common import password_encrypt, get_random_chars
 from common.utils.rsa_util import encrypt, decrypt
+from common.utils.logger import porsche_logger
 from porsche.const import CONFIG
 from users.models import User
 
@@ -31,6 +32,8 @@ class LoginRequest(serializers.Serializer):
     encryptedData = serializers.CharField(required=False, label=_('encryptedData'), allow_null=True,
                                           allow_blank=True)
     email_code = serializers.CharField(required=False, max_length=6, label=_('Email verification code'),
+                                       allow_null=True, allow_blank=True)
+    temp_token = serializers.CharField(required=False, max_length=512, label=_('Temporary session token'),
                                        allow_null=True, allow_blank=True)
 
 
@@ -154,29 +157,80 @@ class LoginSerializer(serializers.Serializer):
                     raise AppApiException(1010, _("Verification code sending too frequent, please try again later."))
                 
                 try:
-                    from users.serializers.user import send_email_code
+                    from users.tasks.email import send_email_code_async
                     from common.utils.email import mask_email
-                    send_email_code(user.email, 'login_email', _('Login verification'), timeout=60 * 5)
+                    # 异步发送邮件，不阻塞登录流程
+                    send_email_code_async.delay(user.email, 'login_email', _('Login verification'), timeout=60 * 5)
+                    porsche_logger.info(f"Login email code task queued for user: {username}, email: {user.email}")
                 except AppApiException:
                     raise
                 except Exception as e:
+                    porsche_logger.error(f"Failed to queue login email code task for {username}: {str(e)}", exc_info=True)
                     raise AppApiException(500, str(e))
                 
-                # 返回脱敏邮箱地址
+                # 生成临时会话令牌，绑定两阶段登录
+                import time
+                temp_token_data = {
+                    'username': username,
+                    'email': user.email,
+                    'timestamp': int(time.time()),
+                    'purpose': 'login_email_verification'
+                }
+                temp_token = signing.dumps(temp_token_data, salt='login_temp_token')
+                
+                # 将临时token存入缓存，5分钟有效
+                temp_token_key = get_key(f"{user.email}:login_temp_token")
+                cache.set(temp_token_key, temp_token, timeout=300, version=version)
+                
+                # 返回脱敏邮箱地址和临时token
                 masked_email = mask_email(user.email)
                 raise AppApiException(
                     1009, 
                     _("Verification code has been sent to your email. Please enter the code to complete login."),
-                    extra_data={"masked_email": masked_email}
+                    extra_data={"masked_email": masked_email, "temp_token": temp_token}
                 )
             else:
                 # 阶段二：校验邮箱验证码
+                # 首先验证临时token
+                temp_token = instance.get("temp_token", "")
+                if not temp_token:
+                    raise AppApiException(1005, _("Temporary session token is required"))
+                
+                try:
+                    temp_token_data = signing.loads(temp_token, salt='login_temp_token', max_age=300)
+                    if temp_token_data.get('purpose') != 'login_email_verification':
+                        raise AppApiException(1005, _("Invalid temporary session token"))
+                    if temp_token_data.get('username') != username or temp_token_data.get('email') != user.email:
+                        raise AppApiException(1005, _("Temporary session token mismatch"))
+                except Exception:
+                    raise AppApiException(1005, _("Temporary session token expired or invalid"))
+                
+                # 验证缓存中的临时token是否匹配
+                temp_token_key = get_key(f"{user.email}:login_temp_token")
+                cached_temp_token = cache.get(temp_token_key, version=version)
+                if not cached_temp_token or cached_temp_token != temp_token:
+                    raise AppApiException(1005, _("Temporary session token has been used or expired"))
+                
+                attempts_key = get_key(f"{user.email}:login_email_attempts")
+                attempts = cache.get(attempts_key, version=version) or 0
+                
+                if attempts >= 5:
+                    # 超过尝试次数，清除验证码并提示重发
+                    cache.delete(get_key(f"{user.email}:login_email"), version=version)
+                    raise AppApiException(1005, _("Too many failed attempts. Please request a new code."))
+                
                 cache_code = cache.get(get_key(f"{user.email}:login_email"), version=version)
                 if cache_code is None or cache_code != email_code:
+                    cache.set(attempts_key, attempts + 1, timeout=300, version=version)  # 5分钟过期
                     record_login_fail(username)
-                    raise AppApiException(1005, _("Email verification code error or expiration"))
-                # 校验通过，清除验证码缓存
+                    remaining = 5 - (attempts + 1)
+                    raise AppApiException(1005, _("Email verification code error. {remaining} attempts remaining.").format(remaining=remaining))
+                
+                # 校验通过，清除验证码缓存、尝试计数和临时token
                 cache.delete(get_key(f"{user.email}:login_email"), version=version)
+                cache.delete(attempts_key, version=version)
+                cache.delete(temp_token_key, version=version)
+                porsche_logger.info(f"Login email code verified successfully for user: {username}")
 
         cache.delete(system_get_key(f'system_{username}'), version=system_version)
         token = signing.dumps({'username': user.username,

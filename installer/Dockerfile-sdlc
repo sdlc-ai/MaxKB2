@@ -10,7 +10,10 @@ FROM porsche-base:python3.11-pg17.6 AS stage-build
 WORKDIR /opt/porsche-app
 # 先复制依赖文件,利用 Docker 缓存
 COPY pyproject.toml uv.lock requirements.txt ./
-RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list 2>/dev/null || true; \
+# 禁用代理并配置 apt 源
+ENV http_proxy="" https_proxy="" no_proxy=""
+RUN unset http_proxy https_proxy HTTPS_PROXY HTTP_PROXY && \
+    sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list 2>/dev/null || true; \
     sed -i 's/security.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list 2>/dev/null || true; \
     apt-get update && \
     apt-get install -y --no-install-recommends gcc g++ gettext libexpat1-dev libffi-dev && \

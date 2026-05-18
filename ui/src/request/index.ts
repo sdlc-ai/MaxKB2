@@ -52,7 +52,11 @@ instance.interceptors.response.use(
           !response.config.url.includes('/valid') &&
           !response.config.url.includes('/tool/debug')
         ) {
-          MsgError(response.data.message)
+          // 对于特定的错误码（如1009、1010、1011），不在这里显示错误消息，由调用方自行处理
+          const shouldShowError = ![1009, 1010, 1011].includes(response.data.code)
+          if (shouldShowError) {
+            MsgError(response.data.message)
+          }
           return Promise.reject(response.data)
         }
       }

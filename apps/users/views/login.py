@@ -15,6 +15,9 @@ from models_provider.api.model import DefaultModelResponse
 from users.api.login import LoginAPI, CaptchaAPI
 from users.serializers.login import LoginSerializer, CaptchaSerializer
 
+# 导入系统设置缓存版本，用于清理邮箱验证码
+system_version, system_get_key = Cache_Version.SYSTEM.value
+
 
 def _get_details(request):
     path = request.path
@@ -55,7 +58,21 @@ class Logout(APIView):
          get_operation_object=lambda r, k: {'name': r.user.username})
     def post(self, request: Request):
         version, get_key = Cache_Version.TOKEN.value
-        cache.delete(get_key(token=request.META.get('HTTP_AUTHORIZATION')[7:]), version=version)
+        token = request.META.get('HTTP_AUTHORIZATION')[7:]
+        cache.delete(get_key(token=token), version=version)
+        
+        # 清理该用户的邮箱验证码缓存，防止退出后验证码仍有效
+        user = request.user
+        if user and user.email:
+            email_code_key = system_get_key(f"{user.email}:login_email")
+            email_lock_key = system_get_key(f"{user.email}:login_email_lock")
+            email_attempts_key = system_get_key(f"{user.email}:login_email_attempts")
+            temp_token_key = system_get_key(f"{user.email}:login_temp_token")
+            cache.delete(email_code_key, version=system_version)
+            cache.delete(email_lock_key, version=system_version)
+            cache.delete(email_attempts_key, version=system_version)
+            cache.delete(temp_token_key, version=system_version)
+            
         return result.success(True)
 
 

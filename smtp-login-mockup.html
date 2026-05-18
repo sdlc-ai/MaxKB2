@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMTP 登录体验优化 - 方案对比</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: #333;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 {
+      text-align: center;
+      color: white;
+      font-size: 32px;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.9);
+      font-size: 16px;
+      margin-bottom: 40px;
+    }
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      justify-content: center;
+    }
+    .tab {
+      padding: 12px 24px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+    .tab:hover { background: rgba(255,255,255,0.3); }
+    .tab.active {
+      background: white;
+      color: #667eea;
+    }
+    .content { display: none; }
+    .content.active { display: block; }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .card h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: #f7f8fa;
+      border-radius: 8px;
+      border-left: 4px solid #ddd;
+    }
+    .step.problem {
+      background: #fff3cd;
+      border-left-color: #ffc107;
+    }
+    .step.good {
+      background: #d4edda;
+      border-left-color: #28a745;
+    }
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #667eea;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .step-content { flex: 1; }
+    .step-title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    .step-desc {
+      color: #666;
+      font-size: 14px;
+    }
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .option {
+      padding: 20px;
+      border-radius: 12px;
+      border: 3px solid #e0e0e0;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .option:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+    }
+    .option h3 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+    .pros-cons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pro, .con {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .pro {
+      background: #d4edda;
+      color: #155724;
+    }
+    .con {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    .badge.recommended {
+      background: #28a745;
+      color: white;
+    }
+    .badge.complex {
+      background: #ffc107;
+      color: #333;
+    }
+    .badge.simple {
+      background: #17a2b8;
+      color: white;
+    }
+    .mockup {
+      background: #f8f9fa;
+      border: 2px dashed #dee2e6;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .mockup-title {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 15px;
+    }
+    .form-mock {
+      max-width: 400px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #495057;
+      font-size: 14px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .form-button {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .email-notice {
+      background: #e7f3ff;
+      border-left: 4px solid #2196F3;
+      padding: 12px;
+      border-radius: 4px;
+      margin: 15px 0;
+      font-size: 13px;
+    }
+    .timer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #ffc107;
+      color: #333;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+    .resend-btn {
+      background: none;
+      border: 1px solid #667eea;
+      color: #667eea;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-left: 10px;
+    }
+    .resend-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+    @media (max-width: 768px) {
+      .comparison { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SMTP 登录体验优化</h1>
+    <p class="subtitle">当前问题与改进方案对比</p>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('current')">当前流程</button>
+      <button class="tab" onclick="showTab('solutions')">改进方案</button>
+      <button class="tab" onclick="showTab('mockup')">界面原型</button>
+    </div>
+
+    <div id="current" class="content active">
+      <div class="card">
+        <h2>📍 当前登录流程</h2>
+        <div class="flow-steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <div class="step-title">用户输入账号密码</div>
+              <div class="step-desc">用户填写用户名和密码，点击登录</div>
+            </div>
+          </div>
+          <div class="step problem">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <div class="step-title">⚠️ 突然弹出"验证码已发送"</div>
+              <div class="step-desc">用户没有预期到需要邮箱验证码，不知道发到哪个邮箱</div>
+            </div>
+          </div>
+          <div class="step problem">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <div class="step-title">⚠️ 无重发按钮</div>
+              <div class="step-desc">如果邮件丢失或延迟，用户无法重新发送验证码</div>
+            </div>
+          </div>
+          <div class="step problem">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <div class="step-title">⚠️ 需要二次操作</div>
+              <div class="step-desc">用户去邮箱查看验证码后，需要重新输入并提交</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="solutions" class="content">
+      <div class="comparison">
+        <div class="option">
+          <h3>方案 A：轻量优化</h3>
+          <p style="margin-bottom: 15px; color: #666;">保持两步流程，优化用户体验</p>
+          <div class="pros-cons">
+            <div class="pro">✓ 开发量小，快速实现</div>
+            <div class="pro">✓ 添加重发按钮和倒计时</div>
+            <div class="pro">✓ 显示邮箱地址提示</div>
+            <div class="pro">✓ 状态提示更友好</div>
+            <div class="con">✗ 仍需两步操作</div>
+          </div>
+          <span class="badge recommended">推荐</span>
+          <span class="badge simple">工作量小</span>
+        </div>
+
+        <div class="option">
+          <h3>方案 B：单页整合</h3>
+          <p style="margin-bottom: 15px; color: #666;">在同一页面完成所有操作</p>
+          <div class="pros-cons">
+            <div class="pro">✓ 一次性输入账号+密码+验证码</div>
+            <div class="pro">✓ 流程更连贯</div>
+            <div class="pro">✓ 减少用户等待</div>
+            <div class="con">✗ 需要提前知道邮箱</div>
+            <div class="con">✗ 首次登录体验复杂</div>
+          </div>
+          <span class="badge complex">工作量中</span>
+        </div>
+
+        <div class="option">
+          <h3>方案 C：自动填充</h3>
+          <p style="margin-bottom: 15px; color: #666;">后端自动填入邮箱验证码</p>
+          <div class="pros-cons">
+            <div class="pro">✓ 最流畅的体验</div>
+            <div class="pro">✓ 用户无需手动输入验证码</div>
+            <div class="con">✗ 需要后端轮询或 WebSocket</div>
+            <div class="con">✗ 开发量大</div>
+            <div class="con">✗ 安全性考量</div>
+          </div>
+          <span class="badge complex">工作量大</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="mockup" class="content">
+      <div class="card">
+        <h2>🎨 方案 A 界面原型</h2>
+        <div class="mockup">
+          <div class="mockup-title">优化后的登录页面</div>
+          <div class="form-mock">
+            <h3 style="margin-bottom: 20px; color: #333;">登录</h3>
+            <div class="form-group">
+              <label class="form-label">用户名</label>
+              <input class="form-input" type="text" value="superAdministrator" readonly>
+            </div>
+            <div class="form-group">
+              <label class="form-label">密码</label>
+              <input class="form-input" type="password" value="••••••••" readonly>
+            </div>
+            
+            <div class="email-notice">
+              <strong>📧 验证码已发送至</strong><br>
+              y***n@capgemini.com
+              <span class="timer-badge">⏱️ 60s</span>
+              <button class="resend-btn">重新发送</button>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">邮箱验证码 <span style="color: #999; font-weight: normal;">（5分钟内有效）</span></label>
+              <input class="form-input" type="text" placeholder="请输入6位验证码">
+            </div>
+
+            <button class="form-button">完成登录</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>⚡ 核心改进点</h2>
+        <div class="flow-steps">
+          <div class="step good">
+            <div class="step-number">✓</div>
+            <div class="step-content">
+              <div class="step-title">显示脱敏邮箱地址</div>
+              <div class="step-desc">用户知道验证码发到了哪里</div>
+            </div>
+          </div>
+          <div class="step good">
+            <div class="step-number">✓</div>
+            <div class="step-content">
+              <div class="step-title">倒计时 + 重发按钮</div>
+              <div class="step-desc">60秒倒计时，超时后可重新发送</div>
+            </div>
+          </div>
+          <div class="step good">
+            <div class="step-number">✓</div>
+            <div class="step-content">
+              <div class="step-title">验证码输入框直接显示</div>
+              <div class="step-desc">无需二次登录，在当前页面输入即可</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showTab(tabName) {
+      document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

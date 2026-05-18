@@ -44,9 +44,10 @@ class ResendEmailCodeSerializer:
         if lock_exists is not None:
             raise AppApiException(1010, _("Verification code sending too frequent, please try again later."))
         
-        # 发送验证码
+        # 发送验证码（异步）
         try:
-            send_email_code(user.email, 'login_email', _('Login verification'), timeout=60 * 5)
+            from users.tasks.email import send_email_code_async
+            send_email_code_async.delay(user.email, 'login_email', _('Login verification'), timeout=60 * 5)
         except AppApiException:
             raise
         except Exception as e:

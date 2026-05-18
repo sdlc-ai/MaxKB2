@@ -3,6 +3,19 @@
     <LoginContainer :subTitle="newDefaultSlogan">
       <h2 class="mb-24" v-if="!showQrCodeTab">{{ loginMode || $t('views.login.title') }}</h2>
       <div v-if="!showQrCodeTab">
+        <!-- 步骤指示器 -->
+        <div v-if="emailVerificationState.active" class="step-indicator mb-24">
+          <div class="step-item completed">
+            <div class="step-number">✓</div>
+            <span class="step-label">{{ $t('views.login.steps.password') }}</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step-item active">
+            <div class="step-number">2</div>
+            <span class="step-label">{{ $t('views.login.steps.emailVerification') }}</span>
+          </div>
+        </div>
+
         <el-form
           class="login-form"
           :rules="rules"
@@ -59,17 +72,20 @@
           <div class="mb-24" v-if="needEmailCode">
             <el-form-item prop="email_code">
               <!-- 邮箱验证提示卡片 -->
-              <div class="email-verification-card">
+              <div class="email-verification-card" role="alert" aria-live="polite">
                 <div class="email-info">
                   <span class="label">{{ $t('views.login.emailVerification.tip') }}</span>
-                  <span class="email">{{ emailVerificationState.maskedEmail }}</span>
+                  <span class="email" :title="emailVerificationState.maskedEmail">{{ emailVerificationState.maskedEmail }}</span>
                 </div>
                 <div class="input-row">
                   <el-input
+                    ref="emailCodeInputRef"
                     size="large"
                     class="input-item"
                     v-model="loginForm.email_code"
                     :placeholder="$t('views.login.emailVerification.enterCode')"
+                    maxlength="6"
+                    @input="handleEmailCodeInput"
                   />
                   <el-button
                     size="large"
@@ -79,6 +95,7 @@
                     :disabled="!emailVerificationState.canResend"
                     :loading="emailVerificationState.loading"
                     @click="resendEmailCodeHandle"
+                    :aria-label="emailVerificationState.canResend ? $t('views.login.emailVerification.resend') : `${emailVerificationState.countdown}${$t('views.login.emailVerification.countdown')}`"
                   >
                     <template v-if="emailVerificationState.canResend">
                       {{ $t('views.login.emailVerification.resend') }}
@@ -87,6 +104,10 @@
                       {{ emailVerificationState.countdown }}{{ $t('views.login.emailVerification.countdown') }}
                     </template>
                   </el-button>
+                </div>
+                <div v-if="emailVerificationState.attempts > 0" class="attempts-warning mt-8">
+                  <el-icon class="warning-icon"><Warning /></el-icon>
+                  <span>{{ $t('views.login.emailVerification.attemptsRemaining', { count: 5 - emailVerificationState.attempts }) }}</span>
                 </div>
               </div>
             </el-form-item>
@@ -173,6 +194,7 @@ import {getBrowserLang, t} from '@/locales'
 import useStore from '@/stores'
 import {useI18n} from 'vue-i18n'
 import {ElMessage} from 'element-plus'
+import {Warning} from '@element-plus/icons-vue'
 import QrCodeTab from '@/views/login/scanCompinents/QrCodeTab.vue'
 import {MsgConfirm, MsgError} from '@/utils/message.ts'
 import * as dd from 'dingtalk-jsapi'
@@ -186,6 +208,7 @@ const loading = ref<boolean>(false)
 const route = useRoute()
 const identifyCode = ref<string>('')
 const loginFormRef = ref<FormInstance>()
+const emailCodeInputRef = ref<any>()
 const authSetting = ref<any>(null)
 const defaultQrTab = ref<string>('')
 const needEmailCode = ref(false)
@@ -197,6 +220,8 @@ const emailVerificationState = ref({
   countdown: 0,            // 倒计时秒数
   canResend: false,        // 是否可以重发
   loading: false,          // 重发按钮加载状态
+  attempts: 0,             // 验证码尝试次数
+  tempToken: '',           // 临时会话令牌
 })
 let countdownTimer: NodeJS.Timeout | null = null
 
@@ -205,6 +230,7 @@ const loginForm = ref<LoginRequest>({
   password: '',
   captcha: '',
   email_code: '',
+  temp_token: '',
 })
 
 const rules = ref<FormRules<LoginRequest>>({
@@ -251,17 +277,22 @@ const loginHandle = () => {
       } else {
         const publicKey = forge.pki.publicKeyFromPem(user.rasKey);
         // 转换为UTF-8编码后再加密
-        const jsonData = JSON.stringify(loginForm.value);
+        // 注意：temp_token 不参与加密，避免 RSA 加密数据过长
+        const dataToEncrypt = {...loginForm.value}
+        delete dataToEncrypt.temp_token
+        const jsonData = JSON.stringify(dataToEncrypt);
         const utf8Bytes = forge.util.encodeUtf8(jsonData);
         const encrypted = publicKey.encrypt(utf8Bytes, 'RSAES-PKCS1-V1_5');
         const encryptedBase64 = forge.util.encode64(encrypted);
         login
-          .asyncLogin({encryptedData: encryptedBase64, username: loginForm.value.username})
+          .asyncLogin({encryptedData: encryptedBase64, username: loginForm.value.username, temp_token: loginForm.value.temp_token})
           .then(() => {
             locale.value = localStorage.getItem('Porsche-locale') || getBrowserLang() || 'en-US'
             localStorage.setItem('workspace_id', 'default')
             needEmailCode.value = false
             emailVerificationState.value.active = false
+            emailVerificationState.value.tempToken = ''
+            loginForm.value.temp_token = ''
             // 清理定时器
             if (countdownTimer) {
               clearInterval(countdownTimer)
@@ -276,19 +307,39 @@ const loginHandle = () => {
             // 处理 1009 需要邮箱验证码
             if (err?.code === 1009) {
               const maskedEmail = err?.data?.masked_email || ''
-              if (maskedEmail) {
+              const tempToken = err?.data?.temp_token || ''
+              if (maskedEmail && tempToken) {
+                emailVerificationState.value.tempToken = tempToken
+                loginForm.value.temp_token = tempToken
                 activateEmailVerification(maskedEmail)
+                ElMessage.info(t('views.login.emailVerification.codeSent'))
               } else {
                 needEmailCode.value = true
               }
             }
             // 处理 1010 频繁发送
             else if (err?.code === 1010) {
-              ElMessage.error(t('views.login.emailVerification.tooFrequent'))
+              ElMessage.warning(t('views.login.emailVerification.tooFrequent'))
             }
             // 处理 1011 用户无邮箱
             else if (err?.code === 1011) {
               ElMessage.error(t('views.login.emailVerification.noEmailBound'))
+            }
+            // 处理邮箱验证码错误
+            else if (err?.code === 1005 && emailVerificationState.value.active) {
+              emailVerificationState.value.attempts++
+              if (emailVerificationState.value.attempts >= 5) {
+                ElMessage.error(t('views.login.emailVerification.maxAttemptsReached'))
+                // 超过最大尝试次数，重置状态
+                resetEmailVerification()
+              } else {
+                ElMessage.error(t('views.login.emailVerification.codeError', { attempts: 5 - emailVerificationState.value.attempts }))
+                // 清空验证码输入框并重新聚焦
+                loginForm.value.email_code = ''
+                setTimeout(() => {
+                  emailCodeInputRef.value?.focus()
+                }, 100)
+              }
             }
           })
       }
@@ -338,12 +389,41 @@ const resendEmailCodeHandle = async () => {
     ElMessage.success(t('views.login.emailVerification.resendSuccess'))
     emailVerificationState.value.countdown = 60
     emailVerificationState.value.canResend = false
+    emailVerificationState.value.attempts = 0  // 重置尝试次数
     startCountdown()
+    // 清空输入框并重新聚焦
+    loginForm.value.email_code = ''
+    setTimeout(() => {
+      emailCodeInputRef.value?.focus()
+    }, 100)
   } catch (err: any) {
     ElMessage.error(err?.message || t('views.login.emailVerification.resendFailed'))
   } finally {
     emailVerificationState.value.loading = false
   }
+}
+
+// 重置邮箱验证状态
+const resetEmailVerification = () => {
+  needEmailCode.value = false
+  emailVerificationState.value.active = false
+  emailVerificationState.value.maskedEmail = ''
+  emailVerificationState.value.countdown = 0
+  emailVerificationState.value.canResend = false
+  emailVerificationState.value.attempts = 0
+  emailVerificationState.value.tempToken = ''
+  loginForm.value.email_code = ''
+  loginForm.value.temp_token = ''
+  if (countdownTimer) {
+    clearInterval(countdownTimer)
+    countdownTimer = null
+  }
+}
+
+// 邮箱验证码输入处理（只允许数字）
+const handleEmailCodeInput = (value: string) => {
+  const sanitizedValue = value.replace(/[^0-9]/g, '')
+  loginForm.value.email_code = sanitizedValue
 }
 
 // 激活邮箱验证模式
@@ -352,8 +432,14 @@ const activateEmailVerification = (maskedEmail: string) => {
   emailVerificationState.value.maskedEmail = maskedEmail
   emailVerificationState.value.countdown = 60
   emailVerificationState.value.canResend = false
+  emailVerificationState.value.attempts = 0
   needEmailCode.value = true
   startCountdown()
+  
+  // 下一帧聚焦到邮箱验证码输入框
+  setTimeout(() => {
+    emailCodeInputRef.value?.focus()
+  }, 100)
 }
 
 onBeforeMount(() => {
@@ -686,6 +772,97 @@ onMounted(() => {
     .input-item {
       flex: 1;
     }
+  }
+  
+  .attempts-warning {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--el-color-warning);
+    
+    .warning-icon {
+      font-size: 16px;
+    }
+  }
+  
+  .auto-submit-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--el-text-color-secondary);
+    
+    .hint-icon {
+      font-size: 16px;
+      color: var(--el-color-info);
+    }
+  }
+}
+
+// 步骤指示器样式
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      background: var(--el-fill-color);
+      color: var(--el-text-color-secondary);
+      border: 2px solid var(--el-border-color);
+    }
+    
+    .step-label {
+      font-size: 13px;
+      color: var(--el-text-color-secondary);
+    }
+    
+    &.completed {
+      .step-number {
+        background: var(--el-color-success);
+        color: white;
+        border-color: var(--el-color-success);
+      }
+      
+      .step-label {
+        color: var(--el-color-success);
+      }
+    }
+    
+    &.active {
+      .step-number {
+        background: var(--el-color-primary);
+        color: white;
+        border-color: var(--el-color-primary);
+      }
+      
+      .step-label {
+        color: var(--el-color-primary);
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .step-line {
+    width: 60px;
+    height: 2px;
+    background: var(--el-border-color);
+    margin-top: -16px;
   }
 }
 </style>

@@ -1,0 +1,175 @@
+graph TB
+    subgraph URL["URL路由层"]
+        AdminAPI["Admin API<br/>/admin/api/*"]
+        ChatAPI["Chat API<br/>/chat/api/*"]
+    end
+
+    subgraph Views["视图层 (Views)"]
+        AppViews["Application Views<br/>应用管理"]
+        KnowledgeViews["Knowledge Views<br/>知识库管理"]
+        ModelViews["Model Provider Views<br/>模型管理"]
+        ChatViews["Chat Views<br/>聊天功能"]
+        UserViews["User Views<br/>用户管理"]
+        ToolViews["Tool Views<br/>工具管理"]
+        SystemViews["System Views<br/>系统管理"]
+    end
+
+    subgraph Serializers["序列化层"]
+        AppSerializers["Application Serializers"]
+        KnowledgeSerializers["Knowledge Serializers"]
+        ModelSerializers["Model Serializers"]
+    end
+
+    subgraph BusinessLogic["业务逻辑层"]
+        direction TB
+        
+        subgraph ApplicationModule["application模块"]
+            WorkflowEngine["Workflow Engine<br/>工作流引擎<br/>37种节点类型"]
+            ChatPipeline["Chat Pipeline<br/>聊天管道"]
+            FlowNodes["Flow Nodes<br/>AI节点/知识节点<br/>工具节点/控制节点"]
+        end
+
+        subgraph KnowledgeModule["knowledge模块"]
+            VectorDB["PG Vector<br/>向量数据库"]
+            DocParser["Document Parser<br/>文档解析器"]
+            TextSplitter["Text Splitter<br/>文本分割器"]
+            EmbeddingTask["Embedding Task<br/>向量化任务"]
+        end
+
+        subgraph ModelProvider["models_provider模块"]
+            OpenAIProvider["OpenAI Provider"]
+            AnthropicProvider["Anthropic Provider"]
+            AliyunProvider["阿里云百炼"]
+            OtherProviders["其他22+提供商"]
+            BaseModel["Base Model Provider<br/>抽象基类"]
+        end
+
+        subgraph CommonModule["common模块"]
+            Auth["Authentication<br/>认证授权"]
+            Middleware["Middleware<br/>中间件"]
+            Utils["Utils<br/>工具函数"]
+            EventListener["Event Listener<br/>事件监听"]
+        end
+    end
+
+    subgraph Models["数据模型层 (Models)"]
+        AppModels["Application Models<br/>Application<br/>ApplicationFolder<br/>ChatRecord"]
+        KnowledgeModels["Knowledge Models<br/>Knowledge<br/>Document<br/>Paragraph"]
+        UserModels["User Models<br/>User<br/>Workspace"]
+        ToolModels["Tool Models"]
+    end
+
+    subgraph Database["数据库层"]
+        PostgreSQL["PostgreSQL 17.6<br/>+ pgvector"]
+        MPTT["MPTT树形结构"]
+        JSONField["JSONField配置"]
+        UUID["UUID v7主键"]
+    end
+
+    subgraph AsyncTasks["异步任务层 (Celery)"]
+        CeleryBeat["Celery Beat<br/>定时任务调度"]
+        CeleryWorker["Celery Worker<br/>任务执行"]
+        EmbeddingJobs["Embedding Jobs<br/>向量化任务"]
+        GenerateJobs["Generate Jobs<br/>问题生成"]
+        SyncJobs["Sync Jobs<br/>同步任务"]
+        CleanJobs["Clean Jobs<br/>清理任务"]
+    end
+
+    subgraph Cache["缓存层"]
+        RedisCache["Redis Cache<br/>会话/缓存"]
+        RedisBroker["Redis Broker<br/>消息队列"]
+    end
+
+    %% 数据流 - URL到Views
+    AdminAPI --> AppViews
+    AdminAPI --> KnowledgeViews
+    AdminAPI --> ModelViews
+    AdminAPI --> UserViews
+    AdminAPI --> ToolViews
+    AdminAPI --> SystemViews
+    ChatAPI --> ChatViews
+
+    %% Views到Serializers
+    AppViews --> AppSerializers
+    KnowledgeViews --> KnowledgeSerializers
+    ModelViews --> ModelSerializers
+
+    %% Serializers到BusinessLogic
+    AppSerializers --> WorkflowEngine
+    AppSerializers --> ChatPipeline
+    KnowledgeSerializers --> VectorDB
+    KnowledgeSerializers --> DocParser
+    ModelSerializers --> BaseModel
+
+    %% BusinessLogic内部流转
+    WorkflowEngine --> FlowNodes
+    DocParser --> TextSplitter
+    TextSplitter --> EmbeddingTask
+    EmbeddingTask --> VectorDB
+
+    BaseModel --> OpenAIProvider
+    BaseModel --> AnthropicProvider
+    BaseModel --> AliyunProvider
+    BaseModel --> OtherProviders
+
+    %% BusinessLogic到Models
+    WorkflowEngine --> AppModels
+    VectorDB --> KnowledgeModels
+    ChatPipeline --> AppModels
+    Auth --> UserModels
+
+    %% Models到Database
+    AppModels --> PostgreSQL
+    KnowledgeModels --> PostgreSQL
+    UserModels --> PostgreSQL
+    ToolModels --> PostgreSQL
+
+    PostgreSQL --> MPTT
+    PostgreSQL --> JSONField
+    PostgreSQL --> UUID
+
+    %% 异步任务
+    EmbeddingTask --> CeleryWorker
+    CeleryBeat --> CeleryWorker
+    CeleryWorker --> EmbeddingJobs
+    CeleryWorker --> GenerateJobs
+    CeleryWorker --> SyncJobs
+    CeleryWorker --> CleanJobs
+
+    EmbeddingJobs --> VectorDB
+    GenerateJobs --> KnowledgeModels
+    CleanJobs --> AppModels
+
+    %% 缓存
+    Auth --> RedisCache
+    CeleryWorker --> RedisBroker
+    RedisCache --> RedisBroker
+
+    %% 公共组件被各模块使用
+    Auth -.-> AppViews
+    Auth -.-> KnowledgeViews
+    Auth -.-> ModelViews
+    Middleware -.-> AdminAPI
+    Middleware -.-> ChatAPI
+    Utils -.-> WorkflowEngine
+    Utils -.-> DocParser
+    EventListener -.-> ChatPipeline
+
+    %% 样式定义
+    classDef url fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef views fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef serializers fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef business fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    classDef models fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef database fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+    classDef async fill:#e0f2f1,stroke:#00796b,stroke-width:2px
+    classDef cache fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+
+    class AdminAPI,ChatAPI url
+    class AppViews,KnowledgeViews,ModelViews,ChatViews,UserViews,ToolViews,SystemViews views
+    class AppSerializers,KnowledgeSerializers,ModelSerializers serializers
+    class WorkflowEngine,ChatPipeline,FlowNodes,VectorDB,DocParser,TextSplitter,EmbeddingTask,OpenAIProvider,AnthropicProvider,AliyunProvider,OtherProviders,BaseModel,Auth,Middleware,Utils,EventListener business
+    class AppModels,KnowledgeModels,UserModels,ToolModels models
+    class PostgreSQL,MPTT,JSONField,UUID database
+    class CeleryBeat,CeleryWorker,EmbeddingJobs,GenerateJobs,SyncJobs,CleanJobs async
+    class RedisCache,RedisBroker cache

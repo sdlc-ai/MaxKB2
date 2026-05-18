@@ -1,0 +1,65 @@
+graph TB
+    subgraph Client["客户端层"]
+        Browser["Web Browser<br/>Vue 3 SPA"]
+    end
+
+    subgraph Access["接入层"]
+        Gunicorn["Gunicorn WSGI Server"]
+        Django["Django REST Framework<br/>API Gateway"]
+        CORS["CORS Middleware"]
+        WebSocket["WebSocket Handler"]
+    end
+
+    subgraph Application["应用服务层"]
+        direction TB
+        DjangoApp["Django Application<br/>主应用服务"]
+        CeleryWorker["Celery Worker<br/>异步任务处理"]
+        LocalModel["Local Model Server<br/>本地AI模型 (可选)"]
+        Sandbox["Sandbox Environment<br/>Python代码执行沙箱"]
+    end
+
+    subgraph Storage["数据存储层"]
+        PostgreSQL["PostgreSQL 17.6<br/>+ pgvector扩展"]
+        Redis["Redis 6.x<br/>缓存 + 消息队列"]
+    end
+
+    subgraph External["外部服务层"]
+        AIModels["25+ AI模型提供商<br/>OpenAI, Anthropic, Gemini<br/>阿里云, 百度文心, 腾讯混元等"]
+        OSS["对象存储服务<br/>OSS"]
+        ThirdParty["第三方工具<br/>MySQL, Google Search等"]
+    end
+
+    %% 数据流
+    Browser -->|HTTP/HTTPS| Gunicorn
+    Gunicorn --> Django
+    Django -->|路由分发| DjangoApp
+    Browser -->|WebSocket| WebSocket
+    WebSocket --> DjangoApp
+
+    DjangoApp -->|ORM查询| PostgreSQL
+    DjangoApp -->|缓存/会话| Redis
+    DjangoApp -->|任务队列| CeleryWorker
+    DjangoApp -->|调用| AIModels
+    DjangoApp -->|存储文件| OSS
+    DjangoApp -->|集成工具| ThirdParty
+    DjangoApp -->|代码执行| Sandbox
+
+    CeleryWorker -->|向量嵌入任务| PostgreSQL
+    CeleryWorker -->|文档解析任务| PostgreSQL
+    CeleryWorker -->|结果存储| Redis
+    CeleryWorker -->|调用AI模型| AIModels
+
+    LocalModel -->|模型推理| DjangoApp
+
+    %% 样式定义
+    classDef client fill:#e1f5ff,stroke:#0288d1,stroke-width:2px
+    classDef access fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+    classDef application fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    classDef storage fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef external fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+
+    class Browser client
+    class Gunicorn,Django,CORS,WebSocket access
+    class DjangoApp,CeleryWorker,LocalModel,Sandbox application
+    class PostgreSQL,Redis storage
+    class AIModels,OSS,ThirdParty external

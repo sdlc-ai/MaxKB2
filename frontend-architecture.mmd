@@ -1,0 +1,268 @@
+graph TB
+    subgraph Build["构建层"]
+        Vite["Vite 6.2.4<br/>构建工具"]
+        TypeScript["TypeScript 5.8<br/>类型检查"]
+        SCSS["Sass/SCSS<br/>样式预处理"]
+        AdminBuild["管理模式构建<br/>npm run build → /admin/"]
+        ChatBuild["聊天模式构建<br/>npm run build-chat → /chat/"]
+    end
+
+    subgraph Entry["入口层"]
+        MainTS["main.ts<br/>应用入口"]
+        AppVue["App.vue<br/>根组件"]
+    end
+
+    subgraph Router["路由层 (Vue Router 4.5.0)"]
+        RouterIndex["router/index.ts<br/>路由配置"]
+        RouteModules["Route Modules<br/>模块化路由"]
+        RouteGuards["Route Guards<br/>路由守卫"]
+    end
+
+    subgraph Store["状态管理 (Pinia 3.0.1)"]
+        PiniaInstance["Pinia Instance"]
+        UserStore["user.ts<br/>用户状态"]
+        LoginStore["login.ts<br/>登录状态"]
+        AppStore["application.ts<br/>应用状态"]
+        KnowledgeStore["knowledge.ts<br/>知识库状态"]
+        ModelStore["model.ts<br/>模型状态"]
+        ToolStore["tool.ts<br/>工具状态"]
+    end
+
+    subgraph Views["视图层 (Views - 25个模块)"]
+        direction TB
+        
+        subgraph AppViews["应用管理视图"]
+            AppList["Application List<br/>应用列表"]
+            AppDetail["Application Detail<br/>应用详情"]
+            AppWorkflow["Application Workflow<br/>工作流编辑器"]
+        end
+
+        subgraph KnowledgeViews["知识库视图"]
+            KnowledgeList["Knowledge List<br/>知识库列表"]
+            DocumentManage["Document Manage<br/>文档管理"]
+            ParagraphManage["Paragraph Manage<br/>段落管理"]
+            ProblemManage["Problem Manage<br/>问题管理"]
+        end
+
+        subgraph ChatViews["聊天视图"]
+            ChatInterface["Chat Interface<br/>聊天界面"]
+            ChatLog["Chat Log<br/>聊天日志"]
+        end
+
+        subgraph SystemViews["系统视图"]
+            ModelManage["Model Manage<br/>模型管理"]
+            ToolManage["Tool Manage<br/>工具管理"]
+            SystemSetting["System Setting<br/>系统设置"]
+            UserManage["User Manage<br/>用户管理"]
+        end
+
+        OtherViews["其他视图<br/>Login, Error等"]
+    end
+
+    subgraph Components["组件层 (Components - 31个)"]
+        direction TB
+        
+        subgraph CoreComponents["核心组件"]
+            AIChat["ai-chat/<br/>AI聊天组件"]
+            Markdown["markdown/<br/>Markdown渲染"]
+            FolderTree["folder-tree/<br/>文件夹树"]
+            DynamicForm["dynamics-form/<br/>动态表单"]
+        end
+
+        subgraph WorkflowComponents["工作流组件"]
+            WorkflowMenu["workflow-dropdown-menu/<br/>工作流菜单"]
+            NodeComponents["Node Components<br/>42种节点组件"]
+        end
+
+        subgraph UIComponents["UI组件"]
+            ElementPlus["Element Plus 2.11.7<br/>UI组件库"]
+            CustomUI["Custom UI Components<br/>自定义UI组件"]
+        end
+    end
+
+    subgraph Workflow["工作流编辑器 (LogicFlow 1.2.27)"]
+        LFCore["LogicFlow Core<br/>核心引擎"]
+        LFExtension["LogicFlow Extension<br/>扩展插件"]
+        NodeIcons["Node Icons<br/>节点图标"]
+        LFPlugins["LF Plugins<br/>插件"]
+    end
+
+    subgraph API["API层 (Axios 1.8.4)"]
+        AxiosInstance["Axios Instance<br/>HTTP客户端实例"]
+        RequestInterceptor["Request Interceptor<br/>请求拦截器"]
+        ResponseInterceptor["Response Interceptor<br/>响应拦截器"]
+        
+        APIModules["API Modules"]
+        AppAPI["application/<br/>应用API"]
+        KnowledgeAPI["knowledge/<br/>知识库API"]
+        ModelAPI["model/<br/>模型API"]
+        ToolAPI["tool/<br/>工具API"]
+        SystemAPI["system/<br/>系统API"]
+        ChatAPI["chat/<br/>聊天API"]
+    end
+
+    subgraph Types["类型定义"]
+        TypeDefinitions["Type Definitions<br/>TypeScript类型"]
+        APIType["api/type/<br/>API类型定义"]
+    end
+
+    subgraph Utils["工具层"]
+        CommonUtils["Common Utils<br/>通用工具函数"]
+        DateUtils["Date Utils<br/>日期工具"]
+        StorageUtils["Storage Utils<br/>存储工具"]
+        ValidateUtils["Validate Utils<br/>验证工具"]
+    end
+
+    subgraph I18n["国际化 (Vue I18n 11.1.3)"]
+        I18nInstance["Vue I18n Instance"]
+        ZHLocale["zh-CN<br/>简体中文"]
+        ZHTLocale["zh-Hant<br/>繁体中文"]
+        ENLocale["en-US<br/>英文"]
+    end
+
+    subgraph Features["特性组件"]
+        Mermaid["Mermaid 11.12.0<br/>图表渲染"]
+        KaTeX["KaTeX 0.16.10<br/>数学公式"]
+        CodeMirror["CodeMirror 6<br/>代码编辑器"]
+        ECharts["ECharts 5.6.0<br/>数据可视化"]
+        MdEditor["md-editor-v3 5.8.2<br/>Markdown编辑器"]
+    end
+
+    %% 数据流
+    Vite --> AdminBuild
+    Vite --> ChatBuild
+    TypeScript --> AdminBuild
+    TypeScript --> ChatBuild
+    SCSS --> AdminBuild
+    SCSS --> ChatBuild
+
+    AdminBuild --> MainTS
+    ChatBuild --> MainTS
+    MainTS --> AppVue
+
+    AppVue --> RouterIndex
+    RouterIndex --> RouteModules
+    RouterIndex --> RouteGuards
+
+    AppVue --> PiniaInstance
+    PiniaInstance --> UserStore
+    PiniaInstance --> LoginStore
+    PiniaInstance --> AppStore
+    PiniaInstance --> KnowledgeStore
+    PiniaInstance --> ModelStore
+    PiniaInstance --> ToolStore
+
+    RouteModules --> AppList
+    RouteModules --> AppDetail
+    RouteModules --> AppWorkflow
+    RouteModules --> KnowledgeList
+    RouteModules --> DocumentManage
+    RouteModules --> ParagraphManage
+    RouteModules --> ProblemManage
+    RouteModules --> ChatInterface
+    RouteModules --> ChatLog
+    RouteModules --> ModelManage
+    RouteModules --> ToolManage
+    RouteModules --> SystemSetting
+    RouteModules --> UserManage
+    RouteModules --> OtherViews
+
+    %% Views使用Components
+    AppList --> ElementPlus
+    AppDetail --> ElementPlus
+    AppWorkflow --> WorkflowMenu
+    AppWorkflow --> NodeComponents
+    AppWorkflow --> LFCore
+    ChatInterface --> AIChat
+    ChatInterface --> Markdown
+    KnowledgeList --> FolderTree
+    DocumentManage --> DynamicForm
+    ProblemManage --> DynamicForm
+
+    %% Workflow编辑器
+    LFCore --> LFExtension
+    LFCore --> NodeIcons
+    LFCore --> LFPlugins
+    NodeComponents --> LFCore
+
+    %% Components使用API
+    AIChat --> AxiosInstance
+    AppList --> AxiosInstance
+    KnowledgeList --> AxiosInstance
+    ModelManage --> AxiosInstance
+
+    %% API层
+    AxiosInstance --> RequestInterceptor
+    AxiosInstance --> ResponseInterceptor
+    RequestInterceptor --> AppAPI
+    RequestInterceptor --> KnowledgeAPI
+    RequestInterceptor --> ModelAPI
+    RequestInterceptor --> ToolAPI
+    RequestInterceptor --> SystemAPI
+    RequestInterceptor --> ChatAPI
+
+    AppAPI --> APIModules
+    KnowledgeAPI --> APIModules
+    ModelAPI --> APIModules
+    ToolAPI --> APIModules
+    SystemAPI --> APIModules
+    ChatAPI --> APIModules
+
+    %% API使用Types
+    AppAPI --> APIType
+    KnowledgeAPI --> APIType
+    ModelAPI --> APIType
+
+    %% Stores使用API
+    UserStore --> AppAPI
+    LoginStore --> SystemAPI
+    AppStore --> AppAPI
+    KnowledgeStore --> KnowledgeAPI
+    ModelStore --> ModelAPI
+    ToolStore --> ToolAPI
+
+    %% 国际化
+    I18nInstance --> ZHLocale
+    I18nInstance --> ZHTLocale
+    I18nInstance --> ENLocale
+    AppVue -.-> I18nInstance
+
+    %% 工具函数被各层使用
+    CommonUtils -.-> Views
+    CommonUtils -.-> Components
+    CommonUtils -.-> API
+    CommonUtils -.-> Store
+
+    %% 特性组件被Views使用
+    Markdown --> Mermaid
+    Markdown --> KaTeX
+    DocumentManage --> CodeMirror
+    SystemSetting --> ECharts
+    ParagraphManage --> MdEditor
+
+    %% 样式定义
+    classDef build fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef entry fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef router fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef store fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    classDef views fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef components fill:#ffebee,stroke:#d32f2f,stroke-width:2px
+    classDef workflow fill:#e0f2f1,stroke:#00796b,stroke-width:2px
+    classDef api fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+    classDef types fill:#fafafa,stroke:#616161,stroke-width:2px
+    classDef utils fill:#efebe9,stroke:#5d4037,stroke-width:2px
+    classDef i18n fill:#f1f8e9,stroke:#689f38,stroke-width:2px
+    classDef features fill:#ede7f6,stroke:#512da8,stroke-width:2px
+
+    class Vite,TypeScript,SCSS,AdminBuild,ChatBuild build
+    class MainTS,AppVue entry
+    class RouterIndex,RouteModules,RouteGuards router
+    class PiniaInstance,UserStore,LoginStore,AppStore,KnowledgeStore,ModelStore,ToolStore store
+    class AppList,AppDetail,AppWorkflow,KnowledgeList,DocumentManage,ParagraphManage,ProblemManage,ChatInterface,ChatLog,ModelManage,ToolManage,SystemSetting,UserManage,OtherViews views
+    class AIChat,Markdown,FolderTree,DynamicForm,WorkflowMenu,NodeComponents,ElementPlus,CustomUI components
+    class LFCore,LFExtension,NodeIcons,LFPlugins workflow
+    class AxiosInstance,RequestInterceptor,ResponseInterceptor,AppAPI,KnowledgeAPI,ModelAPI,ToolAPI,SystemAPI,ChatAPI,APIModules api
+    class TypeDefinitions,APIType types
+    class CommonUtils,DateUtils,StorageUtils,ValidateUtils utils
+    class I18nInstance,ZHLocale,ZHTLocale,ENLocale i18n
+    class Mermaid,KaTeX,CodeMirror,ECharts,MdEditor features

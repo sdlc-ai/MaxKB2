@@ -19,5 +19,9 @@ interface LoginRequest {
    * 邮箱验证码
    */
   email_code?: string
+  /**
+   * 临时会话令牌（用于两阶段登录）
+   */
+  temp_token?: string
 }
 export type { LoginRequest }

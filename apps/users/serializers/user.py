@@ -869,22 +869,28 @@ def send_email_code(email: str, code_type: str, state_label: str = '', timeout: 
         client.quit()
     except smtplib.SMTPConnectError as e:
         cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending failed, connection failed: {error}").format(error=str(e)))
+        porsche_logger.error(f"SMTP connection failed: {str(e)}", exc_info=True)
+        raise AppApiException(500, _("Email service connection failed. Please try again later."))
     except smtplib.SMTPAuthenticationError as e:
         cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending failed, authentication error: {error}").format(error=str(e)))
+        porsche_logger.error(f"SMTP authentication failed: {str(e)}", exc_info=True)
+        raise AppApiException(500, _("Email service configuration error. Please contact administrator."))
     except smtplib.SMTPSenderRefused as e:
         cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending failed, sender refused: {error}").format(error=str(e)))
+        porsche_logger.error(f"SMTP sender refused: {str(e)}", exc_info=True)
+        raise AppApiException(500, _("Email sending failed. Please contact administrator."))
     except smtplib.SMTPRecipientsRefused as e:
         cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending failed, recipient refused: {error}").format(error=str(e)))
+        porsche_logger.error(f"SMTP recipient refused: {str(e)}", exc_info=True)
+        raise AppApiException(500, _("Email address is invalid or rejected by server."))
     except smtplib.SMTPException as e:
         cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending failed: {error}").format(error=str(e)))
+        porsche_logger.error(f"SMTP error occurred: {str(e)}", exc_info=True)
+        raise AppApiException(500, _("Email sending failed due to server error. Please try again later."))
     except Exception as e:
         cache.delete(get_key(code_cache_key_lock), version=version)
-        raise AppApiException(500, _("Email sending exception: {error}").format(error=str(e)))
+        porsche_logger.error(f"Unexpected email sending exception: {str(e)}", exc_info=True)
+        raise AppApiException(500, _("Email service temporarily unavailable. Please try again later."))
 
     # 设置验证码缓存
     cache.set(get_key(code_cache_key), code, timeout=timeout, version=version)
